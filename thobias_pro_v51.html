@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thobias Pro | v51</title>
+    <title>Thobias Pro | v52</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -177,6 +177,9 @@
     <div id="panel-supps" class="panel active"></div>
     <div id="panel-derm" class="panel"></div>
     <div id="panel-gym" class="panel">
+        <div style="display:flex;gap:8px;margin-bottom:10px">
+            <button class="add-btn" onclick="openWorkoutTimer()" style="flex:1;margin:0;background:rgba(52,211,153,.1);border-color:var(--accent);color:var(--accent)">⏱ Cronômetro Musculação</button>
+        </div>
         <div id="exList"></div>
         <button class="add-btn" onclick="openExModal('new')">+ Adicionar Exercício</button>
     </div>
@@ -303,6 +306,20 @@
     <div class="modal-row"><button class="mbtn mbtn-close" onclick="closeModal('exHistModal')" style="flex:1">Fechar</button></div>
 </div></div>
 
+<!-- INFO DETAIL MODAL -->
+<div id="infoModal" class="modal-bg"><div class="modal" style="max-width:440px">
+    <h3 id="infoTitle" style="font-size:14px">Detalhes</h3>
+    <div id="infoContent" style="font-size:12px;line-height:1.6;max-height:60vh;overflow-y:auto"></div>
+    <div class="modal-row"><button class="mbtn mbtn-close" onclick="closeModal('infoModal')" style="flex:1">Fechar</button></div>
+</div></div>
+
+<!-- WORKOUT TIMER MODAL -->
+<div id="timerModal" class="modal-bg"><div class="modal" style="max-width:440px">
+    <h3>⏱ Cronômetro de Treino</h3>
+    <div id="timerContent"></div>
+    <div class="modal-row"><button class="mbtn mbtn-close" onclick="stopWorkoutTimer();closeModal('timerModal')" style="flex:1">Fechar</button></div>
+</div></div>
+
 <canvas id="snapCanvas" width="1080"></canvas>
 
 <script>
@@ -365,6 +382,7 @@ const DERM=[
 {id:'d02',time:'06:05',qty:'🧹 1x',title:'Higiene palpebral',cat:'Ptose'},
 {id:'d03',time:'06:10',qty:'🏋️ 10+15',title:'Exercícios palpebrais',cat:'Ptose'},
 {id:'d04',time:'06:12',qty:'💧 1 gota',title:'Brimonidina 0,15% colírio',cat:'Ptose'},
+{id:'d19',time:'06:45',qty:'💧 1 gota SOS',title:'Fenilefrina 2,5% colírio (se ptose persistir)',cat:'Ptose'},
 {id:'d05',time:'06:20',qty:'🧴',title:'Limpeza facial suave',cat:'Rosto'},
 {id:'d06',time:'06:22',qty:'💧',title:'Sérum cafeína periocular (Mix-02)',cat:'Ptose'},
 {id:'d07',time:'06:25',qty:'🧴',title:'Sérum anti-rosácea (Niacin+Telangyn+Azelogl)',cat:'Rosácea'},
@@ -441,6 +459,12 @@ const FOODS=[
 {fid:'f75',name:'Carne moída (patinho)',unit:'g',defQty:150,per100:{kcal:219,prot:35.9,carb:0,fat:7.3,fib:0},cat:'🥩 Proteína'},
 {fid:'f76',name:'Filé mignon bovino grelhado',unit:'g',defQty:150,per100:{kcal:220,prot:32.8,carb:0,fat:8.8,fib:0},cat:'🥩 Proteína'},
 {fid:'f77',name:'Hambúrguer Seara Gran Angus (unid. 80g)',unit:'g',defQty:80,per100:{kcal:256,prot:17.5,carb:0,fat:21.3,fib:0},cat:'🥩 Proteína'},
+{fid:'f78',name:'Feijão preto cozido',unit:'g',defQty:80,per100:{kcal:77,prot:4.5,carb:14.0,fat:0.5,fib:8.4},cat:'🍚 Carboidrato'},
+{fid:'f79',name:'Feijão verde (fradinho) cozido',unit:'g',defQty:80,per100:{kcal:78,prot:5.1,carb:13.5,fat:0.6,fib:7.5},cat:'🍚 Carboidrato'},
+{fid:'f80',name:'Feijão macassar cozido',unit:'g',defQty:80,per100:{kcal:78,prot:5.1,carb:13.5,fat:0.6,fib:7.5},cat:'🍚 Carboidrato'},
+{fid:'f81',name:'Arroz 8 Grãos Integrais Biju (cozido)',unit:'g',defQty:150,per100:{kcal:132,prot:3.8,carb:24.5,fat:2.2,fib:3.5},cat:'🍚 Carboidrato'},
+{fid:'f82',name:'Arroz 7 Grãos Tio João (cozido)',unit:'g',defQty:150,per100:{kcal:140,prot:4.3,carb:24.0,fat:2.6,fib:5.4},cat:'🍚 Carboidrato'},
+{fid:'f83',name:'Mooving Hydro Protein (500ml)',unit:'ml',defQty:500,per100:{kcal:18,prot:4.0,carb:0,fat:0,fib:0},cat:'🥤 Suplemento'},
 ];
 
 // ═══ STATE ═══
@@ -861,7 +885,204 @@ function openExHistory(exId){
     });
 }
 
-// ═══ HISTORY ═══
+// ═══ ITEM INFO POPUP ═══
+const ITEM_INFO={
+// Supplements
+'s01':{obj:'Corrigir ferritina (39 ng/mL → meta 80-100)',rec:'Jejum obrigatório. Tomar com vit C. Não tomar com café, chá ou laticínios.',interval:'≥6h antes do zinco · ≥3h antes do cálcio · ≥5h antes do cobre'},
+'s02':{obj:'Corrigir B12 (251 pg/mL → meta >500)',rec:'Sublingual para bypass GI. Forma metilcobalamina preferível.',interval:'Sem restrição significativa'},
+'s03':{obj:'Tratamento ansiedade social (dose terapêutica)',rec:'Tomar no mesmo horário diariamente. Não interromper sem orientação médica.',interval:'Efeito pleno após 4-6 semanas. Inibição CYP2C19 pelo CBD pode ↑ nível sérico'},
+'s04':{obj:'TRT — otimizar testosterona (358 ng/dL → meta 600-900)',rec:'Aplicar em pele limpa e seca (braço/abdômen). Lavar mãos após. Evitar contato com mulheres/crianças.',interval:'Absorção ~4h. Aplicar antes de vestir camisa'},
+'s05':{obj:'Corrigir vitamina D (34,2 → meta ≥40 ng/mL)',rec:'COM GORDURA obrigatório (lipossolúvel). Se próximo exame <40, aumentar para 6.000 UI.',interval:'Tomar junto com ômega-3 e K2 para sinergismo'},
+'s06':{obj:'Veículo lipídico + anti-inflamatório + cardioproteção',rec:'COM GORDURA da refeição. Serve como veículo para D3, K2, CoQ10.',interval:'Sem restrições significativas'},
+'s07':{obj:'Prevenir deficiência de cobre (obrigatório c/ zinco >25mg/dia)',rec:'Zinco depleta cobre a longo prazo. Suplementar cobre é obrigatório.',interval:'≥5h antes do zinco (competem por absorção) · ≥5h após ferro'},
+'s08':{obj:'Controle de PA (hipertensão)',rec:'Dose fixa diária. Monitorar PA especialmente com minoxidil.',interval:'Sem restrição alimentar. Pico 3-4h'},
+'s09':{obj:'Bloquear DHT (alopecia androgenética)',rec:'COM GORDURA melhora absorção. Evitar CBD no mesmo período (CYP3A4).',interval:'≥12h do CBD · Meia-vida longa (~5 semanas)'},
+'s10':{obj:'Estimular crescimento capilar (vasodilatação)',rec:'Monitorar PA e FC nas primeiras semanas. Efeito vasodilatador pode causar hipotensão.',interval:'Efeito em 3-6 meses. Avaliar PA em 2 semanas'},
+'s12':{obj:'Energia mitocondrial + cardioproteção + antioxidante',rec:'COM GORDURA obrigatório (lipossolúvel). Ubiquinol > ubiquinona.',interval:'Sem restrições significativas'},
+'s13':{obj:'Proteção renal e cardiovascular',rec:'Melhor absorção em jejum. Auxilia controle de PA.',interval:'Sem competição significativa'},
+'s14':{obj:'Precursor de glutationa (antioxidante master) + proteção renal',rec:'Jejum maximiza absorção. Componente do protocolo GlyNAC.',interval:'Dose 1 de 2 (dose 2 no jantar)'},
+'s15':{obj:'Imunidade, testosterona, cicatrização, pele',rec:'≥6h após ferro, ≥5h após cobre. COM COMIDA melhora tolerância GI.',interval:'≥2h antes do cálcio · Competição ferro/cobre'},
+'s17':{obj:'Anti-inflamatório natural sistêmico',rec:'COM COMIDA obrigatório. Pimenta preta ↑ biodisponibilidade 2000%.',interval:'Inibidor CYP — considerar janela com dutasterida'},
+'s18':{obj:'Oxidação de gordura + saúde da pele',rec:'Com refeição. Pré-treino potencializa uso de gordura como combustível em zona 2.',interval:'Dose 1 almoço + dose 2 pré-treino'},
+'s25':{obj:'Força, volume muscular, hidratação celular',rec:'COM CARBOIDRATO/PROTEÍNA (insulina ↑ captação). 3-5g/dia dose de manutenção.',interval:'Pós-treino ideal. Não precisa de loading'},
+'s26':{obj:'Sensibilidade insulínica + longevidade + controle IGF-1',rec:'COM COMIDA obrigatório (reduz desconforto GI). XR = liberação prolongada.',interval:'Monitorar GI nas primeiras semanas'},
+'s30':{obj:'Saúde óssea (prevenir osteopenia)',rec:'≥2h após zinco. COM COMIDA. K1 da fórmula ≠ K2 suplementada.',interval:'≥3h após ferro · ≥2h após zinco'},
+'s32':{obj:'Neuroproteção + sono + relaxamento muscular',rec:'Forma treonato cruza barreira hematoencefálica (superior a outras formas).',interval:'≥45min após jantar. Efeito sedativo leve'},
+'s33':{obj:'Ansiolítico natural (substituto ashwagandha)',rec:'Ashwagandha contraindicada c/ TSH 0,627 (risco tireoidiano). L-teanina é segura.',interval:'Sinérgica com magnésio. Efeito em 30-60min'},
+'s34':{obj:'Indução e manutenção do sono',rec:'Dose baixa (15-25mg) = efeito sedativo sem efeito antidepressivo.',interval:'30-60min antes de dormir'},
+'s36':{obj:'Sono + ansiolítico + anti-inflamatório',rec:'≥14h após dutasterida. Inibidor CYP3A4 e CYP2C19.',interval:'Dose atual (15 gotas ~22-37mg) adequada. Não aumentar >75mg'},
+'s37':{obj:'Componente GlyNAC + sono + síntese de glutationa',rec:'Com NAC forma o protocolo GlyNAC (longevidade). Auxilia qualidade do sono.',interval:'Tomar junto ou próximo ao NAC dose 2'},
+'s41':{obj:'Neuroplasticidade + fator de crescimento nervoso (NGF/BDNF)',rec:'Absorção não depende de gordura. Sinérgico com lítio orotato.',interval:'Jejum ou com comida — sem restrição'},
+'s42':{obj:'Bridge anti-DHT até dutasterida fazer efeito pleno',rec:'TEMPORÁRIO — suspender em 04/03 quando dutasterida estiver em steady-state.',interval:'COM GORDURA (fitoesteróis lipossolúveis)'},
+'s44':{obj:'Bloqueio de sintomas físicos de ansiedade social',rec:'APENAS SOS em eventos. 30-60min antes. Bloqueia taquicardia, tremor, voz trêmula.',interval:'Monitorar PA (candesartana+minoxidil). Max 20mg. Discutir c/ psiquiatra'},
+// Derma
+'d01':{obj:'Reduzir edema palpebral e estimular drenagem',rec:'Máscara gel gelada 5-10 min. Primeira coisa ao acordar.',interval:'Diário, antes dos colírios'},
+'d02':{obj:'Prevenir blefarite e manter margens palpebrais limpas',rec:'Com lenço ou solução própria para higiene ocular.',interval:'1-2x ao dia'},
+'d03':{obj:'Fortalecer músculo elevador da pálpebra',rec:'10 elevações forçadas + 15 piscadas rápidas. 2-3x/dia.',interval:'Pode repetir à tarde e noite'},
+'d04':{obj:'Elevar pálpebra (contrai músculo de Müller via receptor alfa-2)',rec:'1 gota pela manhã. Início ação 5-15min, pico 30-60min, dura 4-8h.',interval:'Esperar 30min antes da fenilefrina se necessário'},
+'d19':{obj:'Resgate SOS para ptose — agonista alfa-1 (mecanismo diferente)',rec:'Usar se brimonidina insuficiente após 30-45min. Pode causar midríase e fotossensibilidade.',interval:'≥30min após brimonidina · Max 3-4x/semana combinados · NÃO usar gel facial brimonidina no mesmo dia'},
+'d07':{obj:'Tratamento rosácea: anti-inflamatório + antivascular + clareamento',rec:'Niacinamida 4% + Telangyn 2% + Azeloglicina 5% + Alfa-bisabolol 0,3%.',interval:'Após limpeza, antes de barreira e filtro solar'},
+'d10':{obj:'SOS flushing — vasoconstrição facial imediata',rec:'Máx 3-4x/semana. NÃO usar no mesmo dia que combinar os dois colírios (triple-dose adrenérgica).',interval:'Onset 15-30min, dura 8-12h. Rebote possível se uso >4x/semana'},
+'d16':{obj:'Tratamento noturno rosácea: antiparasitário + anti-inflamatório',rec:'Ivermectina 1% (Demodex) + Ác. Azelaico 15% + Metronidazol 0,75%.',interval:'15-20min antes da barreira (Nutrel)'},
+};
+
+function openItemInfo(id,panel){
+    const item=state[panel].find(x=>x.id===id);
+    if(!item) return;
+    const info=ITEM_INFO[id];
+    document.getElementById('infoTitle').textContent=item.title;
+    let html='';
+    if(info){
+        html+=`<div style="margin-bottom:12px;padding:10px;background:rgba(52,211,153,.08);border-radius:8px;border-left:3px solid var(--accent)"><strong style="color:var(--accent);font-size:10px;text-transform:uppercase">🎯 Objetivo</strong><br>${info.obj}</div>`;
+        html+=`<div style="margin-bottom:12px;padding:10px;background:rgba(96,165,250,.08);border-radius:8px;border-left:3px solid var(--blue)"><strong style="color:var(--blue);font-size:10px;text-transform:uppercase">📋 Recomendação</strong><br>${info.rec}</div>`;
+        html+=`<div style="margin-bottom:12px;padding:10px;background:rgba(251,146,60,.08);border-radius:8px;border-left:3px solid var(--orange)"><strong style="color:var(--orange);font-size:10px;text-transform:uppercase">⏰ Intervalos</strong><br>${info.interval}</div>`;
+    }
+    html+=`<div style="padding:8px;background:rgba(255,255,255,.03);border-radius:8px;font-size:11px">`;
+    html+=`<div style="color:var(--text3)">💊 ${item.qty} · ⏰ ${item.time} · 🏷 ${item.cat}</div>`;
+    if(item.note) html+=`<div style="color:var(--text3);margin-top:6px">📝 ${item.note}</div>`;
+    if(item.userNote) html+=`<div style="color:var(--yellow);margin-top:6px">✏️ ${item.userNote}</div>`;
+    html+=`</div>`;
+    document.getElementById('infoContent').innerHTML=html;
+    document.getElementById('infoModal').classList.add('open');
+}
+
+// ═══ WORKOUT TIMER ═══
+let wkTimer={running:false,start:0,elapsed:0,interval:null,
+    // Sub-timer for series/rest
+    subMode:'idle', // idle, series, rest
+    subStart:0,subElapsed:0,subInterval:null,
+    totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0
+};
+
+function fmtTimer(ms){
+    const s=Math.floor(ms/1000),m=Math.floor(s/60),h=Math.floor(m/60);
+    return (h?String(h).padStart(2,'0')+':':'')+String(m%60).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+}
+
+function openWorkoutTimer(){
+    renderTimerUI();
+    document.getElementById('timerModal').classList.add('open');
+}
+
+function renderTimerUI(){
+    const el=document.getElementById('timerContent');
+    const elapsed=wkTimer.running?(wkTimer.elapsed+Date.now()-wkTimer.start):wkTimer.elapsed;
+    const subElapsed=(wkTimer.subMode!=='idle'&&wkTimer.subInterval)?(wkTimer.subElapsed+Date.now()-wkTimer.subStart):wkTimer.subElapsed;
+
+    let html=`<div style="text-align:center;margin:16px 0">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:42px;font-weight:800;color:${wkTimer.running?'var(--accent)':'var(--text2)'}">${fmtTimer(elapsed)}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px">TEMPO TOTAL DO TREINO</div>
+    </div>`;
+
+    // Main timer buttons
+    html+=`<div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px">`;
+    if(!wkTimer.running&&wkTimer.elapsed===0){
+        html+=`<button class="mbtn mbtn-save" onclick="startWorkoutTimer()" style="flex:1">▶ Iniciar Treino</button>`;
+    } else if(wkTimer.running){
+        html+=`<button class="mbtn mbtn-del" onclick="pauseWorkoutTimer()" style="flex:1">⏸ Pausar</button>`;
+    } else {
+        html+=`<button class="mbtn mbtn-save" onclick="resumeWorkoutTimer()" style="flex:1">▶ Retomar</button>`;
+        html+=`<button class="mbtn mbtn-del" onclick="finishWorkoutTimer()" style="flex:1">⏹ Finalizar</button>`;
+    }
+    html+=`</div>`;
+
+    // Sub-timer (series/rest) — only when main timer is running
+    if(wkTimer.running||wkTimer.elapsed>0){
+        const subColor=wkTimer.subMode==='series'?'var(--accent)':wkTimer.subMode==='rest'?'var(--orange)':'var(--text3)';
+        const subLabel=wkTimer.subMode==='series'?'🏋️ SÉRIE':wkTimer.subMode==='rest'?'⏳ INTERVALO':'—';
+        html+=`<div style="border-top:1px solid var(--border2);padding-top:14px;margin-top:8px">
+            <div style="text-align:center;margin-bottom:10px">
+                <div style="font-size:10px;font-weight:700;color:${subColor};text-transform:uppercase;margin-bottom:4px">${subLabel}</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:800;color:${subColor}">${fmtTimer(wkTimer.subMode!=='idle'&&wkTimer.subInterval?subElapsed:0)}</div>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:center;margin-bottom:12px">`;
+        if(wkTimer.subMode==='idle'){
+            html+=`<button class="mbtn" onclick="startSub('series')" style="flex:1;background:rgba(52,211,153,.15);color:var(--accent);border:1px solid var(--accent)">🏋️ Iniciar Série</button>`;
+        } else if(wkTimer.subMode==='series'){
+            html+=`<button class="mbtn" onclick="endSub()" style="flex:1;background:rgba(52,211,153,.15);color:var(--accent);border:1px solid var(--accent)">✓ Fim da Série</button>`;
+        } else if(wkTimer.subMode==='rest'){
+            html+=`<button class="mbtn" onclick="endSub()" style="flex:1;background:rgba(251,146,60,.15);color:var(--orange);border:1px solid var(--orange)">✓ Fim do Intervalo</button>`;
+        }
+        html+=`</div>`;
+
+        // Accumulated stats
+        html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px">
+            <div style="background:rgba(52,211,153,.06);padding:8px;border-radius:8px;text-align:center">
+                <div style="color:var(--accent);font-weight:800;font-size:16px">${fmtTimer(wkTimer.totalSeriesTime)}</div>
+                <div style="color:var(--text3)">Sob tensão (${wkTimer.seriesCount} séries)</div>
+            </div>
+            <div style="background:rgba(251,146,60,.06);padding:8px;border-radius:8px;text-align:center">
+                <div style="color:var(--orange);font-weight:800;font-size:16px">${fmtTimer(wkTimer.totalRestTime)}</div>
+                <div style="color:var(--text3)">Intervalo (${wkTimer.restCount}x)</div>
+            </div>
+        </div>`;
+        html+=`</div>`;
+    }
+    el.innerHTML=html;
+}
+
+function startWorkoutTimer(){
+    wkTimer.running=true;wkTimer.start=Date.now();wkTimer.elapsed=0;
+    wkTimer.totalSeriesTime=0;wkTimer.totalRestTime=0;wkTimer.seriesCount=0;wkTimer.restCount=0;wkTimer.subMode='idle';
+    wkTimer.interval=setInterval(renderTimerUI,500);renderTimerUI();
+}
+function pauseWorkoutTimer(){
+    wkTimer.running=false;wkTimer.elapsed+=Date.now()-wkTimer.start;
+    clearInterval(wkTimer.interval);wkTimer.interval=null;
+    if(wkTimer.subMode!=='idle') pauseSub();
+    renderTimerUI();
+}
+function resumeWorkoutTimer(){
+    wkTimer.running=true;wkTimer.start=Date.now();
+    wkTimer.interval=setInterval(renderTimerUI,500);renderTimerUI();
+}
+function stopWorkoutTimer(){
+    // Don't reset — just stop updating
+    if(wkTimer.interval){clearInterval(wkTimer.interval);wkTimer.interval=null;}
+    if(wkTimer.subInterval){clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}
+}
+function finishWorkoutTimer(){
+    const totalMs=wkTimer.elapsed;
+    if(wkTimer.subMode!=='idle') endSub();
+    clearInterval(wkTimer.interval);wkTimer.interval=null;
+    const totalMin=Math.round(totalMs/60000);
+    const seriesMin=(wkTimer.totalSeriesTime/60000).toFixed(1);
+    const restMin=(wkTimer.totalRestTime/60000).toFixed(1);
+
+    // Add generic musculação exercise
+    const cals=prompt('Calorias estimadas (smartwatch):','0');
+    const notes=`⏱ ${totalMin}min total · 🏋️ ${seriesMin}min tensão (${wkTimer.seriesCount} séries) · ⏳ ${restMin}min intervalo (${wkTimer.restCount}x)`;
+    state.gym.push({
+        id:'ex'+Date.now(),name:'Musculação',type:'cardio',
+        duration:totalMin,calories:parseInt(cals)||0,
+        distance:'',hr:0,notes,done:true,
+        time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
+        isGeneric:true,seriesTime:wkTimer.totalSeriesTime,restTime:wkTimer.totalRestTime,
+        seriesCount:wkTimer.seriesCount,restCount:wkTimer.restCount
+    });
+
+    // Reset timer
+    wkTimer={running:false,start:0,elapsed:0,interval:null,subMode:'idle',subStart:0,subElapsed:0,subInterval:null,totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0};
+    save();closeModal('timerModal');
+}
+
+function startSub(mode){
+    wkTimer.subMode=mode;wkTimer.subStart=Date.now();wkTimer.subElapsed=0;
+    wkTimer.subInterval=setInterval(renderTimerUI,200);renderTimerUI();
+}
+function pauseSub(){
+    if(wkTimer.subInterval){wkTimer.subElapsed+=Date.now()-wkTimer.subStart;clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}
+}
+function endSub(){
+    const elapsed=wkTimer.subElapsed+(wkTimer.subInterval?Date.now()-wkTimer.subStart:0);
+    if(wkTimer.subMode==='series'){wkTimer.totalSeriesTime+=elapsed;wkTimer.seriesCount++;wkTimer.subMode='rest';}
+    else if(wkTimer.subMode==='rest'){wkTimer.totalRestTime+=elapsed;wkTimer.restCount++;wkTimer.subMode='idle';}
+    if(wkTimer.subInterval){clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}
+    wkTimer.subElapsed=0;wkTimer.subStart=Date.now();
+    // Auto-start next phase
+    if(wkTimer.subMode==='rest'){startSub('rest');}
+    else{renderTimerUI();}
+}
 function openHistory(){
     const list=document.getElementById('histList');list.innerHTML='';
     if(!state.history.length){list.innerHTML='<p style="color:var(--text3);font-size:12px;text-align:center;padding:20px">Nenhum registro</p>';}
@@ -903,11 +1124,12 @@ function renderList(panel,cid){
             const logHtml=(t.done&&!t.suspended&&t.log)?`<div class="task-log">${t.log}</div>`:'';
             const noteHtml=t.note?`<div class="task-note">${t.note}</div>`:'';
             const userNoteHtml=t.userNote?`<div class="task-note" style="border-left-color:var(--yellow);color:var(--yellow);opacity:.8">📝 ${t.userNote}</div>`:'';
+            const hasInfo=ITEM_INFO[t.id];
             row.innerHTML=`
                 <div class="chk" onclick="event.stopPropagation();toggleTask('${panel}','${t.id}')">✓</div>
-                <div class="task-info" onclick="toggleTask('${panel}','${t.id}')">
-                    <div class="task-meta">${t.qty} · ${t.cat}</div>
-                    <div class="task-title">${t.title}</div>${logHtml}${noteHtml}${userNoteHtml}
+                <div class="task-info">
+                    <div class="task-meta" onclick="toggleTask('${panel}','${t.id}')">${t.qty} · ${t.cat}</div>
+                    <div class="task-title" onclick="${hasInfo?`event.stopPropagation();openItemInfo('${t.id}','${panel}')`:`toggleTask('${panel}','${t.id}')`}" style="${hasInfo?'cursor:pointer;text-decoration-style:dotted;text-underline-offset:3px':''}">${t.title}${hasInfo?' ℹ️':''}</div>${logHtml}${noteHtml}${userNoteHtml}
                 </div>
                 <div class="task-btns">
                     <button class="task-chart" onclick="event.stopPropagation();openItemChart('${t.id}','${panel}')" title="Progresso">📊</button>
