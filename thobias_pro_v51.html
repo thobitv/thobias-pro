@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thobias Pro | v52</title>
+    <title>Thobias Pro | v53</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -124,10 +124,33 @@
         .hist-score{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:800;color:var(--accent)}
         .hist-water{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue)}
         canvas{display:none}
+
+        /* PENDING DAY BANNER */
+        .pending-banner{background:linear-gradient(135deg,rgba(251,146,60,.15),rgba(248,113,113,.1));border:1px solid rgba(251,146,60,.4);border-radius:14px;padding:12px 14px;margin-bottom:14px;display:none;align-items:center;gap:10px}
+        .pending-banner.show{display:flex}
+        .pending-banner-icon{font-size:22px;flex-shrink:0}
+        .pending-banner-text{flex:1}
+        .pending-banner-title{font-size:11px;font-weight:800;color:var(--orange);text-transform:uppercase;letter-spacing:.5px}
+        .pending-banner-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px}
+        .pending-banner-btn{background:var(--orange);color:#0a0f1e;border:none;padding:8px 12px;border-radius:8px;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;text-transform:uppercase;cursor:pointer;flex-shrink:0}
+
+        /* FOOD MODE TOGGLE */
+        .mode-toggle{display:flex;background:var(--bg);border-radius:10px;padding:3px;gap:3px;margin-bottom:12px}
+        .mode-btn{flex:1;padding:8px;border:none;border-radius:8px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;cursor:pointer;color:var(--text3);background:transparent;transition:.2s}
+        .mode-btn.active{background:var(--card2);color:var(--accent)}
     </style>
 </head>
 <body>
 <div class="app">
+    <!-- PENDING DAY CLOSE BANNER -->
+    <div class="pending-banner" id="pendingBanner">
+        <div class="pending-banner-icon">⚠️</div>
+        <div class="pending-banner-text">
+            <div class="pending-banner-title">Dia anterior não encerrado</div>
+            <div class="pending-banner-sub" id="pendingBannerSub">Dados de <span id="pendingDate"></span> preservados</div>
+        </div>
+        <button class="pending-banner-btn" onclick="finishDay()">Encerrar</button>
+    </div>
     <div class="hdr">
         <div class="hdr-top">
             <div>
@@ -207,13 +230,40 @@
 <!-- FOOD MODAL -->
 <div id="foodModal" class="modal-bg"><div class="modal">
     <h3 id="foodModalTitle">Alimento</h3><input type="hidden" id="foodEditId">
+    <!-- Mode toggle -->
+    <div class="mode-toggle">
+        <button class="mode-btn active" id="foodModeBank" onclick="setFoodMode('bank')">🏦 Banco</button>
+        <button class="mode-btn" id="foodModeManual" onclick="setFoodMode('manual')">✏️ Manual</button>
+    </div>
+    <!-- Bank mode -->
+    <div id="foodBankFields">
     <div class="fld"><label>Alimento</label>
         <select id="foodSelect" onchange="onFoodSelect()" style="width:100%;padding:10px;border-radius:8px;background:var(--card);color:var(--text1);border:1px solid var(--border2);font-size:13px">
             <option value="">— Selecionar —</option>
         </select>
     </div>
+    </div>
     <div class="fld"><label>Nome (ou personalizado)</label><input type="text" id="foodName"></div>
     <div class="fld"><label>Porção consumida (g ou ml)</label><input type="number" id="foodQty" value="100" min="1" step="1" onchange="calcFoodMacros()" oninput="calcFoodMacros()"></div>
+    <!-- Manual macro fields -->
+    <div id="foodManualFields" style="display:none">
+        <div style="background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.15);border-radius:10px;padding:10px;margin-bottom:12px">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:var(--accent);text-transform:uppercase;margin-bottom:8px">Macros por 100g/ml</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <div class="fld" style="margin:0"><label>Kcal</label><input type="number" id="foodManKcal" placeholder="0" min="0" step="0.1" onchange="calcFoodMacros()" oninput="calcFoodMacros()"></div>
+                <div class="fld" style="margin:0"><label>Proteína (g)</label><input type="number" id="foodManProt" placeholder="0" min="0" step="0.1" onchange="calcFoodMacros()" oninput="calcFoodMacros()"></div>
+                <div class="fld" style="margin:0"><label>Carboidrato (g)</label><input type="number" id="foodManCarb" placeholder="0" min="0" step="0.1" onchange="calcFoodMacros()" oninput="calcFoodMacros()"></div>
+                <div class="fld" style="margin:0"><label>Gordura (g)</label><input type="number" id="foodManFat" placeholder="0" min="0" step="0.1" onchange="calcFoodMacros()" oninput="calcFoodMacros()"></div>
+                <div class="fld" style="margin:0"><label>Fibra (g)</label><input type="number" id="foodManFib" placeholder="0" min="0" step="0.1" onchange="calcFoodMacros()" oninput="calcFoodMacros()"></div>
+                <div class="fld" style="margin:0"><label>Unidade</label>
+                    <select id="foodManUnit" style="width:100%;padding:10px;border-radius:8px;background:var(--card);color:var(--text);border:1px solid var(--border2);font-size:13px">
+                        <option value="g">g (gramas)</option>
+                        <option value="ml">ml (mililitros)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="foodMacroPreview" style="font-family:'JetBrains Mono',monospace;font-size:11px;padding:8px;background:rgba(255,255,255,.03);border-radius:8px;margin-bottom:10px"></div>
     <div class="fld"><label>Refeição</label>
         <select id="foodMeal" style="width:100%;padding:10px;border-radius:8px;background:var(--card);color:var(--text1);border:1px solid var(--border2);font-size:13px">
@@ -484,18 +534,23 @@ function load(){
     if(!state.food) state.food=[];
     if(!state.history) state.history=[];
     if(!state.gymHistory) state.gymHistory=[];
+    if(!state.lastTimer) state.lastTimer=null;
+    if(state.pendingDayClose===undefined) state.pendingDayClose=false;
     const today=new Date().toLocaleDateString('pt-BR');
-    if(state.date!==today){
-        if(!state.supps.length) state.supps=JSON.parse(JSON.stringify(SUPPS));
-        if(!state.derm.length) state.derm=JSON.parse(JSON.stringify(DERM));
-        state.supps.forEach(t=>{t.done=false;t.log='';});
-        state.derm.forEach(t=>{t.done=false;t.log='';});
+    if(!state.date){
+        // First run ever — init fresh
+        state.date=today;
+        state.supps=JSON.parse(JSON.stringify(SUPPS));
+        state.derm=JSON.parse(JSON.stringify(DERM));
         state.fluids={pure:0,decaf:0,other:0};
         state.food=[];
-        state.date=today;
         const dow=new Date().getDay();
         const isIron=[1,3,5].includes(dow);
         state.supps.forEach(t=>{if(t.ironOnly) t.suspended=!isIron;});
+        state.pendingDayClose=false;
+    } else if(state.date!==today){
+        // Day changed — preserve previous day data, show banner
+        state.pendingDayClose=true;
     }
     save();
 }
@@ -645,12 +700,24 @@ function finishDay(){
     // Limitar gymHistory a 500 registros
     if(state.gymHistory.length>500) state.gymHistory=state.gymHistory.slice(-500);
 
-    state.supps.forEach(t=>{t.done=false;t.log='';});
-    state.derm.forEach(t=>{t.done=false;t.log='';});
-    state.gym=[];
+    // Resetar dados do dia encerrado e iniciar novo dia
+    const today=new Date().toLocaleDateString('pt-BR');
+    state.date=today;
+    state.pendingDayClose=false;
     state.fluids={pure:0,decaf:0,other:0};
+    state.gym=[];
+    state.food=[];
+    state.lastTimer=null;
+
+    // Reiniciar protocolo para o novo dia
+    state.supps=JSON.parse(JSON.stringify(SUPPS));
+    state.derm=JSON.parse(JSON.stringify(DERM));
+    const dow=new Date().getDay();
+    const isIron=[1,3,5].includes(dow);
+    state.supps.forEach(t=>{if(t.ironOnly) t.suspended=!isIron;});
+
     save();
-    alert('Dia salvo!');
+    alert('Dia salvo! Novo dia iniciado: '+today);
 }
 
 // ═══ ITEM PROGRESS CHART ═══
@@ -986,6 +1053,17 @@ function renderTimerUI(){
     }
     html+=`</div>`;
 
+    // Resume last timer button — shown only when idle and a previous session exists
+    if(!wkTimer.running&&wkTimer.elapsed===0&&state.lastTimer){
+        html+=`<div style="border:1px dashed rgba(167,139,250,.4);border-radius:10px;padding:10px 12px;margin-bottom:14px;display:flex;align-items:center;gap:10px">
+            <div style="flex:1">
+                <div style="font-size:10px;font-weight:700;color:var(--purple);text-transform:uppercase">Treino anterior disponível</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px">Finalizado às ${state.lastTimer.savedAt} · ${fmtTimer(state.lastTimer.elapsed)} acumulados · ${state.lastTimer.seriesCount} séries</div>
+            </div>
+            <button class="mbtn" onclick="resumeFromLastTimer()" style="background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.4);font-size:10px;padding:8px 10px;flex-shrink:0">↩ Retomar</button>
+        </div>`;
+    }
+
     // Sub-timer (series/rest) — only when main timer is running
     if(wkTimer.running||wkTimer.elapsed>0){
         const subColor=wkTimer.subMode==='series'?'var(--accent)':wkTimer.subMode==='rest'?'var(--orange)':'var(--text3)';
@@ -1051,9 +1129,10 @@ function finishWorkoutTimer(){
 
     // Add generic musculação exercise
     const cals=prompt('Calorias estimadas (smartwatch):','0');
+    const entryId='ex'+Date.now();
     const notes=`⏱ ${totalMin}min total · 🏋️ ${seriesMin}min tensão (${wkTimer.seriesCount} séries) · ⏳ ${restMin}min intervalo (${wkTimer.restCount}x)`;
     state.gym.push({
-        id:'ex'+Date.now(),name:'Musculação',type:'cardio',
+        id:entryId,name:'Musculação',type:'cardio',
         duration:totalMin,calories:parseInt(cals)||0,
         distance:'',hr:0,notes,done:true,
         time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
@@ -1061,9 +1140,38 @@ function finishWorkoutTimer(){
         seriesCount:wkTimer.seriesCount,restCount:wkTimer.restCount
     });
 
+    // Salvar estado para possível retomada acidental
+    state.lastTimer={
+        elapsed:totalMs,
+        totalSeriesTime:wkTimer.totalSeriesTime,
+        totalRestTime:wkTimer.totalRestTime,
+        seriesCount:wkTimer.seriesCount,
+        restCount:wkTimer.restCount,
+        entryId,
+        savedAt:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
+    };
+
     // Reset timer
     wkTimer={running:false,start:0,elapsed:0,interval:null,subMode:'idle',subStart:0,subElapsed:0,subInterval:null,totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0};
     save();closeModal('timerModal');
+}
+
+function resumeFromLastTimer(){
+    if(!state.lastTimer) return;
+    if(!confirm('Retomar treino finalizado às '+state.lastTimer.savedAt+'? O registro automático será removido.')) return;
+    // Remove the auto-created entry
+    state.gym=state.gym.filter(x=>x.id!==state.lastTimer.entryId);
+    // Restore timer state
+    wkTimer.elapsed=state.lastTimer.elapsed;
+    wkTimer.totalSeriesTime=state.lastTimer.totalSeriesTime;
+    wkTimer.totalRestTime=state.lastTimer.totalRestTime;
+    wkTimer.seriesCount=state.lastTimer.seriesCount;
+    wkTimer.restCount=state.lastTimer.restCount;
+    wkTimer.subMode='idle';
+    wkTimer.running=false;
+    state.lastTimer=null;
+    save();
+    renderTimerUI();
 }
 
 function startSub(mode){
@@ -1181,6 +1289,18 @@ function renderGym(){
 }
 
 // ═══ FOOD ═══
+function setFoodMode(mode){
+    const isManual=mode==='manual';
+    document.getElementById('foodModeBank').classList.toggle('active',!isManual);
+    document.getElementById('foodModeManual').classList.toggle('active',isManual);
+    document.getElementById('foodBankFields').style.display=isManual?'none':'block';
+    document.getElementById('foodManualFields').style.display=isManual?'block':'none';
+    if(!isManual){
+        // Reset select if switching back to bank
+        document.getElementById('foodSelect').value='';
+    }
+    calcFoodMacros();
+}
 function populateFoodSelect(){
     const sel=document.getElementById('foodSelect');
     sel.innerHTML='<option value="">— Selecionar do banco —</option>';
@@ -1197,17 +1317,30 @@ function onFoodSelect(){
     if(f){document.getElementById('foodName').value=f.name;document.getElementById('foodQty').value=f.defQty;calcFoodMacros();}
 }
 function calcFoodMacros(){
-    const fid=document.getElementById('foodSelect').value;
-    const f=FOODS.find(x=>x.fid===fid);
+    const isManual=document.getElementById('foodModeManual').classList.contains('active');
     const qty=parseFloat(document.getElementById('foodQty').value)||0;
     const el=document.getElementById('foodMacroPreview');
-    if(!f){el.innerHTML='<span style="color:var(--text3)">Selecione um alimento para ver os macros</span>';return;}
+    let per100;
+    if(isManual){
+        per100={
+            kcal:parseFloat(document.getElementById('foodManKcal').value)||0,
+            prot:parseFloat(document.getElementById('foodManProt').value)||0,
+            carb:parseFloat(document.getElementById('foodManCarb').value)||0,
+            fat:parseFloat(document.getElementById('foodManFat').value)||0,
+            fib:parseFloat(document.getElementById('foodManFib').value)||0,
+        };
+    } else {
+        const fid=document.getElementById('foodSelect').value;
+        const f=FOODS.find(x=>x.fid===fid);
+        if(!f){el.innerHTML='<span style="color:var(--text3)">Selecione um alimento para ver os macros</span>';return;}
+        per100=f.per100;
+    }
     const m=qty/100;
-    const kcal=Math.round(f.per100.kcal*m);
-    const prot=(f.per100.prot*m).toFixed(1);
-    const carb=(f.per100.carb*m).toFixed(1);
-    const fat=(f.per100.fat*m).toFixed(1);
-    const fib=(f.per100.fib*m).toFixed(1);
+    const kcal=Math.round(per100.kcal*m);
+    const prot=(per100.prot*m).toFixed(1);
+    const carb=(per100.carb*m).toFixed(1);
+    const fat=(per100.fat*m).toFixed(1);
+    const fib=(per100.fib*m).toFixed(1);
     el.innerHTML=`<div style="display:flex;justify-content:space-around;text-align:center">
         <div><span style="color:var(--accent);font-weight:800;font-size:14px">${kcal}</span><br><span style="font-size:8px;color:var(--text3)">kcal</span></div>
         <div><span style="color:var(--red);font-weight:800">${prot}g</span><br><span style="font-size:8px;color:var(--text3)">prot</span></div>
@@ -1222,6 +1355,8 @@ function openFoodModal(id){
     document.getElementById('foodModalTitle').textContent=isNew?'Adicionar Alimento':'Editar Alimento';
     document.getElementById('foodDelBtn').style.display=isNew?'none':'block';
     populateFoodSelect();
+    // Reset to bank mode
+    setFoodMode('bank');
     document.getElementById('foodSelect').value='';
     document.getElementById('foodName').value='';
     document.getElementById('foodQty').value=100;
@@ -1231,7 +1366,19 @@ function openFoodModal(id){
     if(!isNew){
         const item=state.food.find(x=>x.id===id);
         if(item){
-            document.getElementById('foodSelect').value=item.fid||'';
+            if(item.isManual){
+                setFoodMode('manual');
+                if(item.per100){
+                    document.getElementById('foodManKcal').value=item.per100.kcal||0;
+                    document.getElementById('foodManProt').value=item.per100.prot||0;
+                    document.getElementById('foodManCarb').value=item.per100.carb||0;
+                    document.getElementById('foodManFat').value=item.per100.fat||0;
+                    document.getElementById('foodManFib').value=item.per100.fib||0;
+                }
+                document.getElementById('foodManUnit').value=item.unit||'g';
+            } else {
+                document.getElementById('foodSelect').value=item.fid||'';
+            }
             document.getElementById('foodName').value=item.name;
             document.getElementById('foodQty').value=item.qty;
             document.getElementById('foodMeal').value=item.meal||'almoco';
@@ -1245,15 +1392,32 @@ function saveFood(){
     const id=document.getElementById('foodEditId').value;
     const name=document.getElementById('foodName').value;
     if(!name) return alert('Nome obrigatório');
-    const fid=document.getElementById('foodSelect').value;
-    const f=FOODS.find(x=>x.fid===fid);
+    const isManual=document.getElementById('foodModeManual').classList.contains('active');
     const qty=parseFloat(document.getElementById('foodQty').value)||0;
     const meal=document.getElementById('foodMeal').value;
     const notes=document.getElementById('foodNotes').value;
     const m=qty/100;
-    const macros=f?{kcal:Math.round(f.per100.kcal*m),prot:+(f.per100.prot*m).toFixed(1),carb:+(f.per100.carb*m).toFixed(1),fat:+(f.per100.fat*m).toFixed(1),fib:+(f.per100.fib*m).toFixed(1)}:{kcal:0,prot:0,carb:0,fat:0,fib:0};
-    const unit=f?f.unit:'g';
-    const d={name,fid:fid||'',qty,unit,meal,notes,macros,eaten:true,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})};
+    let macros,unit,fid,per100,isManualFlag=false;
+    if(isManual){
+        per100={
+            kcal:parseFloat(document.getElementById('foodManKcal').value)||0,
+            prot:parseFloat(document.getElementById('foodManProt').value)||0,
+            carb:parseFloat(document.getElementById('foodManCarb').value)||0,
+            fat:parseFloat(document.getElementById('foodManFat').value)||0,
+            fib:parseFloat(document.getElementById('foodManFib').value)||0,
+        };
+        unit=document.getElementById('foodManUnit').value||'g';
+        macros={kcal:Math.round(per100.kcal*m),prot:+(per100.prot*m).toFixed(1),carb:+(per100.carb*m).toFixed(1),fat:+(per100.fat*m).toFixed(1),fib:+(per100.fib*m).toFixed(1)};
+        fid='';
+        isManualFlag=true;
+    } else {
+        fid=document.getElementById('foodSelect').value;
+        const f=FOODS.find(x=>x.fid===fid);
+        per100=f?f.per100:null;
+        unit=f?f.unit:'g';
+        macros=f?{kcal:Math.round(f.per100.kcal*m),prot:+(f.per100.prot*m).toFixed(1),carb:+(f.per100.carb*m).toFixed(1),fat:+(f.per100.fat*m).toFixed(1),fib:+(f.per100.fib*m).toFixed(1)}:{kcal:0,prot:0,carb:0,fat:0,fib:0};
+    }
+    const d={name,fid:fid||'',qty,unit,meal,notes,macros,per100,isManual:isManualFlag,eaten:true,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})};
     if(id==='new'){state.food.push({...d,id:'fd'+Date.now()});}
     else{const item=state.food.find(x=>x.id===id);if(item) Object.assign(item,d);}
     save();closeModal('foodModal');
@@ -1309,6 +1473,14 @@ function updateFoodTotals(){
 
 function render(){
     document.getElementById('displayDate').textContent=state.date;
+    // Pending day close banner
+    const banner=document.getElementById('pendingBanner');
+    if(state.pendingDayClose){
+        banner.classList.add('show');
+        document.getElementById('pendingDate').textContent=state.date;
+    } else {
+        banner.classList.remove('show');
+    }
     const allActive=[...state.supps,...state.derm].filter(t=>!t.suspended);
     const done=allActive.filter(t=>t.done).length;
     const score=Math.round((done/(allActive.length||1))*100);
