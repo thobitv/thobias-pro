@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thobias Pro | v53a</title>
+    <title>Thobias Pro | v54</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -257,6 +257,7 @@
     <div class="modal-row" id="editRow1">
         <button class="mbtn mbtn-del" onclick="deleteItem()">Excluir</button>
         <button class="mbtn mbtn-sus" id="btnSus" onclick="toggleSuspend()">Suspender</button>
+        <button class="mbtn" id="btnDup" onclick="duplicateItem()" style="background:var(--blue);color:#0a0f1e;flex:1">📋 Duplicar</button>
     </div>
     <div class="modal-row"><button class="mbtn mbtn-close" onclick="closeModal('editModal')">Cancelar</button><button class="mbtn mbtn-save" onclick="saveEdit()">Salvar</button></div>
 </div></div>
@@ -381,7 +382,8 @@ const SUPPS=[
 {id:'s33',time:'21:15',qty:'💊 200-400mg',title:'L-Teanina',cat:'Relax',note:'Substituto da ashwagandha (risco tireoidiano c/ TSH 0,627)'},
 {id:'s34',time:'21:15',qty:'💊 15-25mg',title:'Trazodona',cat:'Sono',note:'Dose baixa para sono · Efeito sedativo'},
 {id:'s35',time:'21:15',qty:'💊 2mg',title:'Melatonina',cat:'Sono',note:'Ambiente escuro potencializa efeito'},
-{id:'s36',time:'21:15',qty:'💧 15 gotas',title:'Canabidiol (CBD)',cat:'Sono',note:'⚠ ≥14h após dutasterida (07:00→21:15 = 14h ✓) · Inibidor CYP3A4'},
+{id:'s36',time:'09:30',qty:'💧 10 gotas',title:'Canabidiol (CBD) — manhã',cat:'Sono',note:'⚠ ≥2h após dutasterida (07:00→09:30 ✓) · Inibidor CYP3A4/CYP2C19 · Pode elevar nível sérico escitalopram'},
+{id:'s36b',time:'19:00',qty:'💧 20 gotas',title:'Canabidiol (CBD) — noite',cat:'Sono',note:'⚠ ≥12h antes dutasterida (19:00→07:00 = 12h ✓) · Tomar com jantar · Dose maior potencializa escitalopram via CYP2C19'},
 {id:'s37',time:'21:15',qty:'🥄 3g',title:'Glicina (GlyNAC)',cat:'Sono',note:'Componente GlyNAC (com NAC) · Auxilia sono e glutationa'},
 {id:'s44',time:'SOS',qty:'💊 10-20mg',title:'Propranolol SOS (pré-evento social)',cat:'Ansiedade',note:'⚠ APENAS em eventos sociais · 30-60min antes · Monitorar PA (candesartana+minoxidil) · Discutir c/ psiquiatra'},
 ];
@@ -557,6 +559,27 @@ function saveEdit(){
 }
 function deleteItem(){const id=document.getElementById('editId').value,p=document.getElementById('editPanel').value;if(confirm('Excluir?')){state[p]=state[p].filter(x=>x.id!==id);save();closeModal('editModal');}}
 function toggleSuspend(){const id=document.getElementById('editId').value,p=document.getElementById('editPanel').value,t=state[p].find(x=>x.id===id);if(t){t.suspended=!t.suspended;if(t.suspended){t.done=false;t.log='';}save();closeModal('editModal');}}
+function duplicateItem(){
+    const id=document.getElementById('editId').value,p=document.getElementById('editPanel').value;
+    const t=state[p].find(x=>x.id===id);
+    if(!t) return;
+    // Salvar primeiro quaisquer edições pendentes nos campos antes de duplicar
+    const d={
+        title:document.getElementById('editTitle').value||t.title,
+        qty:document.getElementById('editQty').value||t.qty,
+        time:document.getElementById('editTime').value||t.time,
+        cat:document.getElementById('editCat').value||t.cat,
+        userNote:document.getElementById('editNotes').value||t.userNote||'',
+        note:t.note||'',
+        ironOnly:t.ironOnly||false,
+    };
+    const copy={...t,...d,id:'c'+Date.now(),done:false,log:'',suspended:false};
+    state[p].push(copy);
+    state[p].sort((a,b)=>a.time.localeCompare(b.time));
+    save();closeModal('editModal');
+    // Abrir o item duplicado já em edição para ajuste de horário
+    requestAnimationFrame(()=>openEdit(copy.id,p));
+}
 function closeModal(m){document.getElementById(m).classList.remove('open');}
 
 // ═══ EXERCISE ═══
@@ -919,7 +942,8 @@ const ITEM_INFO={
 's32':{obj:'Neuroproteção + sono + relaxamento muscular',rec:'Forma treonato cruza barreira hematoencefálica (superior a outras formas).',interval:'≥45min após jantar. Efeito sedativo leve'},
 's33':{obj:'Ansiolítico natural (substituto ashwagandha)',rec:'Ashwagandha contraindicada c/ TSH 0,627 (risco tireoidiano). L-teanina é segura.',interval:'Sinérgica com magnésio. Efeito em 30-60min'},
 's34':{obj:'Indução e manutenção do sono',rec:'Dose baixa (15-25mg) = efeito sedativo sem efeito antidepressivo.',interval:'30-60min antes de dormir'},
-'s36':{obj:'Sono + ansiolítico + anti-inflamatório',rec:'≥14h após dutasterida. Inibidor CYP3A4 e CYP2C19.',interval:'Dose atual (15 gotas ~22-37mg) adequada. Não aumentar >75mg'},
+'s36':{obj:'Ansiolítico + anti-inflamatório + suporte sono (dose matinal 10 gotas)',rec:'Tomar ≥2h após dutasterida. Sublingual 60-90s. Dose menor de manhã para efeito ansiolítico diurno sem sedação.',interval:'≥2h após dutasterida · Inibidor CYP3A4/CYP2C19 — eleva nível sérico escitalopram e dutasterida'},
+'s36b':{obj:'Ansiolítico + indução sono + anti-inflamatório (dose noturna 20 gotas)',rec:'Tomar às 19:00 com o jantar para respeitar intervalo mínimo de 12h antes da dutasterida. Dose maior favorece sono. Observar sonolência excessiva — inibição CYP2C19 aumenta nível sérico do escitalopram.',interval:'≥12h antes da dutasterida do dia seguinte · Máx 20 gotas nessa dose (não aumentar >75mg total/dia)'},
 's37':{obj:'Componente GlyNAC + sono + síntese de glutationa',rec:'Com NAC forma o protocolo GlyNAC (longevidade). Auxilia qualidade do sono.',interval:'Tomar junto ou próximo ao NAC dose 2'},
 's41':{obj:'Neuroplasticidade + fator de crescimento nervoso (NGF/BDNF)',rec:'Absorção não depende de gordura. Sinérgico com lítio orotato.',interval:'Jejum ou com comida — sem restrição'},
 's42':{obj:'Bridge anti-DHT até dutasterida fazer efeito pleno',rec:'TEMPORÁRIO — suspender em 04/03 quando dutasterida estiver em steady-state.',interval:'COM GORDURA (fitoesteróis lipossolúveis)'},
