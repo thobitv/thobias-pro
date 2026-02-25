@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thobias Pro | v55</title>
+    <title>Thobias Pro | v56</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -124,6 +124,11 @@
         .hist-score{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:800;color:var(--accent)}
         .hist-water{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue)}
         canvas{display:none}
+        .notif-btn{position:absolute;top:14px;right:80px;background:none;border:1px solid var(--border2);border-radius:8px;padding:4px 8px;font-size:14px;cursor:pointer;color:var(--text3);transition:.2s}
+        .notif-btn.on{color:var(--accent);border-color:var(--accent);background:var(--accent-glow)}
+        .timer-active-badge{display:inline-flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(52,211,153,.15);color:var(--accent);border:1px solid rgba(52,211,153,.3);animation:pulse-badge .8s infinite alternate}
+        @keyframes pulse-badge{from{opacity:.7}to{opacity:1}}
+        .ex-set-active{background:rgba(52,211,153,.2)!important;border-color:var(--accent)!important;color:var(--accent)!important;animation:pulse-badge .8s infinite alternate}
     </style>
 </head>
 <body>
@@ -133,7 +138,9 @@
             <div>
                 <div class="brand">Thobias Pro</div>
                 <div class="brand-sub" id="displayDate">--/--/----</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:1px;opacity:.6">v56 · 25/02/2026 · 18:32</div>
             </div>
+            <button id="notifBtn" class="notif-btn" onclick="toggleNotifications()" title="Notificações de suplementos">🔔</button>
             <div class="score-ring">
                 <svg viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="15.5"/><circle class="fg" id="scoreArc" cx="18" cy="18" r="15.5" stroke-dasharray="97.4" stroke-dashoffset="97.4"/></svg>
                 <div class="score-val"><span id="lblScore">0</span>%</div>
@@ -482,7 +489,7 @@ let state={supps:[],derm:[],gym:[],food:[],fluids:{pure:0,decaf:0,other:0},histo
 const SK='thobias_v51';
 
 // ═══ VERSÃO E MIGRAÇÃO AUTOMÁTICA ═══
-const APP_VERSION='55';
+const APP_VERSION='56';
 
 function migrate(){
     if(state.appVersion===APP_VERSION) return;
@@ -548,7 +555,7 @@ function load(){
     save();
 }
 
-function save(){localStorage.setItem(SK,JSON.stringify(state));render();}
+function save(){localStorage.setItem(SK,JSON.stringify(state));refreshNotifSchedule();render();}
 
 // ═══ TABS ═══
 let activeTab='supps';
@@ -669,8 +676,6 @@ function saveEx(){
     save();closeModal('exModal');
 }
 function deleteEx(){const id=document.getElementById('exEditId').value;if(confirm('Excluir?')){state.gym=state.gym.filter(x=>x.id!==id);save();closeModal('exModal');}}
-function toggleExSet(eid,si){const ex=state.gym.find(x=>x.id===eid);if(!ex) return;if(!ex.completed) ex.completed=[];const i=ex.completed.indexOf(si);if(i>-1) ex.completed.splice(i,1);else ex.completed.push(si);save();}
-function toggleCardioDone(eid){const ex=state.gym.find(x=>x.id===eid);if(!ex) return;ex.done=!ex.done;save();}
 
 // ═══ FINISH DAY — salva dados detalhados para gráficos ═══
 function finishDay(){
@@ -1021,7 +1026,9 @@ let wkTimer={running:false,start:0,elapsed:0,interval:null,
     // Sub-timer for series/rest
     subMode:'idle', // idle, series, rest
     subStart:0,subElapsed:0,subInterval:null,
-    totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0
+    totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0,
+    // Integração com exercícios
+    activeExId:null,activeSetIdx:-1
 };
 
 function fmtTimer(ms){
@@ -1041,9 +1048,17 @@ function adjustTimer(ms){
     renderTimerUI();
 }
 function adjustSub(ms){
-    // Adjust sub-timer elapsed
+    // Captura tempo atual antes de ajustar
     if(wkTimer.subInterval){wkTimer.subElapsed+=Date.now()-wkTimer.subStart;wkTimer.subStart=Date.now();}
+    const before=wkTimer.subElapsed;
     wkTimer.subElapsed=Math.max(0,wkTimer.subElapsed+ms);
+    const delta=wkTimer.subElapsed-before; // delta real (pode ser menor se clampou em 0)
+    // Conservação: o tempo subtraído de série vai para descanso e vice-versa
+    if(wkTimer.subMode==='series'){
+        wkTimer.totalRestTime=Math.max(0,wkTimer.totalRestTime-delta);
+    } else if(wkTimer.subMode==='rest'){
+        wkTimer.totalSeriesTime=Math.max(0,wkTimer.totalSeriesTime-delta);
+    }
     renderTimerUI();
 }
 function adjustSeriesCount(delta){
@@ -1053,12 +1068,30 @@ function adjustSeriesCount(delta){
 
 function renderTimerUI(){
     const el=document.getElementById('timerContent');
+    if(!el) return;
     const elapsed=wkTimer.running?(wkTimer.elapsed+Date.now()-wkTimer.start):wkTimer.elapsed;
     const subElapsed=(wkTimer.subMode!=='idle'&&wkTimer.subInterval)?(wkTimer.subElapsed+Date.now()-wkTimer.subStart):wkTimer.subElapsed;
-
     const adjBtnStyle='background:rgba(255,255,255,.07);border:1px solid var(--border2);color:var(--text2);border-radius:8px;padding:6px 10px;font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;cursor:pointer';
 
-    let html=`<div style="text-align:center;margin:16px 0">
+    // Exercício ativo vinculado ao timer
+    let activeExHtml='';
+    if(wkTimer.activeExId){
+        const ex=state.gym.find(x=>x.id===wkTimer.activeExId);
+        if(ex){
+            const rA=ex.reps?ex.reps.split(',').map(s=>s.trim()):[];
+            const lA=ex.load?ex.load.split(',').map(s=>s.trim()):[];
+            const si=wkTimer.activeSetIdx;
+            const r=rA[si]||rA[rA.length-1]||'?';
+            const l=lA[si]||lA[lA.length-1]||'?';
+            activeExHtml=`<div style="text-align:center;margin-bottom:10px;padding:8px;background:rgba(52,211,153,.08);border-radius:10px;border:1px solid rgba(52,211,153,.25)">
+                <div style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">Exercício Ativo</div>
+                <div style="font-size:12px;font-weight:700;color:var(--accent);margin-top:2px">${ex.name}</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2)">Série ${si+1} · ${r} reps × ${l}kg</div>
+            </div>`;
+        }
+    }
+
+    let html=`${activeExHtml}<div style="text-align:center;margin:16px 0">
         <div style="font-family:'JetBrains Mono',monospace;font-size:42px;font-weight:800;color:${wkTimer.running?'var(--accent)':'var(--text2)'}">${fmtTimer(elapsed)}</div>
         <div style="font-size:10px;color:var(--text3);margin-top:4px">TEMPO TOTAL DO TREINO</div>
         <div style="display:flex;gap:6px;justify-content:center;margin-top:8px">
@@ -1081,7 +1114,7 @@ function renderTimerUI(){
     }
     html+=`</div>`;
 
-    // Sub-timer (series/rest) — only when main timer is running
+    // Sub-timer
     if(wkTimer.running||wkTimer.elapsed>0){
         const subColor=wkTimer.subMode==='series'?'var(--accent)':wkTimer.subMode==='rest'?'var(--orange)':'var(--text3)';
         const subLabel=wkTimer.subMode==='series'?'🏋️ SÉRIE':wkTimer.subMode==='rest'?'⏳ INTERVALO':'—';
@@ -1090,6 +1123,7 @@ function renderTimerUI(){
             <div style="text-align:center;margin-bottom:8px">
                 <div style="font-size:10px;font-weight:700;color:${subColor};text-transform:uppercase;margin-bottom:4px">${subLabel}</div>
                 <div style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:800;color:${subColor}">${fmtTimer(subMs)}</div>
+                <div style="font-size:9px;color:var(--text3);margin-top:2px">±5s redistribui entre série e descanso</div>
                 <div style="display:flex;gap:6px;justify-content:center;margin-top:6px">
                     <button style="${adjBtnStyle};font-size:10px" onclick="adjustSub(-5000)">−5s</button>
                     <button style="${adjBtnStyle};font-size:10px" onclick="adjustSub(5000)">+5s</button>
@@ -1104,8 +1138,7 @@ function renderTimerUI(){
             html+=`<button class="mbtn" onclick="endSub()" style="flex:1;background:rgba(251,146,60,.15);color:var(--orange);border:1px solid var(--orange)">✓ Fim do Intervalo</button>`;
         }
         html+=`</div>`;
-
-        // Accumulated stats
+        // Stats com edição de séries
         html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px">
             <div style="background:rgba(52,211,153,.06);padding:8px;border-radius:8px;text-align:center">
                 <div style="color:var(--accent);font-weight:800;font-size:16px">${fmtTimer(wkTimer.totalSeriesTime)}</div>
@@ -1171,23 +1204,67 @@ function finishWorkoutTimer(){
     save();closeModal('timerModal');
 }
 
-function startSub(mode){
+function startSub(mode, exId=null, setIdx=-1){
     wkTimer.subMode=mode;wkTimer.subStart=Date.now();wkTimer.subElapsed=0;
-    wkTimer.subInterval=setInterval(renderTimerUI,200);renderTimerUI();
+    if(mode==='series'){wkTimer.activeExId=exId;wkTimer.activeSetIdx=setIdx;}
+    else{wkTimer.activeExId=null;wkTimer.activeSetIdx=-1;}
+    wkTimer.subInterval=setInterval(()=>{renderTimerUI();renderGym();},200);
+    renderTimerUI();renderGym();
 }
 function pauseSub(){
     if(wkTimer.subInterval){wkTimer.subElapsed+=Date.now()-wkTimer.subStart;clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}
 }
 function endSub(){
     const elapsed=wkTimer.subElapsed+(wkTimer.subInterval?Date.now()-wkTimer.subStart:0);
-    if(wkTimer.subMode==='series'){wkTimer.totalSeriesTime+=elapsed;wkTimer.seriesCount++;wkTimer.subMode='rest';}
-    else if(wkTimer.subMode==='rest'){wkTimer.totalRestTime+=elapsed;wkTimer.restCount++;wkTimer.subMode='idle';}
+    if(wkTimer.subMode==='series'){
+        wkTimer.totalSeriesTime+=elapsed;
+        wkTimer.seriesCount++;
+        // Sincronizar com exercício vinculado
+        if(wkTimer.activeExId!==null&&wkTimer.activeSetIdx>=0){
+            const ex=state.gym.find(x=>x.id===wkTimer.activeExId);
+            if(ex&&!(ex.completed||[]).includes(wkTimer.activeSetIdx)){
+                if(!ex.completed) ex.completed=[];
+                ex.completed.push(wkTimer.activeSetIdx);
+                localStorage.setItem(SK,JSON.stringify(state));// salvar sem re-render completo
+            }
+        }
+        wkTimer.activeExId=null;wkTimer.activeSetIdx=-1;
+        wkTimer.subMode='rest';
+    } else if(wkTimer.subMode==='rest'){
+        wkTimer.totalRestTime+=elapsed;
+        wkTimer.restCount++;
+        wkTimer.subMode='idle';
+    }
     if(wkTimer.subInterval){clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}
     wkTimer.subElapsed=0;wkTimer.subStart=Date.now();
-    // Auto-start next phase
     if(wkTimer.subMode==='rest'){startSub('rest');}
-    else{renderTimerUI();}
+    else{renderTimerUI();renderGym();}
 }
+function toggleExSet(eid,si){
+    const ex=state.gym.find(x=>x.id===eid);if(!ex) return;
+    if(!ex.completed) ex.completed=[];
+    const i=ex.completed.indexOf(si);
+    if(i>-1){
+        // Destoggle: remove da lista
+        ex.completed.splice(i,1);
+        save();return;
+    }
+    // Toggle ON: se o timer estiver idle, integrar
+    if(wkTimer.subMode==='idle'){
+        // Auto-iniciar treino se ainda não começou
+        if(!wkTimer.running&&wkTimer.elapsed===0) startWorkoutTimer();
+        else if(!wkTimer.running) resumeWorkoutTimer();
+        startSub('series',eid,si);
+        // Abrir cronômetro
+        renderTimerUI();
+        document.getElementById('timerModal').classList.add('open');
+    } else {
+        // Timer ocupado: marcar direto sem timer
+        ex.completed.push(si);
+        save();
+    }
+}
+function toggleCardioDone(eid){const ex=state.gym.find(x=>x.id===eid);if(!ex) return;ex.done=!ex.done;save();}
 function openHistory(){
     const list=document.getElementById('histList');list.innerHTML='';
     if(!state.history.length){list.innerHTML='<p style="color:var(--text3);font-size:12px;text-align:center;padding:20px">Nenhum registro</p>';}
@@ -1248,10 +1325,10 @@ function renderList(panel,cid){
 function renderGym(){
     const el=document.getElementById('exList');el.innerHTML='';
     if(!state.gym.length){el.innerHTML='<p style="color:var(--text3);font-size:12px;text-align:center;padding:30px">Nenhum exercício registrado hoje.<br>Toque + para adicionar.</p>';return;}
+    const timerOn=wkTimer.running||wkTimer.elapsed>0;
     state.gym.forEach(ex=>{
         const card=document.createElement('div');card.className='ex-card';
         if(ex.type==='cardio'){
-            // Cardio card
             const doneClass=ex.done?' done':'';
             card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center">
                 <div class="ex-name">🫀 ${ex.name}</div>
@@ -1267,19 +1344,38 @@ function renderGym(){
             </div>
             ${ex.notes?`<div class="ex-meta">📝 ${ex.notes}</div>`:''}`;
         } else {
-            // Resistido card
-            let sH='';const rA=ex.reps?ex.reps.split(',').map(s=>s.trim()):[];const lA=ex.load?ex.load.split(',').map(s=>s.trim()):[];
-            for(let i=0;i<ex.series;i++){const done=ex.completed&&ex.completed.includes(i);const r=rA[i]||rA[rA.length-1]||'?';const l=lA[i]||lA[lA.length-1]||'?';sH+=`<div class="ex-set${done?' done':''}" onclick="toggleExSet('${ex.id}',${i})">S${i+1}: ${r}×${l}kg</div>`;}
-            card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center">
-                <div class="ex-name">${ex.name}</div>
+            // Resistido card — série ativa fica destacada
+            let sH='';
+            const rA=ex.reps?ex.reps.split(',').map(s=>s.trim()):[];
+            const lA=ex.load?ex.load.split(',').map(s=>s.trim()):[];
+            for(let i=0;i<ex.series;i++){
+                const done=ex.completed&&ex.completed.includes(i);
+                const isActive=wkTimer.activeExId===ex.id&&wkTimer.activeSetIdx===i&&wkTimer.subMode==='series';
+                const r=rA[i]||rA[rA.length-1]||'?';
+                const l=lA[i]||lA[lA.length-1]||'?';
+                let cls='ex-set'+(done?' done':'')+(isActive?' ex-set-active':'');
+                const label=isActive?`▶ S${i+1}: ${r}×${l}kg`:`S${i+1}: ${r}×${l}kg`;
+                sH+=`<div class="${cls}" onclick="toggleExSet('${ex.id}',${i})">${label}</div>`;
+            }
+            // Badge mostrando timer ativo nesse exercício
+            const activeHere=wkTimer.activeExId===ex.id;
+            const exBadge=activeHere?`<span class="timer-active-badge">⏱ EM EXECUÇÃO</span>`:'';
+            // Progresso das séries
+            const completedCount=(ex.completed||[]).length;
+            const progColor=completedCount===ex.series?'var(--accent)':completedCount>0?'var(--yellow)':'var(--text3)';
+            card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
+                <div style="flex:1;min-width:0">
+                    <div class="ex-name" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${ex.name} ${exBadge}</div>
+                    ${ex.group?`<div class="ex-meta" style="color:var(--purple)">${ex.group}</div>`:''}
+                </div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:${progColor};flex-shrink:0">${completedCount}/${ex.series}</div>
                 <div class="task-btns">
                     <button class="task-chart" onclick="openExHistory('${ex.id}')" title="Histórico">📊</button>
                     <button class="task-edit" onclick="openExModal('${ex.id}')" title="Editar">⚙️</button>
                 </div>
             </div>
-            ${ex.group?`<div class="ex-meta" style="color:var(--purple);margin-bottom:6px">${ex.group}</div>`:''}
-            <div class="ex-sets">${sH}</div>
-            <div class="ex-meta">⏱ ${ex.rest}s${ex.notes?' · '+ex.notes:''}</div>`;
+            <div class="ex-sets" style="margin-top:6px">${sH}</div>
+            <div class="ex-meta">⏱ ${ex.rest}s descanso${ex.notes?' · '+ex.notes:''}</div>`;
         }
         el.appendChild(card);
     });
@@ -1493,6 +1589,101 @@ function loadPreset(key){
     save();
     // Garantir que a aba treino esteja ativa
     switchTab('gym');
+}
+
+// ═══ NOTIFICAÇÕES DE SUPLEMENTOS ═══
+let notifState={enabled:false,scheduled:[],ticker:null};
+
+async function toggleNotifications(){
+    if(notifState.enabled){
+        disableNotifications();return;
+    }
+    if(!('Notification' in window)){
+        alert('Este navegador não suporta notificações. Use Chrome ou Safari no iOS 16.4+.');return;
+    }
+    const perm=await Notification.requestPermission();
+    if(perm!=='granted'){
+        alert('Permissão de notificação negada. Habilite nas configurações do navegador.');return;
+    }
+    enableNotifications();
+}
+
+function enableNotifications(){
+    notifState.enabled=true;
+    const btn=document.getElementById('notifBtn');
+    if(btn){btn.classList.add('on');btn.textContent='🔔';}
+    scheduleAllNotifications();
+    // Checar a cada 30 segundos se há alguma notificação a disparar
+    if(notifState.ticker) clearInterval(notifState.ticker);
+    notifState.ticker=setInterval(checkAndFireNotifications,30000);
+}
+
+function disableNotifications(){
+    notifState.enabled=false;
+    notifState.scheduled=[];
+    if(notifState.ticker){clearInterval(notifState.ticker);notifState.ticker=null;}
+    const btn=document.getElementById('notifBtn');
+    if(btn){btn.classList.remove('on');btn.textContent='🔔';}
+}
+
+function scheduleAllNotifications(){
+    notifState.scheduled=[];
+    const now=new Date();
+    const todayStr=now.toLocaleDateString('pt-BR');
+    const activeSupps=state.supps.filter(t=>!t.suspended&&!t.done);
+    activeSupps.forEach(t=>{
+        const[h,m]=t.time.split(':').map(Number);
+        const fireTime=new Date();
+        fireTime.setHours(h,m,0,0);
+        // Se o horário já passou hoje, não agendar
+        if(fireTime>now){
+            notifState.scheduled.push({id:t.id,title:t.title,qty:t.qty,time:t.time,fireTime:fireTime.getTime(),fired:false});
+        }
+    });
+}
+
+function checkAndFireNotifications(){
+    if(!notifState.enabled||Notification.permission!=='granted') return;
+    const now=Date.now();
+    // Reagendar se mudou de dia
+    const today=new Date().toLocaleDateString('pt-BR');
+    if(notifState.lastDay&&notifState.lastDay!==today){scheduleAllNotifications();}
+    notifState.lastDay=today;
+    notifState.scheduled.forEach(n=>{
+        if(!n.fired&&now>=n.fireTime&&now<n.fireTime+120000){// janela de 2 minutos
+            n.fired=true;
+            const t=state.supps.find(x=>x.id===n.id);
+            if(t&&!t.done&&!t.suspended){
+                fireNotification(t);
+            }
+        }
+    });
+}
+
+function fireNotification(item){
+    try{
+        const notif=new Notification('💊 Thobias Pro — '+item.time,{
+            body:`${item.qty} · ${item.title}`,
+            icon:'icon-192.png',
+            badge:'icon-192.png',
+            tag:'supps-'+item.id,
+            requireInteraction:false,
+            silent:false
+        });
+        notif.onclick=()=>{window.focus();notif.close();switchTab('supps');};
+        // Vibração se disponível
+        if(navigator.vibrate) navigator.vibrate([200,100,200]);
+    }catch(e){console.warn('Notificação falhou:',e);}
+}
+
+// Atualiza agendamento quando um item é marcado como feito
+function refreshNotifSchedule(){
+    if(!notifState.enabled) return;
+    // Remover do agendamento itens já concluídos
+    notifState.scheduled=notifState.scheduled.filter(n=>{
+        const t=state.supps.find(x=>x.id===n.id);
+        return t&&!t.done&&!t.suspended;
+    });
 }
 
 load();
