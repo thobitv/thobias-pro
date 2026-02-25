@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thobias Pro | v56</title>
+    <title>Thobias Pro | v57</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -138,7 +138,7 @@
             <div>
                 <div class="brand">Thobias Pro</div>
                 <div class="brand-sub" id="displayDate">--/--/----</div>
-                <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:1px;opacity:.6">v56 · 25/02/2026 · 18:32</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:1px;opacity:.6">v57 · 25/02/2026 · 19:10</div>
             </div>
             <button id="notifBtn" class="notif-btn" onclick="toggleNotifications()" title="Notificações de suplementos">🔔</button>
             <div class="score-ring">
@@ -334,7 +334,7 @@
 <div id="timerModal" class="modal-bg"><div class="modal" style="max-width:440px">
     <h3>⏱ Cronômetro de Treino</h3>
     <div id="timerContent"></div>
-    <div class="modal-row"><button class="mbtn mbtn-close" onclick="stopWorkoutTimer();closeModal('timerModal')" style="flex:1">Fechar</button></div>
+    <div class="modal-row"><button class="mbtn mbtn-close" onclick="closeModal('timerModal')" style="flex:1">↙ Minimizar</button></div>
 </div></div>
 
 <canvas id="snapCanvas" width="1080"></canvas>
@@ -489,7 +489,7 @@ let state={supps:[],derm:[],gym:[],food:[],fluids:{pure:0,decaf:0,other:0},histo
 const SK='thobias_v51';
 
 // ═══ VERSÃO E MIGRAÇÃO AUTOMÁTICA ═══
-const APP_VERSION='56';
+const APP_VERSION='57';
 
 function migrate(){
     if(state.appVersion===APP_VERSION) return;
@@ -1102,15 +1102,44 @@ function renderTimerUI(){
         </div>
     </div>`;
 
-    // Main timer buttons
-    html+=`<div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px">`;
+    // Main timer buttons — layout redesenhado para evitar toque involuntário
+    html+=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px">`;
     if(!wkTimer.running&&wkTimer.elapsed===0){
-        html+=`<button class="mbtn mbtn-save" onclick="startWorkoutTimer()" style="flex:1">▶ Iniciar Treino</button>`;
+        html+=`<button class="mbtn mbtn-save" onclick="startWorkoutTimer()" style="flex:1;font-size:14px;padding:14px">▶ Iniciar Treino</button>`;
     } else if(wkTimer.running){
-        html+=`<button class="mbtn mbtn-del" onclick="pauseWorkoutTimer()" style="flex:1">⏸ Pausar</button>`;
+        // Timer em execução: PAUSA fica pequena, à direita, com ícone e texto pequeno
+        // Área principal vazia (não clicável) para evitar toque acidental
+        html+=`<div style="flex:1;text-align:left;padding-left:4px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;line-height:1.4">Treino<br>em andamento</div>
+        <button onclick="pauseWorkoutTimer()" style="
+            background:rgba(251,146,60,.12);
+            border:1.5px solid var(--orange);
+            color:var(--orange);
+            border-radius:12px;
+            padding:10px 18px;
+            font-family:'Outfit',sans-serif;
+            font-weight:700;
+            font-size:11px;
+            cursor:pointer;
+            display:flex;align-items:center;gap:6px;
+            text-transform:uppercase;letter-spacing:.5px;
+            flex-shrink:0
+        "><svg width="12" height="14" viewBox="0 0 12 14" fill="var(--orange)"><rect x="0" y="0" width="4" height="14" rx="1"/><rect x="8" y="0" width="4" height="14" rx="1"/></svg> Pausar</button>`;
     } else {
-        html+=`<button class="mbtn mbtn-save" onclick="resumeWorkoutTimer()" style="flex:1">▶ Retomar</button>`;
-        html+=`<button class="mbtn mbtn-del" onclick="finishWorkoutTimer()" style="flex:1">⏹ Finalizar</button>`;
+        // Pausado: retomar em destaque, encerrar à direita menor
+        html+=`<button class="mbtn mbtn-save" onclick="resumeWorkoutTimer()" style="flex:1;font-size:13px">▶ Retomar</button>
+        <button onclick="finishWorkoutTimer()" style="
+            background:rgba(248,113,113,.1);
+            border:1.5px solid var(--red);
+            color:var(--red);
+            border-radius:12px;
+            padding:10px 14px;
+            font-family:'Outfit',sans-serif;
+            font-weight:700;
+            font-size:11px;
+            cursor:pointer;
+            text-transform:uppercase;letter-spacing:.5px;
+            flex-shrink:0
+        ">⏹ Encerrar</button>`;
     }
     html+=`</div>`;
 
@@ -1175,9 +1204,15 @@ function resumeWorkoutTimer(){
     wkTimer.interval=setInterval(renderTimerUI,500);renderTimerUI();
 }
 function stopWorkoutTimer(){
-    // Don't reset — just stop updating
+    // Chamado apenas ao fechar definitivamente (reset total)
     if(wkTimer.interval){clearInterval(wkTimer.interval);wkTimer.interval=null;}
     if(wkTimer.subInterval){clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}
+}
+function minimizeTimer(){
+    // Fechar o modal SEM parar o timer — captura elapsed pendente dos intervalos
+    // para que na reabertura os cálculos batam, mas mantém running=true
+    // O setInterval continua rodando em background (renderTimerUI tem guard if(!el))
+    closeModal('timerModal');
 }
 function finishWorkoutTimer(){
     const totalMs=wkTimer.elapsed;
