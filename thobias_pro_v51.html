@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thobias Pro | v54</title>
+    <title>Thobias Pro | v55</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -345,16 +345,16 @@ const SUPPS=[
 {id:'s05',time:'07:00',qty:'💊 2 Caps',title:'Vitamina D3 2.000 UI × 2 (4.000 UI)',cat:'Lipossolúvel',note:'🍳 COM GORDURA obrigatório · 25(OH)D atual 34,2 — meta ≥40 ng/mL · Reavaliar próximo exame'},
 {id:'s39',time:'07:00',qty:'💊 1 Cap',title:'Vitamina K2 150mcg',cat:'Lipossolúvel',note:'🍳 COM GORDURA · Direciona cálcio aos ossos · 150mcg suficiente (dose 2 à noite)'},
 {id:'s06',time:'07:00',qty:'💊 1 Cap',title:'Ômega-3 (Dose 1)',cat:'Lipossolúvel',note:'🍳 COM GORDURA · Serve como veículo lipídico para D3/K2/CoQ10'},
-{id:'s07',time:'07:00',qty:'💊 1 Cap',title:'Cobre Quelato 3mg (Lauton)',cat:'Mineral',note:'⚠ ≥5h antes do zinco (12h) · Obrigatório com zinco >25mg/dia'},
+{id:'s07',time:'19:00',qty:'💊 1 Cap',title:'Cobre Quelato 3mg (SEG/QUA/SEX)',cat:'Mineral',ironOnly:true,note:'⚠ SEG/QUA/SEX junto c/ ferro · ≥12h após ferro manhã (06:15→19:00 ✓) · ≥7h após zinco (12:00→19:00 ✓) · Obrigatório c/ zinco >25mg/dia'},
 {id:'s08',time:'07:00',qty:'💊 1 CP',title:'Candesartana 16mg (Venzer)',cat:'PA',note:'Com ou sem alimento — sem restrição'},
-{id:'s09',time:'07:00',qty:'💊 1 CP',title:'Dutasterida 0,5mg',cat:'DHT',note:'🍳 COM GORDURA melhora absorção · ≥12h do CBD (CYP3A4)'},
-{id:'s10',time:'07:00',qty:'💊 1 CP',title:'Minoxidil oral 2,5mg',cat:'Cabelo',note:'Monitorar PA e FC nas primeiras semanas'},
+{id:'s09',time:'07:00',qty:'💊 1 CP',title:'Dutasterida 0,5mg',cat:'DHT',note:'🍳 COM GORDURA melhora absorção · ≥12h do CBD noturno (07:00→19:00 = 12h ✓) · Meia-vida ~5 semanas'},
+{id:'s10',time:'07:00',qty:'💊 1 CP',title:'Minoxidil oral 2,5mg',cat:'Cabelo',note:'Monitorar PA e FC nas primeiras semanas · Efeito vasodilatador — avaliar hipotensão c/ candesartana'},
 {id:'s11',time:'07:00',qty:'💊 ~1g',title:'Vitamina B5 (Dose 1)',cat:'Pele',note:'⚠ ≥2h antes da biotina · Fracionada em 3 doses diárias'},
 {id:'s12',time:'07:00',qty:'💊 2 Caps',title:'CoQ10 100mg × 2 (com gordura)',cat:'Energia',note:'🍳 COM GORDURA obrigatório (lipossolúvel) · 2 cáps de 100mg'},
 {id:'s13',time:'06:15',qty:'💊 2 Caps',title:'Taurina 1.600mg',cat:'Renal',note:'Melhor absorção em jejum · Não compete com ferro'},
-{id:'s14',time:'06:15',qty:'💊 1 Cap',title:'NAC 600mg (Dose 1)',cat:'Nefro',note:'Melhor absorção em jejum · Precursor glutationa · Não compete com ferro'},
+{id:'s14',time:'19:00',qty:'💊 2 Caps (1.200mg)',title:'NAC 1.200mg — dose única consolidada',cat:'Nefro',note:'Dose diária completa consolidada · Componente GlyNAC · Precursor glutationa · COM COMIDA reduz desconforto GI'},
 {id:'s41',time:'06:15',qty:'💊 1 Cap',title:'Juba de Leão 500mg (Lion\'s Mane)',cat:'Neuro',note:'Absorção não depende de gordura · Estimula NGF/BDNF · Sinérgico c/ lítio'},
-{id:'s42',time:'07:00',qty:'💊 2 Caps',title:'Saw Palmetto 150mg + Pygeum 50mg (BRIDGE até 04/03)',cat:'DHT',note:'⚠ TEMPORÁRIO — suspender ao iniciar Dutasterida · 2 cáps = 300mg SP + 100mg Pyg · COM GORDURA (fitoesteróis lipossolúveis)'},
+{id:'s42',time:'07:00',qty:'💊 2 Caps',title:'Saw Palmetto + Pygeum (SUSPENSO — dutasterida iniciada)',cat:'DHT',suspended:true,note:'Bridge encerrado — dutasterida 0,5mg assumiu cobertura DHT'},
 // ── 12:00 ALMOÇO ──
 {id:'s15',time:'12:00',qty:'💊 29,5mg',title:'Zinco Quelato (6h+ após ferro)',cat:'Mineral',note:'⚠ ≥6h após ferro (06:15→12:15 ✓) · ≥5h após cobre (07:00→12:00 ✓) · ≥2h antes do cálcio (19h)'},
 {id:'s16',time:'12:00',qty:'💊 ~1g',title:'Vitamina B5 (Dose 2)',cat:'Pele',note:'≥2h antes da biotina da tarde · Dose 2 de 3'},
@@ -372,7 +372,6 @@ const SUPPS=[
 // ── 19:00 JANTAR ──
 {id:'s26',time:'19:00',qty:'💊 1 CP',title:'Metformina XR 500mg (Glifage)',cat:'Metab',note:'🍽 COM COMIDA obrigatório · Reduz desconforto GI'},
 {id:'s27',time:'19:00',qty:'💊 1 CP',title:'Trental 400mg (Dose 3)',cat:'Reologia',note:'🍽 COM COMIDA · Dose 3 de 3'},
-{id:'s28',time:'19:00',qty:'💊 1 Cap',title:'NAC 600mg (Dose 2)',cat:'Nefro',note:'Dose 2 de 2 · Componente do protocolo GlyNAC'},
 {id:'s29',time:'19:00',qty:'💊 1 Cap',title:'Ômega-3 (Dose 2, com comida)',cat:'Lipossolúvel',note:'🍳 COM GORDURA da refeição · Dose 2 de 2'},
 {id:'s30',time:'19:00',qty:'💊 4 Caps',title:'Cálcio 800mg + D3 500UI + K1 (≥2h do zinco)',cat:'Ósseo',note:'⚠ ≥2h após zinco (12:00→19:00 = 7h ✓) · ≥3h após ferro · COM COMIDA · K1 ≠ K2: a K2 150mcg da manhã é que direciona cálcio aos ossos'},
 {id:'s31',time:'19:00',qty:'💊 1 Cap',title:'Cardo Mariano 500mg (com comida)',cat:'Fígado',note:'🍽 COM COMIDA · Hepatoprotetor'},
@@ -482,6 +481,42 @@ const FOODS=[
 let state={supps:[],derm:[],gym:[],food:[],fluids:{pure:0,decaf:0,other:0},history:[],gymHistory:[],date:''};
 const SK='thobias_v51';
 
+// ═══ VERSÃO E MIGRAÇÃO AUTOMÁTICA ═══
+const APP_VERSION='55';
+
+function migrate(){
+    if(state.appVersion===APP_VERSION) return;
+    const fix=(id,changes)=>{const t=state.supps.find(x=>x.id===id);if(t) Object.assign(t,changes);};
+    const addIfMissing=(item)=>{if(!state.supps.find(x=>x.id===item.id)) state.supps.push(item);};
+
+    // Dutasterida — remover aviso "AINDA NÃO INICIADO"
+    fix('s09',{note:'🍳 COM GORDURA melhora absorção · ≥12h do CBD noturno (07:00→19:00 = 12h ✓) · Meia-vida ~5 semanas'});
+
+    // Minoxidil — remover aviso "AINDA NÃO INICIADO"
+    fix('s10',{note:'Monitorar PA e FC nas primeiras semanas · Efeito vasodilatador — avaliar hipotensão c/ candesartana'});
+
+    // CBD manhã — ajustar horário e dose
+    fix('s36',{time:'09:30',qty:'💧 10 gotas',title:'Canabidiol (CBD) — manhã',note:'⚠ ≥2h após dutasterida (07:00→09:30 ✓) · Inibidor CYP3A4/CYP2C19'});
+
+    // CBD noite — adicionar se não existir
+    addIfMissing({id:'s36b',time:'19:00',qty:'💧 20 gotas',title:'Canabidiol (CBD) — noite',cat:'Sono',note:'⚠ ≥12h antes dutasterida (19:00→07:00 = 12h ✓) · Com jantar · Inibidor CYP2C19',done:false,log:'',suspended:false});
+
+    // Cobre — mover para 19:00 (SEG/QUA/SEX junto com jantar)
+    fix('s07',{time:'19:00',title:'Cobre Quelato 3mg (SEG/QUA/SEX)',ironOnly:true,note:'⚠ SEG/QUA/SEX · ≥12h após ferro (06:15→19:00 ✓) · ≥7h após zinco (12:00→19:00 ✓) · Obrigatório c/ zinco >25mg/dia'});
+
+    // NAC — consolidar em dose única 1.200mg no jantar
+    // Remove s28 (dose 2 antiga) se existir separado
+    state.supps=state.supps.filter(x=>x.id!=='s28');
+    fix('s14',{time:'19:00',qty:'💊 2 Caps (1.200mg)',title:'NAC 1.200mg — dose única consolidada',note:'Dose diária completa consolidada · Componente GlyNAC · Precursor glutationa · COM COMIDA reduz desconforto GI'});
+
+    // Saw Palmetto — suspender (dutasterida já iniciada)
+    fix('s42',{suspended:true,title:'Saw Palmetto + Pygeum (SUSPENSO — dutasterida iniciada)'});
+
+    // Reordenar por horário
+    state.supps.sort((a,b)=>a.time.localeCompare(b.time));
+    state.appVersion=APP_VERSION;
+}
+
 function load(){
     const r=localStorage.getItem(SK);
     if(r) state=JSON.parse(r);
@@ -495,6 +530,8 @@ function load(){
     if(!state.food) state.food=[];
     if(!state.history) state.history=[];
     if(!state.gymHistory) state.gymHistory=[];
+    // Migração automática — corrige dados do localStorage sem perder histórico
+    migrate();
     const today=new Date().toLocaleDateString('pt-BR');
     if(state.date!==today){
         if(!state.supps.length) state.supps=JSON.parse(JSON.stringify(SUPPS));
@@ -926,13 +963,13 @@ const ITEM_INFO={
 's04':{obj:'TRT — otimizar testosterona (358 ng/dL → meta 600-900)',rec:'Aplicar em pele limpa e seca (braço/abdômen). Lavar mãos após. Evitar contato com mulheres/crianças.',interval:'Absorção ~4h. Aplicar antes de vestir camisa'},
 's05':{obj:'Corrigir vitamina D (34,2 → meta ≥40 ng/mL)',rec:'COM GORDURA obrigatório (lipossolúvel). Se próximo exame <40, aumentar para 6.000 UI.',interval:'Tomar junto com ômega-3 e K2 para sinergismo'},
 's06':{obj:'Veículo lipídico + anti-inflamatório + cardioproteção',rec:'COM GORDURA da refeição. Serve como veículo para D3, K2, CoQ10.',interval:'Sem restrições significativas'},
-'s07':{obj:'Prevenir deficiência de cobre (obrigatório c/ zinco >25mg/dia)',rec:'Zinco depleta cobre a longo prazo. Suplementar cobre é obrigatório.',interval:'≥5h antes do zinco (competem por absorção) · ≥5h após ferro'},
+'s07':{obj:'Prevenir deficiência de cobre (obrigatório c/ zinco >25mg/dia)',rec:'Zinco depleta cobre a longo prazo. SEG/QUA/SEX junto com o ferro da noite.',interval:'SEG/QUA/SEX · ≥12h após ferro manhã · ≥7h após zinco (12:00→19:00 ✓)'},
 's08':{obj:'Controle de PA (hipertensão)',rec:'Dose fixa diária. Monitorar PA especialmente com minoxidil.',interval:'Sem restrição alimentar. Pico 3-4h'},
-'s09':{obj:'Bloquear DHT (alopecia androgenética)',rec:'COM GORDURA melhora absorção. Evitar CBD no mesmo período (CYP3A4).',interval:'≥12h do CBD · Meia-vida longa (~5 semanas)'},
+'s09':{obj:'Bloquear DHT (alopecia androgenética) — inibição tipo I e II',rec:'COM GORDURA melhora absorção. CBD noturno às 19h garante intervalo ≥12h.',interval:'≥12h do CBD noturno (07:00→19:00 = 12h ✓) · Meia-vida ~5 semanas — efeito pleno 3-6 meses'},
 's10':{obj:'Estimular crescimento capilar (vasodilatação)',rec:'Monitorar PA e FC nas primeiras semanas. Efeito vasodilatador pode causar hipotensão.',interval:'Efeito em 3-6 meses. Avaliar PA em 2 semanas'},
 's12':{obj:'Energia mitocondrial + cardioproteção + antioxidante',rec:'COM GORDURA obrigatório (lipossolúvel). Ubiquinol > ubiquinona.',interval:'Sem restrições significativas'},
 's13':{obj:'Proteção renal e cardiovascular',rec:'Melhor absorção em jejum. Auxilia controle de PA.',interval:'Sem competição significativa'},
-'s14':{obj:'Precursor de glutationa (antioxidante master) + proteção renal',rec:'Jejum maximiza absorção. Componente do protocolo GlyNAC.',interval:'Dose 1 de 2 (dose 2 no jantar)'},
+'s14':{obj:'Precursor de glutationa (antioxidante master) + proteção renal — dose diária consolidada',rec:'1.200mg em dose única com o jantar. COM COMIDA reduz desconforto GI. Componente do protocolo GlyNAC.',interval:'Sem restrição de intervalo nesse horário — ferro já foi 12h antes'},
 's15':{obj:'Imunidade, testosterona, cicatrização, pele',rec:'≥6h após ferro, ≥5h após cobre. COM COMIDA melhora tolerância GI.',interval:'≥2h antes do cálcio · Competição ferro/cobre'},
 's17':{obj:'Anti-inflamatório natural sistêmico',rec:'COM COMIDA obrigatório. Pimenta preta ↑ biodisponibilidade 2000%.',interval:'Inibidor CYP — considerar janela com dutasterida'},
 's18':{obj:'Oxidação de gordura + saúde da pele',rec:'Com refeição. Pré-treino potencializa uso de gordura como combustível em zona 2.',interval:'Dose 1 almoço + dose 2 pré-treino'},
