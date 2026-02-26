@@ -138,7 +138,7 @@
             <div>
                 <div class="brand">Thobias Pro</div>
                 <div class="brand-sub" id="displayDate">--/--/----</div>
-                <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:1px;opacity:.6">v57 · 25/02/2026 · 15:10</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:1px;opacity:.6">v57 · 26/02/2026 · 08:15</div>
             </div>
             <button id="notifBtn" class="notif-btn" onclick="toggleNotifications()" title="Notificações de suplementos">🔔</button>
             <div class="score-ring">
@@ -524,6 +524,46 @@ function migrate(){
     state.appVersion=APP_VERSION;
 }
 
+// ═══ AUTO-SAVE: salva o dia anterior no histórico sem interação manual ═══
+function autoSaveDay(){
+    // Só salva se havia um dia registrado com algum dado
+    if(!state.date) return;
+    const allActive=[...state.supps,...state.derm].filter(t=>!t.suspended);
+    // Não salva se não havia absolutamente nada (primeiro uso do app)
+    if(!allActive.length&&!state.gym.length) return;
+    // Não salva duplicata (mesmo dia já no topo do histórico)
+    if(state.history.length&&state.history[0].date===state.date) return;
+
+    const done=allActive.filter(t=>t.done).length;
+    const score=Math.round((done/(allActive.length||1))*100);
+    const itemLogs={};
+    [...state.supps,...state.derm].forEach(t=>{
+        if(!t.suspended) itemLogs[t.id]={done:!!t.done,log:t.log||null,title:t.title,time:t.time};
+    });
+
+    state.history.unshift({
+        date:state.date,score,
+        water:state.fluids.pure+state.fluids.decaf+state.fluids.other,
+        gym:state.gym.length,
+        items:itemLogs,
+        autoSaved:true  // marca para diferenciar no histórico
+    });
+    if(state.history.length>90) state.history.pop();
+
+    state.gym.forEach(ex=>{
+        const key=ex.name.trim().toLowerCase();
+        if(!state.gymHistory) state.gymHistory=[];
+        if(ex.type==='cardio'){
+            state.gymHistory.push({date:state.date,name:ex.name,key,type:'cardio',
+                duration:ex.duration,calories:ex.calories,distance:ex.distance,hr:ex.hr,done:ex.done});
+        } else {
+            state.gymHistory.push({date:state.date,name:ex.name,key,type:'resistido',
+                series:ex.series,reps:ex.reps,load:ex.load,rest:ex.rest,group:ex.group,completed:ex.completed||[]});
+        }
+    });
+    if(state.gymHistory.length>500) state.gymHistory=state.gymHistory.slice(-500);
+}
+
 function load(){
     const r=localStorage.getItem(SK);
     if(r) state=JSON.parse(r);
@@ -541,6 +581,8 @@ function load(){
     migrate();
     const today=new Date().toLocaleDateString('pt-BR');
     if(state.date!==today){
+        // ✅ Auto-salvar o dia anterior ANTES de resetar
+        autoSaveDay();
         if(!state.supps.length) state.supps=JSON.parse(JSON.stringify(SUPPS));
         if(!state.derm.length) state.derm=JSON.parse(JSON.stringify(DERM));
         state.supps.forEach(t=>{t.done=false;t.log='';});
@@ -680,49 +722,19 @@ function deleteEx(){const id=document.getElementById('exEditId').value;if(confir
 // ═══ FINISH DAY — salva dados detalhados para gráficos ═══
 function finishDay(){
     if(!confirm('Encerrar o dia e salvar no histórico?')) return;
-    const allActive=[...state.supps,...state.derm].filter(t=>!t.suspended);
-    const done=allActive.filter(t=>t.done).length;
-    const score=Math.round((done/(allActive.length||1))*100);
-
-    // Salvar detalhes de cada item (id, log time, done)
-    const itemLogs={};
-    [...state.supps,...state.derm].forEach(t=>{
-        if(!t.suspended) itemLogs[t.id]={done:!!t.done,log:t.log||null,title:t.title,time:t.time};
-    });
-
-    state.history.unshift({
-        date:state.date,score,
-        water:state.fluids.pure+state.fluids.decaf+state.fluids.other,
-        gym:state.gym.length,
-        items:itemLogs
-    });
-    if(state.history.length>90) state.history.pop();
-
-    // Salvar histórico de exercícios por nome normalizado
-    state.gym.forEach(ex=>{
-        const key=ex.name.trim().toLowerCase();
-        if(!state.gymHistory) state.gymHistory=[];
-        if(ex.type==='cardio'){
-            state.gymHistory.push({
-                date:state.date,name:ex.name,key,type:'cardio',
-                duration:ex.duration,calories:ex.calories,
-                distance:ex.distance,hr:ex.hr,done:ex.done
-            });
-        } else {
-            state.gymHistory.push({
-                date:state.date,name:ex.name,key,type:'resistido',
-                series:ex.series,reps:ex.reps,load:ex.load,
-                rest:ex.rest,group:ex.group,completed:ex.completed||[]
-            });
-        }
-    });
-    // Limitar gymHistory a 500 registros
-    if(state.gymHistory.length>500) state.gymHistory=state.gymHistory.slice(-500);
-
+    // Remove eventual auto-save do mesmo dia (finishDay tem prioridade)
+    if(state.history.length&&state.history[0].date===state.date&&state.history[0].autoSaved){
+        state.history.shift();
+    }
+    autoSaveDay();
     state.supps.forEach(t=>{t.done=false;t.log='';});
     state.derm.forEach(t=>{t.done=false;t.log='';});
     state.gym=[];
     state.fluids={pure:0,decaf:0,other:0};
+    // Marca o registro recém-inserido como manual (não autoSaved)
+    if(state.history.length&&state.history[0].date===state.date){
+        delete state.history[0].autoSaved;
+    }
     save();
     alert('Dia salvo!');
 }
@@ -1304,7 +1316,8 @@ function openHistory(){
     const list=document.getElementById('histList');list.innerHTML='';
     if(!state.history.length){list.innerHTML='<p style="color:var(--text3);font-size:12px;text-align:center;padding:20px">Nenhum registro</p>';}
     state.history.forEach(h=>{
-        list.innerHTML+=`<div class="hist-item"><div><div class="hist-date">${h.date}</div><div class="hist-water">💧 ${h.water||0}ml · 🏋️ ${h.gym||0}</div></div><div class="hist-score">${h.score}%</div></div>`;
+        const autoIcon=h.autoSaved?'<span title="Salvo automaticamente na virada do dia" style="font-size:9px;color:var(--text3);margin-left:4px">⚡</span>':'';
+        list.innerHTML+=`<div class="hist-item"><div><div class="hist-date">${h.date}${autoIcon}</div><div class="hist-water">💧 ${h.water||0}ml · 🏋️ ${h.gym||0}</div></div><div class="hist-score">${h.score}%</div></div>`;
     });
     document.getElementById('histModal').classList.add('open');
 }
