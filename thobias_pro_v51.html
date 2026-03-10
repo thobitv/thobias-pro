@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thobias Pro | v52</title>
+    <title>Thobias Pro | v53</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -133,6 +133,7 @@
             <div>
                 <div class="brand">Thobias Pro</div>
                 <div class="brand-sub" id="displayDate">--/--/----</div>
+                <div class="brand-sub" style="color:var(--accent);opacity:.5;font-size:8px;margin-top:1px" id="appVersion">v53</div>
             </div>
             <div class="score-ring">
                 <svg viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="15.5"/><circle class="fg" id="scoreArc" cx="18" cy="18" r="15.5" stroke-dasharray="97.4" stroke-dashoffset="97.4"/></svg>
@@ -179,6 +180,11 @@
     <div id="panel-gym" class="panel">
         <div style="display:flex;gap:8px;margin-bottom:10px">
             <button class="add-btn" onclick="openWorkoutTimer()" style="flex:1;margin:0;background:rgba(52,211,153,.1);border-color:var(--accent);color:var(--accent)">⏱ Cronômetro Musculação</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+            <button class="add-btn" onclick="loadTemplate('peito')" style="flex:1;margin:0;padding:10px;font-size:9px;background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.3);color:var(--red)">🏋️ Peito</button>
+            <button class="add-btn" onclick="loadTemplate('dorsal')" style="flex:1;margin:0;padding:10px;font-size:9px;background:rgba(96,165,250,.08);border-color:rgba(96,165,250,.3);color:var(--blue)">🏋️ Dorsal</button>
+            <button class="add-btn" onclick="loadTemplate('pernas')" style="flex:1;margin:0;padding:10px;font-size:9px;background:rgba(167,139,250,.08);border-color:rgba(167,139,250,.3);color:var(--purple)">🏋️ Pernas</button>
         </div>
         <div id="exList"></div>
         <button class="add-btn" onclick="openExModal('new')">+ Adicionar Exercício</button>
@@ -330,6 +336,7 @@ const SUPPS=[
 {id:'s02',time:'06:15',qty:'💊 Sublingual',title:'Vitamina B12 1.000mcg',cat:'Base',note:'Sublingual = bypass GI, não compete com ferro'},
 {id:'s03',time:'06:15',qty:'💊 10mg',title:'Escitalopram 10mg (Exodus)',cat:'Mood',note:'Dose terapêutica para ansiedade social · Interrupção de desmame'},
 {id:'s38',time:'06:15',qty:'🥄 5g',title:'Glutamina (jejum)',cat:'Intestino',note:'⚠ JEJUM maximiza absorção intestinal · Não compete com ferro · Diluir em água'},
+{id:'s45',time:'06:15',qty:'💊 1 Cap',title:'Nattokinase 150mg',cat:'Sangue',note:'⚠ JEJUM · Fibrinolítico · Absorção superior em jejum · Separar de anticoagulantes'},
 // ── 07:00 CAFÉ DA MANHÃ (com gordura) ──
 {id:'s04',time:'07:00',qty:'🧴 1 Pump',title:'Testosterona Gel 20% (Pentravan)',cat:'Hormonal',note:'Aplicar em pele limpa e seca · Lavar mãos após'},
 {id:'s05',time:'07:00',qty:'💊 2 Caps',title:'Vitamina D3 2.000 UI × 2 (4.000 UI)',cat:'Lipossolúvel',note:'🍳 COM GORDURA obrigatório · 25(OH)D atual 34,2 — meta ≥40 ng/mL · Reavaliar próximo exame'},
@@ -342,7 +349,7 @@ const SUPPS=[
 {id:'s11',time:'07:00',qty:'💊 ~1g',title:'Vitamina B5 (Dose 1)',cat:'Pele',note:'⚠ ≥2h antes da biotina · Fracionada em 3 doses diárias'},
 {id:'s12',time:'07:00',qty:'💊 2 Caps',title:'CoQ10 100mg × 2 (com gordura)',cat:'Energia',note:'🍳 COM GORDURA obrigatório (lipossolúvel) · 2 cáps de 100mg'},
 {id:'s13',time:'06:15',qty:'💊 2 Caps',title:'Taurina 1.600mg',cat:'Renal',note:'Melhor absorção em jejum · Não compete com ferro'},
-{id:'s14',time:'06:15',qty:'💊 1 Cap',title:'NAC 600mg (Dose 1)',cat:'Nefro',note:'Melhor absorção em jejum · Precursor glutationa · Não compete com ferro'},
+{id:'s14',time:'19:00',qty:'💊 1 Cap',title:'NAC 600mg',cat:'Nefro',note:'Dose única noturna · Componente do protocolo GlyNAC · Precursor glutationa'},
 {id:'s41',time:'06:15',qty:'💊 1 Cap',title:'Juba de Leão 500mg (Lion\'s Mane)',cat:'Neuro',note:'Absorção não depende de gordura · Estimula NGF/BDNF · Sinérgico c/ lítio'},
 {id:'s42',time:'07:00',qty:'💊 2 Caps',title:'Saw Palmetto 150mg + Pygeum 50mg (BRIDGE até 04/03)',cat:'DHT',note:'⚠ TEMPORÁRIO — suspender ao iniciar Dutasterida · 2 cáps = 300mg SP + 100mg Pyg · COM GORDURA (fitoesteróis lipossolúveis)'},
 // ── 12:00 ALMOÇO ──
@@ -362,7 +369,6 @@ const SUPPS=[
 // ── 19:00 JANTAR ──
 {id:'s26',time:'19:00',qty:'💊 1 CP',title:'Metformina XR 500mg (Glifage)',cat:'Metab',note:'🍽 COM COMIDA obrigatório · Reduz desconforto GI'},
 {id:'s27',time:'19:00',qty:'💊 1 CP',title:'Trental 400mg (Dose 3)',cat:'Reologia',note:'🍽 COM COMIDA · Dose 3 de 3'},
-{id:'s28',time:'19:00',qty:'💊 1 Cap',title:'NAC 600mg (Dose 2)',cat:'Nefro',note:'Dose 2 de 2 · Componente do protocolo GlyNAC'},
 {id:'s29',time:'19:00',qty:'💊 1 Cap',title:'Ômega-3 (Dose 2, com comida)',cat:'Lipossolúvel',note:'🍳 COM GORDURA da refeição · Dose 2 de 2'},
 {id:'s30',time:'19:00',qty:'💊 4 Caps',title:'Cálcio 800mg + D3 500UI + K1 (≥2h do zinco)',cat:'Ósseo',note:'⚠ ≥2h após zinco (12:00→19:00 = 7h ✓) · ≥3h após ferro · COM COMIDA · K1 ≠ K2: a K2 150mcg da manhã é que direciona cálcio aos ossos'},
 {id:'s31',time:'19:00',qty:'💊 1 Cap',title:'Cardo Mariano 500mg (com comida)',cat:'Fígado',note:'🍽 COM COMIDA · Hepatoprotetor'},
@@ -374,6 +380,7 @@ const SUPPS=[
 {id:'s35',time:'21:15',qty:'💊 2mg',title:'Melatonina',cat:'Sono',note:'Ambiente escuro potencializa efeito'},
 {id:'s36',time:'21:15',qty:'💧 15 gotas',title:'Canabidiol (CBD)',cat:'Sono',note:'⚠ ≥14h após dutasterida (07:00→21:15 = 14h ✓) · Inibidor CYP3A4'},
 {id:'s37',time:'21:15',qty:'🥄 3g',title:'Glicina (GlyNAC)',cat:'Sono',note:'Componente GlyNAC (com NAC) · Auxilia sono e glutationa'},
+{id:'s46',time:'21:15',qty:'💊 1 Cap',title:'Naringenina 500mg',cat:'Sangue',note:'≥14h após dutasterida (07:00→21:15 ✓) · Inibidor CYP3A4 leve · Vasoativo'},
 {id:'s44',time:'SOS',qty:'💊 10-20mg',title:'Propranolol SOS (pré-evento social)',cat:'Ansiedade',note:'⚠ APENAS em eventos sociais · 30-60min antes · Monitorar PA (candesartana+minoxidil) · Discutir c/ psiquiatra'},
 ];
 
@@ -473,15 +480,21 @@ const SK='thobias_v51';
 
 function syncList(master,saved){
     // Always rebuild from master, preserving done/log/userNote/suspended from saved state
+    // BUT: do not preserve suspended for ironOnly items — that's handled by daily dow logic
     const map={};saved.forEach(s=>{map[s.id]=s;});
     const result=JSON.parse(JSON.stringify(master)).map(m=>{
         const s=map[m.id];
-        if(s){m.done=s.done||false;m.log=s.log||'';m.userNote=s.userNote||'';if(s.suspended!=null)m.suspended=s.suspended;}
+        if(s){m.done=s.done||false;m.log=s.log||'';m.userNote=s.userNote||'';if(!m.ironOnly&&s.suspended!=null)m.suspended=s.suspended;}
         return m;
     });
-    // Preserve user-added custom items (id starts with 'custom_')
-    saved.filter(s=>s.id&&s.id.startsWith('custom_')).forEach(s=>result.push(s));
+    // Preserve user-added custom items (id starts with 'custom_' or 'c')
+    saved.filter(s=>s.id&&(s.id.startsWith('custom_')||s.id.startsWith('c'))).forEach(s=>{if(!result.find(r=>r.id===s.id))result.push(s);});
     return result;
+}
+function applyIronLogic(){
+    const dow=new Date().getDay();
+    const isIron=[1,3,5].includes(dow);
+    state.supps.forEach(t=>{if(t.ironOnly) t.suspended=!isIron;});
 }
 function load(){
     const r=localStorage.getItem(SK);
@@ -505,14 +518,13 @@ function load(){
         state.fluids={pure:0,decaf:0,other:0};
         state.food=[];
         state.date=today;
-        const dow=new Date().getDay();
-        const isIron=[1,3,5].includes(dow);
-        state.supps.forEach(t=>{if(t.ironOnly) t.suspended=!isIron;});
     } else {
         // Same day: still sync structure but preserve done/log state
         state.supps=syncList(SUPPS,state.supps);
         state.derm=syncList(DERM,state.derm);
     }
+    // Always apply iron day logic (SEG/QUA/SEX only)
+    applyIronLogic();
     save();
 }
 
@@ -1325,6 +1337,7 @@ function updateFoodTotals(){
 
 function render(){
     document.getElementById('displayDate').textContent=state.date;
+    document.getElementById('appVersion').textContent='v53 · 10/03/2026 08:15';
     const allActive=[...state.supps,...state.derm].filter(t=>!t.suspended);
     const done=allActive.filter(t=>t.done).length;
     const score=Math.round((done/(allActive.length||1))*100);
@@ -1343,6 +1356,47 @@ function render(){
     renderList('derm','panel-derm');
     renderGym();
     renderFood();
+}
+
+// ═══ WORKOUT TEMPLATES — Prof. Daniel Carlos (20/02–10/04/2026) ═══
+const TEMPLATES={
+peito:[
+{name:'Supino Reto Aberto Máquina',series:3,reps:'15',load:'0',rest:60,group:'Peito',notes:''},
+{name:'Flexão de Braço',series:3,reps:'15',load:'0',rest:60,group:'Peito',notes:''},
+{name:'Supino Inclinado com Halter',series:3,reps:'12',load:'12',rest:60,group:'Peito',notes:''},
+{name:'Abdução de Ombros em Pé',series:3,reps:'15',load:'0',rest:60,group:'Ombro',notes:''},
+{name:'Voador Peitoral Máquina',series:3,reps:'12',load:'0',rest:60,group:'Peito',notes:'PICO: No topo, aperte 2 seg'},
+{name:'Tríceps Supinado com Halter',series:3,reps:'12',load:'0',rest:60,group:'Tríceps',notes:''},
+{name:'Desenvolvimento Aberto Sentado com Halter',series:3,reps:'12',load:'15',rest:60,group:'Ombro',notes:''},
+{name:'Abdominal Remador',series:3,reps:'20',load:'0',rest:45,group:'Core',notes:''},
+],
+dorsal:[
+{name:'Corrida/Caminhada Esteira',series:1,reps:'1',load:'0',rest:0,group:'Cardio',notes:'Aquecimento 5-10min'},
+{name:'Puxada Fechada Máquina',series:3,reps:'12',load:'54',rest:60,group:'Costas',notes:''},
+{name:'Remada Fechada Máquina',series:3,reps:'12',load:'20',rest:60,group:'Costas',notes:''},
+{name:'Remada Curvada com Kettlebell',series:3,reps:'12',load:'0',rest:60,group:'Costas',notes:''},
+{name:'Crucifixo Inverso Crossover',series:3,reps:'12',load:'15',rest:60,group:'Costas/Ombro',notes:''},
+{name:'Elíptico',series:1,reps:'1',load:'0',rest:0,group:'Cardio',notes:'5-10min entre séries'},
+{name:'Bíceps Barra H',series:3,reps:'12',load:'0',rest:60,group:'Bíceps',notes:''},
+{name:'Bíceps Barra Reta Banco Scott',series:3,reps:'10',load:'0',rest:60,group:'Bíceps',notes:''},
+{name:'Bíceps Banco Inclinado 45°',series:3,reps:'12',load:'8',rest:60,group:'Bíceps',notes:''},
+],
+pernas:[
+{name:'Leg Press Máquina',series:3,reps:'12',load:'90',rest:90,group:'Quadríceps',notes:'PICO: Sem travar joelhos, aperte 2 seg'},
+{name:'Abdominal Total',series:3,reps:'20',load:'0',rest:45,group:'Core',notes:''},
+{name:'Stiff na Máquina',series:3,reps:'12',load:'25',rest:60,group:'Posterior',notes:''},
+{name:'Abdominal Braços Cruzados',series:3,reps:'20',load:'0',rest:45,group:'Core',notes:''},
+{name:'Cadeira Extensora',series:3,reps:'12',load:'0',rest:60,group:'Quadríceps',notes:'ISO: Última rep, segure 10 seg'},
+{name:'Agachamento com Halter',series:3,reps:'15',load:'0',rest:60,group:'Quadríceps',notes:''},
+{name:'Cadeira Flexora',series:3,reps:'12',load:'42',rest:60,group:'Posterior',notes:''},
+{name:'Afundo Unilateral com Halter',series:3,reps:'10',load:'0',rest:60,group:'Quadríceps',notes:''},
+{name:'Panturrilha no Leg Press',series:4,reps:'15',load:'40',rest:45,group:'Panturrilha',notes:''},
+]
+};
+function loadTemplate(key){
+    if(state.gym.length&&!confirm('Substituir exercícios atuais pelo template?')) return;
+    state.gym=TEMPLATES[key].map((t,i)=>({...t,id:'tpl'+Date.now()+i,completed:[],time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}));
+    save();
 }
 
 load();
