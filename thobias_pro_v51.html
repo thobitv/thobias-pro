@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thobias Pro | v57.2</title>
+    <title>Thobias Pro | v57</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -138,7 +138,7 @@
             <div>
                 <div class="brand">Thobias Pro</div>
                 <div class="brand-sub" id="displayDate">--/--/----</div>
-                <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:1px;opacity:.6">v57 · 13/03/2026 · 10:20</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:1px;opacity:.6">v57 · 20/03/2026 · 08:30</div>
             </div>
             <button id="notifBtn" class="notif-btn" onclick="toggleNotifications()" title="Notificações de suplementos">🔔</button>
             <div class="score-ring">
@@ -185,7 +185,7 @@
     <div id="panel-derm" class="panel"></div>
     <div id="panel-gym" class="panel">
         <div style="display:flex;gap:8px;margin-bottom:10px">
-            <button class="add-btn" onclick="openWorkoutTimer()" style="flex:1;margin:0;background:rgba(52,211,153,.1);border-color:var(--accent);color:var(--accent)">⏱ Cronômetro Musculação</button>
+            <button class="add-btn" id="timerBtn" onclick="openWorkoutTimer()" style="flex:1;margin:0;background:rgba(52,211,153,.1);border-color:var(--accent);color:var(--accent)">⏱ Cronômetro Musculação</button>
         </div>
         <!-- PRESETS -->
         <div style="margin-bottom:10px">
@@ -351,7 +351,7 @@ const SUPPS=[
 {id:'s04',time:'07:00',qty:'🧴 1 Pump',title:'Testosterona Gel 20% (Pentravan)',cat:'Hormonal',note:'Aplicar em pele limpa e seca · Lavar mãos após'},
 {id:'s05',time:'07:00',qty:'💊 2 Caps',title:'Vitamina D3 2.000 UI × 2 (4.000 UI)',cat:'Lipossolúvel',note:'🍳 COM GORDURA obrigatório · 25(OH)D atual 34,2 — meta ≥40 ng/mL · Reavaliar próximo exame'},
 {id:'s39',time:'07:00',qty:'💊 1 Cap',title:'Vitamina K2 150mcg',cat:'Lipossolúvel',note:'🍳 COM GORDURA · Direciona cálcio aos ossos · 150mcg suficiente (dose 2 à noite)'},
-{id:'s06',time:'07:00',qty:'💊 1 Cap',title:'Ômega-3 (Dose 1)',cat:'Lipossolúvel',note:'🍳 COM GORDURA · Serve como veículo lipídico para D3/K2/CoQ10'},
+{id:'s06',time:'07:00',qty:'💊 2 Caps (600mg)',title:'Ômega-3 Vitafor (Dose 1 — 2 caps)',cat:'Lipossolúvel',note:'🍳 COM GORDURA · 2 caps = 600mg Ômega-3 (360mg EPA + 240mg DHA) · Veículo lipídico para D3/K2/CoQ10'},
 {id:'s07',time:'19:00',qty:'💊 1 Cap',title:'Cobre Quelato 3mg (SEG/QUA/SEX)',cat:'Mineral',ironOnly:true,note:'⚠ SEG/QUA/SEX junto c/ ferro · ≥12h após ferro manhã (06:15→19:00 ✓) · ≥7h após zinco (12:00→19:00 ✓) · Obrigatório c/ zinco >25mg/dia'},
 {id:'s08',time:'07:00',qty:'💊 1 CP',title:'Candesartana 16mg (Venzer)',cat:'PA',note:'Com ou sem alimento — sem restrição'},
 {id:'s09',time:'07:00',qty:'💊 1 CP',title:'Dutasterida 0,5mg',cat:'DHT',note:'🍳 COM GORDURA melhora absorção · ≥12h do CBD noturno (07:00→19:00 = 12h ✓) · Meia-vida ~5 semanas'},
@@ -379,7 +379,7 @@ const SUPPS=[
 // ── 19:00 JANTAR ──
 {id:'s26',time:'19:00',qty:'💊 1 CP',title:'Metformina XR 500mg (Glifage)',cat:'Metab',note:'🍽 COM COMIDA obrigatório · Reduz desconforto GI'},
 {id:'s27',time:'19:00',qty:'💊 1 CP',title:'Trental 400mg (Dose 3)',cat:'Reologia',note:'🍽 COM COMIDA · Dose 3 de 3'},
-{id:'s29',time:'19:00',qty:'💊 1 Cap',title:'Ômega-3 (Dose 2, com comida)',cat:'Lipossolúvel',note:'🍳 COM GORDURA da refeição · Dose 2 de 2'},
+{id:'s29',time:'19:00',qty:'💊 1 Cap (300mg)',title:'Ômega-3 Vitafor (Dose 2 — 1 cap)',cat:'Lipossolúvel',note:'🍳 COM GORDURA da refeição · 1 cap = 300mg Ômega-3 (180mg EPA + 120mg DHA) · Total dia: 900mg Ômega-3'},
 {id:'s30',time:'19:00',qty:'💊 4 Caps',title:'Cálcio 800mg + D3 500UI + K1 (≥2h do zinco)',cat:'Ósseo',note:'⚠ ≥2h após zinco (12:00→19:00 = 7h ✓) · ≥3h após ferro · COM COMIDA · K1 ≠ K2: a K2 150mcg da manhã é que direciona cálcio aos ossos'},
 {id:'s31',time:'19:00',qty:'💊 1 Cap',title:'Cardo Mariano 500mg (com comida)',cat:'Fígado',note:'🍽 COM COMIDA · Hepatoprotetor'},
 // ── 21:15 NOITE (45+ min após jantar) ──
@@ -577,11 +577,45 @@ function load(){
     if(!state.food) state.food=[];
     if(!state.history) state.history=[];
     if(!state.gymHistory) state.gymHistory=[];
-    // Migração automática — corrige dados do localStorage sem perder histórico
+
+    // Migração automática — ANTES da recuperação, para que patches de migrate
+    // não confundam o check de integridade abaixo
     migrate();
+
+    // ✅ RECUPERAÇÃO ROBUSTA: roda DEPOIS de migrate() e sem a condição "> 0"
+    // Detecta supps corrompido/incompleto comparando contra o protocolo master
+    if(state.supps.length < SUPPS.length){
+        // Preserva estado done/log de itens que já estavam marcados hoje
+        const doneMap={};
+        state.supps.forEach(t=>{
+            doneMap[t.id]={done:!!t.done,log:t.log||'',suspended:t.suspended,userNote:t.userNote||''};
+        });
+        state.supps=JSON.parse(JSON.stringify(SUPPS));
+        state.supps.forEach(t=>{
+            if(doneMap[t.id]){
+                t.done=doneMap[t.id].done;
+                t.log=doneMap[t.id].log;
+                if(doneMap[t.id].suspended!=null) t.suspended=doneMap[t.id].suspended;
+                if(doneMap[t.id].userNote) t.userNote=doneMap[t.id].userNote;
+            }
+        });
+        // Reaplicar patches de migrate() nos itens reconstruídos
+        const fix2=(id,changes)=>{const t=state.supps.find(x=>x.id===id);if(t) Object.assign(t,changes);};
+        fix2('s36',{time:'09:30',qty:'💧 10 gotas',title:'Canabidiol (CBD) — manhã'});
+        if(!state.supps.find(x=>x.id==='s36b'))
+            state.supps.push({id:'s36b',time:'19:00',qty:'💧 20 gotas',title:'Canabidiol (CBD) — noite',cat:'Sono',note:'⚠ ≥12h antes dutasterida · Com jantar · Inibidor CYP2C19',done:false,log:'',suspended:false});
+        fix2('s07',{time:'19:00',title:'Cobre Quelato 3mg (SEG/QUA/SEX)',ironOnly:true});
+        fix2('s42',{suspended:true,title:'Saw Palmetto + Pygeum (SUSPENSO — dutasterida iniciada)'});
+        state.supps=state.supps.filter(x=>x.id!=='s28');
+        fix2('s14',{time:'19:00',qty:'💊 2 Caps (1.200mg)',title:'NAC 1.200mg — dose única consolidada'});
+        state.supps.sort((a,b)=>a.time.localeCompare(b.time));
+    }
+    if(state.derm.length < DERM.length) state.derm=JSON.parse(JSON.stringify(DERM));
+
+    // Restaurar timer se estava ativo
+    restoreTimer();
     const today=new Date().toLocaleDateString('pt-BR');
     if(state.date!==today){
-        // ✅ Auto-salvar o dia anterior ANTES de resetar
         autoSaveDay();
         if(!state.supps.length) state.supps=JSON.parse(JSON.stringify(SUPPS));
         if(!state.derm.length) state.derm=JSON.parse(JSON.stringify(DERM));
@@ -979,7 +1013,7 @@ const ITEM_INFO={
 's03':{obj:'Tratamento ansiedade social (dose terapêutica)',rec:'Tomar no mesmo horário diariamente. Não interromper sem orientação médica.',interval:'Efeito pleno após 4-6 semanas. Inibição CYP2C19 pelo CBD pode ↑ nível sérico'},
 's04':{obj:'TRT — otimizar testosterona (358 ng/dL → meta 600-900)',rec:'Aplicar em pele limpa e seca (braço/abdômen). Lavar mãos após. Evitar contato com mulheres/crianças.',interval:'Absorção ~4h. Aplicar antes de vestir camisa'},
 's05':{obj:'Corrigir vitamina D (34,2 → meta ≥40 ng/mL)',rec:'COM GORDURA obrigatório (lipossolúvel). Se próximo exame <40, aumentar para 6.000 UI.',interval:'Tomar junto com ômega-3 e K2 para sinergismo'},
-'s06':{obj:'Veículo lipídico + anti-inflamatório + cardioproteção',rec:'COM GORDURA da refeição. Serve como veículo para D3, K2, CoQ10.',interval:'Sem restrições significativas'},
+'s06':{obj:'Veículo lipídico + anti-inflamatório + cardioproteção — Vitafor 900mg/dia',rec:'2 caps pela manhã COM GORDURA (serve como veículo para D3, K2, CoQ10). 1 cap à noite no jantar. Total: 900mg Ômega-3 = 540mg EPA + 360mg DHA/dia.',interval:'Sem restrições significativas'},
 's07':{obj:'Prevenir deficiência de cobre (obrigatório c/ zinco >25mg/dia)',rec:'Zinco depleta cobre a longo prazo. SEG/QUA/SEX junto com o ferro da noite.',interval:'SEG/QUA/SEX · ≥12h após ferro manhã · ≥7h após zinco (12:00→19:00 ✓)'},
 's08':{obj:'Controle de PA (hipertensão)',rec:'Dose fixa diária. Monitorar PA especialmente com minoxidil.',interval:'Sem restrição alimentar. Pico 3-4h'},
 's09':{obj:'Bloquear DHT (alopecia androgenética) — inibição tipo I e II',rec:'COM GORDURA melhora absorção. CBD noturno às 19h garante intervalo ≥12h.',interval:'≥12h do CBD noturno (07:00→19:00 = 12h ✓) · Meia-vida ~5 semanas — efeito pleno 3-6 meses'},
@@ -1034,14 +1068,60 @@ function openItemInfo(id,panel){
 }
 
 // ═══ WORKOUT TIMER ═══
+const TK='thobias_timer_v57'; // chave separada para o timer
+
 let wkTimer={running:false,start:0,elapsed:0,interval:null,
-    // Sub-timer for series/rest
-    subMode:'idle', // idle, series, rest
-    subStart:0,subElapsed:0,subInterval:null,
+    subMode:'idle',subStart:0,subElapsed:0,subInterval:null,
     totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0,
-    // Integração com exercícios
     activeExId:null,activeSetIdx:-1
 };
+
+// Salva estado do timer no localStorage (sem os IDs de interval)
+function saveTimer(){
+    const now=Date.now();
+    // Snapshot dos tempos acumulados até agora
+    const snap={
+        running:wkTimer.running,
+        elapsed:wkTimer.running?(wkTimer.elapsed+now-wkTimer.start):wkTimer.elapsed,
+        subMode:wkTimer.subMode,
+        subElapsed:wkTimer.subMode!=='idle'&&wkTimer.subInterval?(wkTimer.subElapsed+now-wkTimer.subStart):wkTimer.subElapsed,
+        totalSeriesTime:wkTimer.totalSeriesTime,
+        totalRestTime:wkTimer.totalRestTime,
+        seriesCount:wkTimer.seriesCount,
+        restCount:wkTimer.restCount,
+        activeExId:wkTimer.activeExId,
+        activeSetIdx:wkTimer.activeSetIdx,
+        savedAt:now
+    };
+    localStorage.setItem(TK,JSON.stringify(snap));
+}
+
+// Restaura timer do localStorage (chamado no load())
+function restoreTimer(){
+    const r=localStorage.getItem(TK);
+    if(!r) return;
+    try{
+        const t=JSON.parse(r);
+        // Só restaura se foi salvo há menos de 4h (14400000ms)
+        if(Date.now()-t.savedAt>14400000){localStorage.removeItem(TK);return;}
+        // Recalcula elapsed: se estava rodando, soma o tempo que passou
+        const extra=t.running?Math.max(0,Date.now()-t.savedAt):0;
+        wkTimer.elapsed=t.elapsed+extra;
+        wkTimer.subMode=t.subMode||'idle';
+        // Sub-timer: se estava em série/descanso, conta o tempo extra também
+        wkTimer.subElapsed=t.subElapsed+(t.running&&t.subMode!=='idle'?extra:0);
+        wkTimer.totalSeriesTime=t.totalSeriesTime||0;
+        wkTimer.totalRestTime=t.totalRestTime||0;
+        wkTimer.seriesCount=t.seriesCount||0;
+        wkTimer.restCount=t.restCount||0;
+        wkTimer.activeExId=t.activeExId||null;
+        wkTimer.activeSetIdx=t.activeSetIdx||-1;
+        // Sempre restaura como pausado — usuário decide retomar
+        wkTimer.running=false;
+        wkTimer.start=Date.now();
+        wkTimer.subStart=Date.now();
+    }catch(e){localStorage.removeItem(TK);}
+}
 
 function fmtTimer(ms){
     const s=Math.floor(ms/1000),m=Math.floor(s/60),h=Math.floor(m/60);
@@ -1049,45 +1129,52 @@ function fmtTimer(ms){
 }
 
 function openWorkoutTimer(){
+    // Reinicia intervals se foram perdidos (reload de página, retorno do background)
+    if(wkTimer.running&&!wkTimer.interval){
+        wkTimer.start=Date.now(); // ancora o timestamp ao momento do resume
+        wkTimer.interval=setInterval(()=>{renderTimerUI();saveTimer();},500);
+    }
+    if(wkTimer.subMode!=='idle'&&!wkTimer.subInterval){
+        wkTimer.subStart=Date.now();
+        wkTimer.subInterval=setInterval(()=>{renderTimerUI();renderGym();},200);
+    }
     renderTimerUI();
     document.getElementById('timerModal').classList.add('open');
 }
 
 function adjustTimer(ms){
-    // Adjust total elapsed (clamped to 0)
     if(wkTimer.running){wkTimer.elapsed+=Date.now()-wkTimer.start;wkTimer.start=Date.now();}
     wkTimer.elapsed=Math.max(0,wkTimer.elapsed+ms);
-    renderTimerUI();
+    saveTimer();renderTimerUI();
 }
 function adjustSub(ms){
-    // Captura tempo atual antes de ajustar
     if(wkTimer.subInterval){wkTimer.subElapsed+=Date.now()-wkTimer.subStart;wkTimer.subStart=Date.now();}
     const before=wkTimer.subElapsed;
     wkTimer.subElapsed=Math.max(0,wkTimer.subElapsed+ms);
-    const delta=wkTimer.subElapsed-before; // delta real (pode ser menor se clampou em 0)
-    // Conservação: o tempo subtraído de série vai para descanso e vice-versa
-    if(wkTimer.subMode==='series'){
-        wkTimer.totalRestTime=Math.max(0,wkTimer.totalRestTime-delta);
-    } else if(wkTimer.subMode==='rest'){
-        wkTimer.totalSeriesTime=Math.max(0,wkTimer.totalSeriesTime-delta);
-    }
-    renderTimerUI();
+    const delta=wkTimer.subElapsed-before;
+    if(wkTimer.subMode==='series') wkTimer.totalRestTime=Math.max(0,wkTimer.totalRestTime-delta);
+    else if(wkTimer.subMode==='rest') wkTimer.totalSeriesTime=Math.max(0,wkTimer.totalSeriesTime-delta);
+    saveTimer();renderTimerUI();
 }
 function adjustSeriesCount(delta){
     wkTimer.seriesCount=Math.max(0,wkTimer.seriesCount+delta);
-    renderTimerUI();
+    saveTimer();renderTimerUI();
 }
 
 function renderTimerUI(){
     const el=document.getElementById('timerContent');
     if(!el) return;
-    const elapsed=wkTimer.running?(wkTimer.elapsed+Date.now()-wkTimer.start):wkTimer.elapsed;
-    const subElapsed=(wkTimer.subMode!=='idle'&&wkTimer.subInterval)?(wkTimer.subElapsed+Date.now()-wkTimer.subStart):wkTimer.subElapsed;
-    const adjBtnStyle='background:rgba(255,255,255,.07);border:1px solid var(--border2);color:var(--text2);border-radius:8px;padding:6px 10px;font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;cursor:pointer';
+    // ─── cálculo robusto — não depende de subInterval existir ───
+    const now=Date.now();
+    const elapsed=wkTimer.running?(wkTimer.elapsed+now-wkTimer.start):wkTimer.elapsed;
+    const rawSubElapsed=wkTimer.subMode!=='idle'
+        ?(wkTimer.subInterval?(wkTimer.subElapsed+now-wkTimer.subStart):wkTimer.subElapsed)
+        :0;
+    const adjBtnStyle='background:rgba(255,255,255,.07);border:1px solid var(--border2);color:var(--text2);border-radius:8px;padding:6px 10px;font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0';
 
-    // Exercício ativo vinculado ao timer
+    // Exercício ativo
     let activeExHtml='';
-    if(wkTimer.activeExId){
+    if(wkTimer.activeExId&&wkTimer.subMode==='series'){
         const ex=state.gym.find(x=>x.id===wkTimer.activeExId);
         if(ex){
             const rA=ex.reps?ex.reps.split(',').map(s=>s.trim()):[];
@@ -1114,60 +1201,31 @@ function renderTimerUI(){
         </div>
     </div>`;
 
-    // Main timer buttons — layout redesenhado para evitar toque involuntário
+    // Botões principais — pausa pequena, à direita
     html+=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px">`;
     if(!wkTimer.running&&wkTimer.elapsed===0){
         html+=`<button class="mbtn mbtn-save" onclick="startWorkoutTimer()" style="flex:1;font-size:14px;padding:14px">▶ Iniciar Treino</button>`;
     } else if(wkTimer.running){
-        // Timer em execução: PAUSA fica pequena, à direita, com ícone e texto pequeno
-        // Área principal vazia (não clicável) para evitar toque acidental
-        html+=`<div style="flex:1;text-align:left;padding-left:4px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;line-height:1.4">Treino<br>em andamento</div>
-        <button onclick="pauseWorkoutTimer()" style="
-            background:rgba(251,146,60,.12);
-            border:1.5px solid var(--orange);
-            color:var(--orange);
-            border-radius:12px;
-            padding:10px 18px;
-            font-family:'Outfit',sans-serif;
-            font-weight:700;
-            font-size:11px;
-            cursor:pointer;
-            display:flex;align-items:center;gap:6px;
-            text-transform:uppercase;letter-spacing:.5px;
-            flex-shrink:0
-        "><svg width="12" height="14" viewBox="0 0 12 14" fill="var(--orange)"><rect x="0" y="0" width="4" height="14" rx="1"/><rect x="8" y="0" width="4" height="14" rx="1"/></svg> Pausar</button>`;
+        html+=`<div style="flex:1;padding-left:4px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;line-height:1.5">Treino<br>em andamento</div>
+        <button onclick="pauseWorkoutTimer()" style="background:rgba(251,146,60,.12);border:1.5px solid var(--orange);color:var(--orange);border-radius:12px;padding:10px 18px;font-family:'Outfit',sans-serif;font-weight:700;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0"><svg width="12" height="14" viewBox="0 0 12 14" fill="var(--orange)"><rect x="0" y="0" width="4" height="14" rx="1"/><rect x="8" y="0" width="4" height="14" rx="1"/></svg>Pausar</button>`;
     } else {
-        // Pausado: retomar em destaque, encerrar à direita menor
         html+=`<button class="mbtn mbtn-save" onclick="resumeWorkoutTimer()" style="flex:1;font-size:13px">▶ Retomar</button>
-        <button onclick="finishWorkoutTimer()" style="
-            background:rgba(248,113,113,.1);
-            border:1.5px solid var(--red);
-            color:var(--red);
-            border-radius:12px;
-            padding:10px 14px;
-            font-family:'Outfit',sans-serif;
-            font-weight:700;
-            font-size:11px;
-            cursor:pointer;
-            text-transform:uppercase;letter-spacing:.5px;
-            flex-shrink:0
-        ">⏹ Encerrar</button>`;
+        <button onclick="finishWorkoutTimer()" style="background:rgba(248,113,113,.1);border:1.5px solid var(--red);color:var(--red);border-radius:12px;padding:10px 14px;font-family:'Outfit',sans-serif;font-weight:700;font-size:11px;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0">⏹ Encerrar</button>`;
     }
     html+=`</div>`;
 
-    // Sub-timer
-    if(wkTimer.running||wkTimer.elapsed>0){
+    // Sub-timer — sempre visível se há elapsed, mesmo com timer pausado
+    if(elapsed>0||wkTimer.subMode!=='idle'){
         const subColor=wkTimer.subMode==='series'?'var(--accent)':wkTimer.subMode==='rest'?'var(--orange)':'var(--text3)';
         const subLabel=wkTimer.subMode==='series'?'🏋️ SÉRIE':wkTimer.subMode==='rest'?'⏳ INTERVALO':'—';
-        const subMs=wkTimer.subMode!=='idle'&&wkTimer.subInterval?subElapsed:0;
-        html+=`<div style="border-top:1px solid var(--border2);padding-top:14px;margin-top:8px">
+        html+=`<div style="border-top:1px solid var(--border2);padding-top:14px;margin-top:4px">
             <div style="text-align:center;margin-bottom:8px">
                 <div style="font-size:10px;font-weight:700;color:${subColor};text-transform:uppercase;margin-bottom:4px">${subLabel}</div>
-                <div style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:800;color:${subColor}">${fmtTimer(subMs)}</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:800;color:${subColor}">${fmtTimer(rawSubElapsed)}</div>
                 <div style="font-size:9px;color:var(--text3);margin-top:2px">±5s redistribui entre série e descanso</div>
                 <div style="display:flex;gap:6px;justify-content:center;margin-top:6px">
-                    <button style="${adjBtnStyle};font-size:10px" onclick="adjustSub(-5000)">−5s</button>
-                    <button style="${adjBtnStyle};font-size:10px" onclick="adjustSub(5000)">+5s</button>
+                    <button style="${adjBtnStyle};font-size:10px;padding:5px 10px" onclick="adjustSub(-5000)">−5s</button>
+                    <button style="${adjBtnStyle};font-size:10px;padding:5px 10px" onclick="adjustSub(5000)">+5s</button>
                 </div>
             </div>
             <div style="display:flex;gap:8px;justify-content:center;margin-bottom:12px">`;
@@ -1178,9 +1236,8 @@ function renderTimerUI(){
         } else if(wkTimer.subMode==='rest'){
             html+=`<button class="mbtn" onclick="endSub()" style="flex:1;background:rgba(251,146,60,.15);color:var(--orange);border:1px solid var(--orange)">✓ Fim do Intervalo</button>`;
         }
-        html+=`</div>`;
-        // Stats com edição de séries
-        html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px">
+        html+=`</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px">
             <div style="background:rgba(52,211,153,.06);padding:8px;border-radius:8px;text-align:center">
                 <div style="color:var(--accent);font-weight:800;font-size:16px">${fmtTimer(wkTimer.totalSeriesTime)}</div>
                 <div style="color:var(--text3);margin-bottom:4px">Sob tensão</div>
@@ -1192,87 +1249,91 @@ function renderTimerUI(){
             </div>
             <div style="background:rgba(251,146,60,.06);padding:8px;border-radius:8px;text-align:center">
                 <div style="color:var(--orange);font-weight:800;font-size:16px">${fmtTimer(wkTimer.totalRestTime)}</div>
-                <div style="color:var(--text3)">Intervalo (${wkTimer.restCount}x)</div>
+                <div style="color:var(--text3)">Descanso (${wkTimer.restCount}×)</div>
             </div>
-        </div>`;
-        html+=`</div>`;
+        </div></div>`;
     }
     el.innerHTML=html;
 }
 
 function startWorkoutTimer(){
+    if(wkTimer.interval) clearInterval(wkTimer.interval);
+    if(wkTimer.subInterval) clearInterval(wkTimer.subInterval);
     wkTimer.running=true;wkTimer.start=Date.now();wkTimer.elapsed=0;
-    wkTimer.totalSeriesTime=0;wkTimer.totalRestTime=0;wkTimer.seriesCount=0;wkTimer.restCount=0;wkTimer.subMode='idle';
-    wkTimer.interval=setInterval(renderTimerUI,500);renderTimerUI();
+    wkTimer.totalSeriesTime=0;wkTimer.totalRestTime=0;wkTimer.seriesCount=0;wkTimer.restCount=0;
+    wkTimer.subMode='idle';wkTimer.subElapsed=0;wkTimer.subInterval=null;
+    wkTimer.activeExId=null;wkTimer.activeSetIdx=-1;
+    wkTimer.interval=setInterval(()=>{renderTimerUI();saveTimer();},500);
+    saveTimer();renderTimerUI();
 }
 function pauseWorkoutTimer(){
-    wkTimer.running=false;wkTimer.elapsed+=Date.now()-wkTimer.start;
+    wkTimer.elapsed+=Date.now()-wkTimer.start;
+    wkTimer.running=false;
     clearInterval(wkTimer.interval);wkTimer.interval=null;
     if(wkTimer.subMode!=='idle') pauseSub();
-    renderTimerUI();
+    saveTimer();renderTimerUI();
 }
 function resumeWorkoutTimer(){
     wkTimer.running=true;wkTimer.start=Date.now();
-    wkTimer.interval=setInterval(renderTimerUI,500);renderTimerUI();
+    if(wkTimer.interval) clearInterval(wkTimer.interval);
+    wkTimer.interval=setInterval(()=>{renderTimerUI();saveTimer();},500);
+    // Retomar sub-timer se estava ativo
+    if(wkTimer.subMode!=='idle'&&!wkTimer.subInterval){
+        wkTimer.subStart=Date.now();
+        wkTimer.subInterval=setInterval(()=>{renderTimerUI();renderGym();},200);
+    }
+    saveTimer();renderTimerUI();
 }
 function stopWorkoutTimer(){
-    // Chamado apenas ao fechar definitivamente (reset total)
     if(wkTimer.interval){clearInterval(wkTimer.interval);wkTimer.interval=null;}
     if(wkTimer.subInterval){clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}
 }
-function minimizeTimer(){
-    // Fechar o modal SEM parar o timer — captura elapsed pendente dos intervalos
-    // para que na reabertura os cálculos batam, mas mantém running=true
-    // O setInterval continua rodando em background (renderTimerUI tem guard if(!el))
-    closeModal('timerModal');
-}
 function finishWorkoutTimer(){
-    const totalMs=wkTimer.elapsed;
+    // Captura tempo final antes de encerrar sub-timer
     if(wkTimer.subMode!=='idle') endSub();
     clearInterval(wkTimer.interval);wkTimer.interval=null;
+    const totalMs=wkTimer.running?(wkTimer.elapsed+Date.now()-wkTimer.start):wkTimer.elapsed;
     const totalMin=Math.round(totalMs/60000);
     const seriesMin=(wkTimer.totalSeriesTime/60000).toFixed(1);
     const restMin=(wkTimer.totalRestTime/60000).toFixed(1);
-
-    // Add generic musculação exercise
     const cals=prompt('Calorias estimadas (smartwatch):','0');
-    const notes=`⏱ ${totalMin}min total · 🏋️ ${seriesMin}min tensão (${wkTimer.seriesCount} séries) · ⏳ ${restMin}min intervalo (${wkTimer.restCount}x)`;
+    const notes=`⏱ ${totalMin}min total · 🏋️ ${seriesMin}min tensão (${wkTimer.seriesCount} sér.) · ⏳ ${restMin}min descanso (${wkTimer.restCount}×)`;
     state.gym.push({
         id:'ex'+Date.now(),name:'Musculação',type:'cardio',
         duration:totalMin,calories:parseInt(cals)||0,
         distance:'',hr:0,notes,done:true,
         time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
-        isGeneric:true,seriesTime:wkTimer.totalSeriesTime,restTime:wkTimer.totalRestTime,
-        seriesCount:wkTimer.seriesCount,restCount:wkTimer.restCount
+        isGeneric:true
     });
-
-    // Reset timer
-    wkTimer={running:false,start:0,elapsed:0,interval:null,subMode:'idle',subStart:0,subElapsed:0,subInterval:null,totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0};
+    // Reset completo
+    wkTimer={running:false,start:0,elapsed:0,interval:null,subMode:'idle',subStart:0,subElapsed:0,subInterval:null,totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0,activeExId:null,activeSetIdx:-1};
+    localStorage.removeItem(TK);
     save();closeModal('timerModal');
 }
 
 function startSub(mode, exId=null, setIdx=-1){
+    if(wkTimer.subInterval){clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}
     wkTimer.subMode=mode;wkTimer.subStart=Date.now();wkTimer.subElapsed=0;
     if(mode==='series'){wkTimer.activeExId=exId;wkTimer.activeSetIdx=setIdx;}
     else{wkTimer.activeExId=null;wkTimer.activeSetIdx=-1;}
     wkTimer.subInterval=setInterval(()=>{renderTimerUI();renderGym();},200);
-    renderTimerUI();renderGym();
+    saveTimer();renderTimerUI();renderGym();
 }
 function pauseSub(){
     if(wkTimer.subInterval){wkTimer.subElapsed+=Date.now()-wkTimer.subStart;clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}
 }
 function endSub(){
     const elapsed=wkTimer.subElapsed+(wkTimer.subInterval?Date.now()-wkTimer.subStart:0);
+    if(wkTimer.subInterval){clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}
     if(wkTimer.subMode==='series'){
         wkTimer.totalSeriesTime+=elapsed;
         wkTimer.seriesCount++;
-        // Sincronizar com exercício vinculado
         if(wkTimer.activeExId!==null&&wkTimer.activeSetIdx>=0){
             const ex=state.gym.find(x=>x.id===wkTimer.activeExId);
             if(ex&&!(ex.completed||[]).includes(wkTimer.activeSetIdx)){
                 if(!ex.completed) ex.completed=[];
                 ex.completed.push(wkTimer.activeSetIdx);
-                localStorage.setItem(SK,JSON.stringify(state));// salvar sem re-render completo
+                localStorage.setItem(SK,JSON.stringify(state));
             }
         }
         wkTimer.activeExId=null;wkTimer.activeSetIdx=-1;
@@ -1282,33 +1343,23 @@ function endSub(){
         wkTimer.restCount++;
         wkTimer.subMode='idle';
     }
-    if(wkTimer.subInterval){clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}
     wkTimer.subElapsed=0;wkTimer.subStart=Date.now();
-    if(wkTimer.subMode==='rest'){startSub('rest');}
+    saveTimer();
+    if(wkTimer.subMode==='rest') startSub('rest');
     else{renderTimerUI();renderGym();}
 }
 function toggleExSet(eid,si){
     const ex=state.gym.find(x=>x.id===eid);if(!ex) return;
     if(!ex.completed) ex.completed=[];
     const i=ex.completed.indexOf(si);
-    if(i>-1){
-        // Destoggle: remove da lista
-        ex.completed.splice(i,1);
-        save();return;
-    }
-    // Toggle ON: se o timer estiver idle, integrar
+    if(i>-1){ex.completed.splice(i,1);save();return;}
     if(wkTimer.subMode==='idle'){
-        // Auto-iniciar treino se ainda não começou
         if(!wkTimer.running&&wkTimer.elapsed===0) startWorkoutTimer();
         else if(!wkTimer.running) resumeWorkoutTimer();
         startSub('series',eid,si);
-        // Abrir cronômetro
-        renderTimerUI();
         document.getElementById('timerModal').classList.add('open');
     } else {
-        // Timer ocupado: marcar direto sem timer
-        ex.completed.push(si);
-        save();
+        ex.completed.push(si);save();
     }
 }
 function toggleCardioDone(eid){const ex=state.gym.find(x=>x.id===eid);if(!ex) return;ex.done=!ex.done;save();}
@@ -1572,6 +1623,21 @@ function render(){
     document.getElementById('barW').style.width=Math.min((fp/4000)*100,100)+'%';
     document.getElementById('barC').style.width=Math.min((fd/4000)*100,100)+'%';
     document.getElementById('barO').style.width=Math.min((fo/4000)*100,100)+'%';
+    // Badge do timer no botão cronômetro
+    const tb=document.getElementById('timerBtn');
+    if(tb){
+        const hasTimer=wkTimer.running||(wkTimer.elapsed>0&&wkTimer.subMode!=='idle')||(wkTimer.elapsed>0);
+        if(wkTimer.running){
+            tb.style.background='rgba(52,211,153,.2)';tb.style.borderColor='var(--accent)';
+            tb.textContent='⏱ TREINO EM ANDAMENTO ●';
+        } else if(wkTimer.elapsed>0){
+            tb.style.background='rgba(251,146,60,.15)';tb.style.borderColor='var(--orange)';tb.style.color='var(--orange)';
+            tb.textContent='⏱ Cronômetro Pausado — Toque para retomar';
+        } else {
+            tb.style.background='rgba(52,211,153,.1)';tb.style.borderColor='var(--accent)';tb.style.color='var(--accent)';
+            tb.textContent='⏱ Cronômetro Musculação';
+        }
+    }
     renderList('supps','panel-supps');
     renderList('derm','panel-derm');
     renderGym();
