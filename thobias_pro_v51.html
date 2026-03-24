@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thobias Pro | v57</title>
+    <title>Thobias Pro | v58</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -124,11 +124,6 @@
         .hist-score{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:800;color:var(--accent)}
         .hist-water{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue)}
         canvas{display:none}
-        .notif-btn{position:absolute;top:14px;right:80px;background:none;border:1px solid var(--border2);border-radius:8px;padding:4px 8px;font-size:14px;cursor:pointer;color:var(--text3);transition:.2s}
-        .notif-btn.on{color:var(--accent);border-color:var(--accent);background:var(--accent-glow)}
-        .timer-active-badge{display:inline-flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(52,211,153,.15);color:var(--accent);border:1px solid rgba(52,211,153,.3);animation:pulse-badge .8s infinite alternate}
-        @keyframes pulse-badge{from{opacity:.7}to{opacity:1}}
-        .ex-set-active{background:rgba(52,211,153,.2)!important;border-color:var(--accent)!important;color:var(--accent)!important;animation:pulse-badge .8s infinite alternate}
     </style>
 </head>
 <body>
@@ -138,9 +133,7 @@
             <div>
                 <div class="brand">Thobias Pro</div>
                 <div class="brand-sub" id="displayDate">--/--/----</div>
-                <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:1px;opacity:.6">v57 · 20/03/2026 · 08:30</div>
             </div>
-            <button id="notifBtn" class="notif-btn" onclick="toggleNotifications()" title="Notificações de suplementos">🔔</button>
             <div class="score-ring">
                 <svg viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="15.5"/><circle class="fg" id="scoreArc" cx="18" cy="18" r="15.5" stroke-dasharray="97.4" stroke-dashoffset="97.4"/></svg>
                 <div class="score-val"><span id="lblScore">0</span>%</div>
@@ -185,16 +178,7 @@
     <div id="panel-derm" class="panel"></div>
     <div id="panel-gym" class="panel">
         <div style="display:flex;gap:8px;margin-bottom:10px">
-            <button class="add-btn" id="timerBtn" onclick="openWorkoutTimer()" style="flex:1;margin:0;background:rgba(52,211,153,.1);border-color:var(--accent);color:var(--accent)">⏱ Cronômetro Musculação</button>
-        </div>
-        <!-- PRESETS -->
-        <div style="margin-bottom:10px">
-            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">📋 Carregar Treino Prescrito</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
-                <button class="wbtn" onclick="loadPreset('A')" style="padding:10px 4px;border-color:rgba(248,113,113,.3);color:var(--red);background:rgba(248,113,113,.06);font-size:8.5px;flex-direction:column;gap:2px"><span style="font-size:13px">🏋️</span>Peitoral<br>Definição</button>
-                <button class="wbtn" onclick="loadPreset('B')" style="padding:10px 4px;border-color:rgba(96,165,250,.3);color:var(--blue);background:rgba(96,165,250,.06);font-size:8.5px;flex-direction:column;gap:2px"><span style="font-size:13px">💪</span>Dorsal<br>Bíceps+Cardio</button>
-                <button class="wbtn" onclick="loadPreset('C')" style="padding:10px 4px;border-color:rgba(167,139,250,.3);color:var(--purple);background:rgba(167,139,250,.06);font-size:8.5px;flex-direction:column;gap:2px"><span style="font-size:13px">🦵</span>Inferiores<br>Core</button>
-            </div>
+            <button class="add-btn" onclick="openWorkoutTimer()" style="flex:1;margin:0;background:rgba(52,211,153,.1);border-color:var(--accent);color:var(--accent)">⏱ Cronômetro Musculação</button>
         </div>
         <div id="exList"></div>
         <button class="add-btn" onclick="openExModal('new')">+ Adicionar Exercício</button>
@@ -264,7 +248,6 @@
     <div class="modal-row" id="editRow1">
         <button class="mbtn mbtn-del" onclick="deleteItem()">Excluir</button>
         <button class="mbtn mbtn-sus" id="btnSus" onclick="toggleSuspend()">Suspender</button>
-        <button class="mbtn" id="btnDup" onclick="duplicateItem()" style="background:var(--blue);color:#0a0f1e;flex:1">📋 Duplicar</button>
     </div>
     <div class="modal-row"><button class="mbtn mbtn-close" onclick="closeModal('editModal')">Cancelar</button><button class="mbtn mbtn-save" onclick="saveEdit()">Salvar</button></div>
 </div></div>
@@ -334,7 +317,7 @@
 <div id="timerModal" class="modal-bg"><div class="modal" style="max-width:440px">
     <h3>⏱ Cronômetro de Treino</h3>
     <div id="timerContent"></div>
-    <div class="modal-row"><button class="mbtn mbtn-close" onclick="closeModal('timerModal')" style="flex:1">↙ Minimizar</button></div>
+    <div class="modal-row"><button class="mbtn mbtn-close" onclick="stopWorkoutTimer();closeModal('timerModal')" style="flex:1">Fechar</button></div>
 </div></div>
 
 <canvas id="snapCanvas" width="1080"></canvas>
@@ -345,23 +328,23 @@ const SUPPS=[
 // ── 06:15 JEJUM (esperar 45-60min antes de comer) ──
 {id:'s01',time:'06:15',qty:'💊 1 Dose',title:'Ferro 60mg + Vitamina C 200mg (SEG/QUA/SEX)',cat:'Nutri',ironOnly:true,note:'⚠ JEJUM obrigatório · Vit C potencializa absorção · ≥6h antes do zinco · ≥3h antes do cálcio · ≥5h antes do cobre'},
 {id:'s02',time:'06:15',qty:'💊 Sublingual',title:'Vitamina B12 1.000mcg',cat:'Base',note:'Sublingual = bypass GI, não compete com ferro'},
-{id:'s03',time:'06:15',qty:'💊 10mg',title:'Escitalopram 10mg (Exodus)',cat:'Mood',note:'Dose terapêutica para ansiedade social · Interrupção de desmame'},
+{id:'s03',time:'06:15',qty:'💊 10mg',title:'Escitalopram 10mg (Exodus)',cat:'Mood',note:'Dose terapêutica para ansiedade social · Nível sérico real de 10mg (CBD descontinuado em mar/2026)'},
 {id:'s38',time:'06:15',qty:'🥄 5g',title:'Glutamina (jejum)',cat:'Intestino',note:'⚠ JEJUM maximiza absorção intestinal · Não compete com ferro · Diluir em água'},
 // ── 07:00 CAFÉ DA MANHÃ (com gordura) ──
 {id:'s04',time:'07:00',qty:'🧴 1 Pump',title:'Testosterona Gel 20% (Pentravan)',cat:'Hormonal',note:'Aplicar em pele limpa e seca · Lavar mãos após'},
 {id:'s05',time:'07:00',qty:'💊 2 Caps',title:'Vitamina D3 2.000 UI × 2 (4.000 UI)',cat:'Lipossolúvel',note:'🍳 COM GORDURA obrigatório · 25(OH)D atual 34,2 — meta ≥40 ng/mL · Reavaliar próximo exame'},
 {id:'s39',time:'07:00',qty:'💊 1 Cap',title:'Vitamina K2 150mcg',cat:'Lipossolúvel',note:'🍳 COM GORDURA · Direciona cálcio aos ossos · 150mcg suficiente (dose 2 à noite)'},
-{id:'s06',time:'07:00',qty:'💊 2 Caps (600mg)',title:'Ômega-3 Vitafor (Dose 1 — 2 caps)',cat:'Lipossolúvel',note:'🍳 COM GORDURA · 2 caps = 600mg Ômega-3 (360mg EPA + 240mg DHA) · Veículo lipídico para D3/K2/CoQ10'},
-{id:'s07',time:'19:00',qty:'💊 1 Cap',title:'Cobre Quelato 3mg (SEG/QUA/SEX)',cat:'Mineral',ironOnly:true,note:'⚠ SEG/QUA/SEX junto c/ ferro · ≥12h após ferro manhã (06:15→19:00 ✓) · ≥7h após zinco (12:00→19:00 ✓) · Obrigatório c/ zinco >25mg/dia'},
+{id:'s06',time:'07:00',qty:'💊 1 Cap',title:'Ômega-3 (Dose 1)',cat:'Lipossolúvel',note:'🍳 COM GORDURA · Serve como veículo lipídico para D3/K2/CoQ10'},
+{id:'s07',time:'07:00',qty:'💊 1 Cap',title:'Cobre Quelato 3mg (Lauton)',cat:'Mineral',note:'⚠ ≥5h antes do zinco (12h) · Obrigatório com zinco >25mg/dia'},
 {id:'s08',time:'07:00',qty:'💊 1 CP',title:'Candesartana 16mg (Venzer)',cat:'PA',note:'Com ou sem alimento — sem restrição'},
-{id:'s09',time:'07:00',qty:'💊 1 CP',title:'Dutasterida 0,5mg',cat:'DHT',note:'🍳 COM GORDURA melhora absorção · ≥12h do CBD noturno (07:00→19:00 = 12h ✓) · Meia-vida ~5 semanas'},
-{id:'s10',time:'07:00',qty:'💊 1 CP',title:'Minoxidil oral 2,5mg',cat:'Cabelo',note:'Monitorar PA e FC nas primeiras semanas · Efeito vasodilatador — avaliar hipotensão c/ candesartana'},
+{id:'s09',time:'07:00',qty:'💊 1 CP',title:'Dutasterida 0,5mg',cat:'DHT',note:'🍳 COM GORDURA melhora absorção · Sem restrição de horário com CBD (descontinuado)'},
+{id:'s10',time:'07:00',qty:'💊 1 CP',title:'Minoxidil oral 2,5mg',cat:'Cabelo',note:'Monitorar PA e FC nas primeiras semanas'},
 {id:'s11',time:'07:00',qty:'💊 ~1g',title:'Vitamina B5 (Dose 1)',cat:'Pele',note:'⚠ ≥2h antes da biotina · Fracionada em 3 doses diárias'},
 {id:'s12',time:'07:00',qty:'💊 2 Caps',title:'CoQ10 100mg × 2 (com gordura)',cat:'Energia',note:'🍳 COM GORDURA obrigatório (lipossolúvel) · 2 cáps de 100mg'},
 {id:'s13',time:'06:15',qty:'💊 2 Caps',title:'Taurina 1.600mg',cat:'Renal',note:'Melhor absorção em jejum · Não compete com ferro'},
-{id:'s14',time:'19:00',qty:'💊 2 Caps (1.200mg)',title:'NAC 1.200mg — dose única consolidada',cat:'Nefro',note:'Dose diária completa consolidada · Componente GlyNAC · Precursor glutationa · COM COMIDA reduz desconforto GI'},
+{id:'s14',time:'06:15',qty:'💊 1 Cap',title:'NAC 600mg (Dose 1)',cat:'Nefro',note:'Melhor absorção em jejum · Precursor glutationa · Não compete com ferro'},
 {id:'s41',time:'06:15',qty:'💊 1 Cap',title:'Juba de Leão 500mg (Lion\'s Mane)',cat:'Neuro',note:'Absorção não depende de gordura · Estimula NGF/BDNF · Sinérgico c/ lítio'},
-{id:'s42',time:'07:00',qty:'💊 2 Caps',title:'Saw Palmetto + Pygeum (SUSPENSO — dutasterida iniciada)',cat:'DHT',suspended:true,note:'Bridge encerrado — dutasterida 0,5mg assumiu cobertura DHT'},
+{id:'s42',time:'07:00',qty:'💊 2 Caps',title:'Saw Palmetto 150mg + Pygeum 50mg (BRIDGE até 04/03)',cat:'DHT',note:'⚠ TEMPORÁRIO — suspender ao iniciar Dutasterida · 2 cáps = 300mg SP + 100mg Pyg · COM GORDURA (fitoesteróis lipossolúveis)'},
 // ── 12:00 ALMOÇO ──
 {id:'s15',time:'12:00',qty:'💊 29,5mg',title:'Zinco Quelato (6h+ após ferro)',cat:'Mineral',note:'⚠ ≥6h após ferro (06:15→12:15 ✓) · ≥5h após cobre (07:00→12:00 ✓) · ≥2h antes do cálcio (19h)'},
 {id:'s16',time:'12:00',qty:'💊 ~1g',title:'Vitamina B5 (Dose 2)',cat:'Pele',note:'≥2h antes da biotina da tarde · Dose 2 de 3'},
@@ -375,45 +358,49 @@ const SUPPS=[
 // ── 16:30 PRÉ-TREINO (treino ~17:30) ──
 {id:'s23',time:'16:30',qty:'💊 500-750mg',title:'L-Carnitina (Dose 2 — pré-treino)',cat:'Fat/Pele',note:'30-60 min antes do treino · Potencializa oxidação de gordura'},
 // ── 18:30 PÓS-TREINO ──
+{id:'s45',time:'12:00',qty:'💊 1 Cap (200mg)',title:'Fosfatidilserina 200mg',cat:'Cortisol',note:'🍽 COM REFEIÇÃO · Redução de cortisol crônico · Não tomar à noite (leve efeito estimulante cognitivo) · Derivado de soja'},
 {id:'s25',time:'18:30',qty:'🥄 3-5g',title:'Creatina (com carboidrato/proteína)',cat:'Força',note:'🍽 COM CARBOIDRATO/PROTEÍNA · Insulina ↑ captação muscular'},
 // ── 19:00 JANTAR ──
 {id:'s26',time:'19:00',qty:'💊 1 CP',title:'Metformina XR 500mg (Glifage)',cat:'Metab',note:'🍽 COM COMIDA obrigatório · Reduz desconforto GI'},
 {id:'s27',time:'19:00',qty:'💊 1 CP',title:'Trental 400mg (Dose 3)',cat:'Reologia',note:'🍽 COM COMIDA · Dose 3 de 3'},
-{id:'s29',time:'19:00',qty:'💊 1 Cap (300mg)',title:'Ômega-3 Vitafor (Dose 2 — 1 cap)',cat:'Lipossolúvel',note:'🍳 COM GORDURA da refeição · 1 cap = 300mg Ômega-3 (180mg EPA + 120mg DHA) · Total dia: 900mg Ômega-3'},
+{id:'s28',time:'19:00',qty:'💊 1 Cap',title:'NAC 600mg (Dose 2)',cat:'Nefro',note:'Dose 2 de 2 · Componente do protocolo GlyNAC'},
+{id:'s29',time:'19:00',qty:'💊 1 Cap',title:'Ômega-3 (Dose 2, com comida)',cat:'Lipossolúvel',note:'🍳 COM GORDURA da refeição · Dose 2 de 2'},
 {id:'s30',time:'19:00',qty:'💊 4 Caps',title:'Cálcio 800mg + D3 500UI + K1 (≥2h do zinco)',cat:'Ósseo',note:'⚠ ≥2h após zinco (12:00→19:00 = 7h ✓) · ≥3h após ferro · COM COMIDA · K1 ≠ K2: a K2 150mcg da manhã é que direciona cálcio aos ossos'},
 {id:'s31',time:'19:00',qty:'💊 1 Cap',title:'Cardo Mariano 500mg (com comida)',cat:'Fígado',note:'🍽 COM COMIDA · Hepatoprotetor'},
 // ── 21:15 NOITE (45+ min após jantar) ──
 {id:'s32',time:'21:15',qty:'💊 300-400mg',title:'Magnésio Treonato',cat:'Neuro',note:'⚠ ≥45 min após jantar · Forma treonato cruza barreira hematoencefálica'},
 {id:'s40',time:'21:15',qty:'💊 1 Cap',title:'Lítio Orotato 5mg (elementar)',cat:'Neuro',note:'Dose nutricional (≠ lítio psiquiátrico) · Neuroprotetor · Sinérgico c/ Mg treonato · Monitorar TSH (atual 0,627)'},
 {id:'s33',time:'21:15',qty:'💊 200-400mg',title:'L-Teanina',cat:'Relax',note:'Substituto da ashwagandha (risco tireoidiano c/ TSH 0,627)'},
-{id:'s34',time:'21:15',qty:'💊 15-25mg',title:'Trazodona',cat:'Sono',note:'Dose baixa para sono · Efeito sedativo'},
-{id:'s35',time:'21:15',qty:'💊 2mg',title:'Melatonina',cat:'Sono',note:'Ambiente escuro potencializa efeito'},
-{id:'s36',time:'09:30',qty:'💧 10 gotas',title:'Canabidiol (CBD) — manhã',cat:'Sono',note:'⚠ ≥2h após dutasterida (07:00→09:30 ✓) · Inibidor CYP3A4/CYP2C19 · Pode elevar nível sérico escitalopram'},
-{id:'s36b',time:'19:00',qty:'💧 20 gotas',title:'Canabidiol (CBD) — noite',cat:'Sono',note:'⚠ ≥12h antes dutasterida (19:00→07:00 = 12h ✓) · Tomar com jantar · Dose maior potencializa escitalopram via CYP2C19'},
+{id:'s35',time:'21:00',qty:'💊 0,21mg',title:'Melatonina 0,21mg (âncora circadiana)',cat:'Sono',note:'Tomar 2h antes do horário alvo de adormecer · Dose fisiológica para sincronização circadiana, não sedação · Orodispersível se disponível'},
+{id:'s46',time:'21:15',qty:'💊 50mg',title:'Apigenina 50mg',cat:'Sono',note:'Agonista GABA-A · Reduz arousal cortical e latência do sono · Farmácia de manipulação (Apigex) · Pode potencializar ansiolíticos — informar farmacêutico'},
 {id:'s37',time:'21:15',qty:'🥄 3g',title:'Glicina (GlyNAC)',cat:'Sono',note:'Componente GlyNAC (com NAC) · Auxilia sono e glutationa'},
 {id:'s44',time:'SOS',qty:'💊 10-20mg',title:'Propranolol SOS (pré-evento social)',cat:'Ansiedade',note:'⚠ APENAS em eventos sociais · 30-60min antes · Monitorar PA (candesartana+minoxidil) · Discutir c/ psiquiatra'},
 ];
 
 const DERM=[
-{id:'d01',time:'06:00',qty:'🧊 5-10min',title:'Compressa fria (máscara gel olhos)',cat:'Ptose'},
-{id:'d02',time:'06:05',qty:'🧹 1x',title:'Higiene palpebral',cat:'Ptose'},
-{id:'d03',time:'06:10',qty:'🏋️ 10+15',title:'Exercícios palpebrais',cat:'Ptose'},
-{id:'d04',time:'06:12',qty:'💧 1 gota',title:'Brimonidina 0,15% colírio',cat:'Ptose'},
-{id:'d19',time:'06:45',qty:'💧 1 gota SOS',title:'Fenilefrina 2,5% colírio (se ptose persistir)',cat:'Ptose'},
-{id:'d05',time:'06:20',qty:'🧴',title:'Limpeza facial suave',cat:'Rosto'},
-{id:'d06',time:'06:22',qty:'💧',title:'Sérum cafeína periocular (Mix-02)',cat:'Ptose'},
-{id:'d07',time:'06:25',qty:'🧴',title:'Sérum anti-rosácea (Niacin+Telangyn+Azelogl)',cat:'Rosácea'},
-{id:'d08',time:'06:28',qty:'🧴',title:'Nutrel Gel (barreira)',cat:'Rosto'},
-{id:'d09',time:'06:30',qty:'🧴',title:'Protetor solar mineral c/ pigmento SPF50+',cat:'Rosto'},
-{id:'d10',time:'06:32',qty:'🧴 SOS',title:'Brimonidina 0,33% gel facial (se flare)',cat:'Rosácea'},
-{id:'d11',time:'06:35',qty:'🧴',title:'Epidrat Corpo Intenso (tórax)',cat:'Corpo'},
-{id:'d12',time:'08:00',qty:'🧴 5min',title:'BP 5% sabonete (tórax 5min contato)',cat:'Corpo'},
-{id:'d13',time:'08:00',qty:'🧴 5min',title:'Cetoconazol 2% hairline (5min)',cat:'Cabelo'},
-{id:'d14',time:'21:00',qty:'🧊 2min',title:'Compressa morna + massagem Meibomius',cat:'Ptose'},
-{id:'d15',time:'21:05',qty:'🧴',title:'Limpeza facial suave',cat:'Rosto'},
-{id:'d16',time:'21:08',qty:'🧴',title:'Ivermectina+Áz.Azelaico+Metronidazol',cat:'Rosácea'},
-{id:'d17',time:'21:25',qty:'🧴',title:'Nutrel Gel (15-20min após)',cat:'Rosto'},
-{id:'d18',time:'21:30',qty:'🧴',title:'Adapaleno (tórax — dias alternados)',cat:'Corpo'},
+// ── MANHÃ ──
+{id:'d01',time:'06:00',qty:'🧊 5-10min',title:'Compressa fria (máscara gel olhos)',cat:'Ptose',note:'Primeira coisa ao acordar · Reduz edema palpebral'},
+{id:'d02',time:'06:05',qty:'🧹 1x',title:'Higiene palpebral',cat:'Ptose',note:'Com lenço ou solução própria · Previne blefarite'},
+{id:'d03',time:'06:10',qty:'🏋️ 10+15',title:'Exercícios palpebrais',cat:'Ptose',note:'10 elevações forçadas + 15 piscadas rápidas · Fortalece músculo elevador'},
+{id:'d04',time:'06:12',qty:'💧 1 gota',title:'Brimonidina 0,15% colírio',cat:'Ptose',note:'Onset 5-15min · Dura 4-8h · Esperar 30min antes da fenilefrina se necessário'},
+{id:'d19',time:'06:45',qty:'💧 1 gota SOS',title:'Fenilefrina 2,5% colírio (se ptose persistir)',cat:'Ptose',note:'Resgate SOS · ≥30min após brimonidina · Pode causar midríase · Máx 3-4x/semana combinados'},
+{id:'d05',time:'06:20',qty:'🧴',title:'Limpeza facial suave (Bioderma Sensibio / CeraVe / LRP Toleriane)',cat:'Rosto',note:'Sem SLS, sem fragrância · Enxaguar bem'},
+{id:'d20',time:'06:22',qty:'💧 1-2 pumps',title:'Mineral 89 (Vichy) — booster hidratação',cat:'Rosto',note:'Aguardar 1-2min absorver · Potencializa absorção dos ativos seguintes'},
+{id:'d06',time:'06:24',qty:'💧',title:'Mix-02 Principia (Cafeína 5% + Tranexâmico 3% + Ferúlico 0,5%)',cat:'Ptose',note:'Periocular principal · Drenagem + ptose + manchas · Aguardar 2-3min · Pode usar manhã e noite'},
+{id:'d07',time:'06:27',qty:'🧴',title:'Sérum anti-rosácea manipulado (Niacinamida 4% + Telangyn 2% + Azeloglicina 5% + Bisabolol 0,3%)',cat:'Rosácea',note:'Ativo diurno anti-eritema · Aguardar 2-3min · Aplicar após Mix-02 (2-3min de intervalo)'},
+{id:'d21',time:'06:32',qty:'🧴',title:'Sensibio AR+ (Bioderma)',cat:'Rosácea',note:'Hidratante terapêutico Rosactiv™ antivermelhidão · Absorver completamente antes do filtro solar'},
+{id:'d09',time:'06:37',qty:'🧴',title:'Protetor solar mineral FPS 50+ (Bioderma Photoderm Mineral / Adcos Fluid Mineral)',cat:'Rosto',note:'Último passo obrigatório · Filtro mineral — não gera calor · Needs FPS 70 aceito provisoriamente'},
+{id:'d10',time:'06:40',qty:'🧴 SOS',title:'Brimonidina 0,33% gel facial (flushing agudo)',cat:'Rosácea',note:'⚠ Máx 3-4x/semana · NÃO usar no mesmo dia que combinar os dois colírios · Onset 15-30min · Dura 8-12h'},
+{id:'d11',time:'06:45',qty:'🧴',title:'Epidrat Corpo Intenso (tórax)',cat:'Corpo',note:'Hidratação corporal · Evitar rosto'},
+{id:'d12',time:'08:00',qty:'🧴 5min',title:'BP 5% sabonete (tórax — 5min contato)',cat:'Corpo',note:'Acne/foliculite tórax · Manter 5min antes de enxaguar'},
+{id:'d13',time:'08:00',qty:'🧴 5min',title:'Cetoconazol 2% hairline (5min)',cat:'Cabelo',note:'Dermatite seborreica hairline · 5min contato antes de enxaguar'},
+// ── NOITE ──
+{id:'d14',time:'21:00',qty:'🧊 2min',title:'Compressa morna + massagem Meibomius',cat:'Ptose',note:'Estimula glândulas de Meibomius · Melhora filme lacrimal'},
+{id:'d15',time:'21:05',qty:'🧴',title:'Limpeza facial suave (mesmo da manhã)',cat:'Rosto',note:'Remover protetor solar e resíduos do dia'},
+{id:'d22',time:'21:07',qty:'💧 1-2 pumps',title:'Mineral 89 (Vichy) — booster noturno',cat:'Rosto',note:'Potencializa absorção do gel noturno · Aguardar 1-2min'},
+{id:'d16',time:'21:09',qty:'🧴',title:'Gel noturno manipulado (Ivermectina 1% + Ác. Azelaico 15%)',cat:'Rosácea',note:'⚠ SEM metronidazol (remover da próxima manipulação — redundante com ivermectina) · Aguardar 15-20min antes da barreira'},
+{id:'d17',time:'21:30',qty:'🧴',title:'Principia CM-01 Multirreparador (barreira noturna)',cat:'Rosto',note:'Squalane + bisabolol + pantenol + minerais · Após 15-20min do gel ativo · Finaliza rotina'},
+{id:'d18',time:'21:35',qty:'🧴',title:'Adapaleno (tórax — dias alternados)',cat:'Corpo',note:'Acne/foliculite tórax · Dias alternados · Não aplicar no rosto'},
 ];
 
 // ═══ FOOD DATABASE (per 100g/ml, TACO/TBCA/USDA) ═══
@@ -488,82 +475,6 @@ const FOODS=[
 let state={supps:[],derm:[],gym:[],food:[],fluids:{pure:0,decaf:0,other:0},history:[],gymHistory:[],date:''};
 const SK='thobias_v51';
 
-// ═══ VERSÃO E MIGRAÇÃO AUTOMÁTICA ═══
-const APP_VERSION='57';
-
-function migrate(){
-    if(state.appVersion===APP_VERSION) return;
-    const fix=(id,changes)=>{const t=state.supps.find(x=>x.id===id);if(t) Object.assign(t,changes);};
-    const addIfMissing=(item)=>{if(!state.supps.find(x=>x.id===item.id)) state.supps.push(item);};
-
-    // Dutasterida — remover aviso "AINDA NÃO INICIADO"
-    fix('s09',{note:'🍳 COM GORDURA melhora absorção · ≥12h do CBD noturno (07:00→19:00 = 12h ✓) · Meia-vida ~5 semanas'});
-
-    // Minoxidil — remover aviso "AINDA NÃO INICIADO"
-    fix('s10',{note:'Monitorar PA e FC nas primeiras semanas · Efeito vasodilatador — avaliar hipotensão c/ candesartana'});
-
-    // CBD manhã — ajustar horário e dose
-    fix('s36',{time:'09:30',qty:'💧 10 gotas',title:'Canabidiol (CBD) — manhã',note:'⚠ ≥2h após dutasterida (07:00→09:30 ✓) · Inibidor CYP3A4/CYP2C19'});
-
-    // CBD noite — adicionar se não existir
-    addIfMissing({id:'s36b',time:'19:00',qty:'💧 20 gotas',title:'Canabidiol (CBD) — noite',cat:'Sono',note:'⚠ ≥12h antes dutasterida (19:00→07:00 = 12h ✓) · Com jantar · Inibidor CYP2C19',done:false,log:'',suspended:false});
-
-    // Cobre — mover para 19:00 (SEG/QUA/SEX junto com jantar)
-    fix('s07',{time:'19:00',title:'Cobre Quelato 3mg (SEG/QUA/SEX)',ironOnly:true,note:'⚠ SEG/QUA/SEX · ≥12h após ferro (06:15→19:00 ✓) · ≥7h após zinco (12:00→19:00 ✓) · Obrigatório c/ zinco >25mg/dia'});
-
-    // NAC — consolidar em dose única 1.200mg no jantar
-    // Remove s28 (dose 2 antiga) se existir separado
-    state.supps=state.supps.filter(x=>x.id!=='s28');
-    fix('s14',{time:'19:00',qty:'💊 2 Caps (1.200mg)',title:'NAC 1.200mg — dose única consolidada',note:'Dose diária completa consolidada · Componente GlyNAC · Precursor glutationa · COM COMIDA reduz desconforto GI'});
-
-    // Saw Palmetto — suspender (dutasterida já iniciada)
-    fix('s42',{suspended:true,title:'Saw Palmetto + Pygeum (SUSPENSO — dutasterida iniciada)'});
-
-    // Reordenar por horário
-    state.supps.sort((a,b)=>a.time.localeCompare(b.time));
-    state.appVersion=APP_VERSION;
-}
-
-// ═══ AUTO-SAVE: salva o dia anterior no histórico sem interação manual ═══
-function autoSaveDay(){
-    // Só salva se havia um dia registrado com algum dado
-    if(!state.date) return;
-    const allActive=[...state.supps,...state.derm].filter(t=>!t.suspended);
-    // Não salva se não havia absolutamente nada (primeiro uso do app)
-    if(!allActive.length&&!state.gym.length) return;
-    // Não salva duplicata (mesmo dia já no topo do histórico)
-    if(state.history.length&&state.history[0].date===state.date) return;
-
-    const done=allActive.filter(t=>t.done).length;
-    const score=Math.round((done/(allActive.length||1))*100);
-    const itemLogs={};
-    [...state.supps,...state.derm].forEach(t=>{
-        if(!t.suspended) itemLogs[t.id]={done:!!t.done,log:t.log||null,title:t.title,time:t.time};
-    });
-
-    state.history.unshift({
-        date:state.date,score,
-        water:state.fluids.pure+state.fluids.decaf+state.fluids.other,
-        gym:state.gym.length,
-        items:itemLogs,
-        autoSaved:true  // marca para diferenciar no histórico
-    });
-    if(state.history.length>90) state.history.pop();
-
-    state.gym.forEach(ex=>{
-        const key=ex.name.trim().toLowerCase();
-        if(!state.gymHistory) state.gymHistory=[];
-        if(ex.type==='cardio'){
-            state.gymHistory.push({date:state.date,name:ex.name,key,type:'cardio',
-                duration:ex.duration,calories:ex.calories,distance:ex.distance,hr:ex.hr,done:ex.done});
-        } else {
-            state.gymHistory.push({date:state.date,name:ex.name,key,type:'resistido',
-                series:ex.series,reps:ex.reps,load:ex.load,rest:ex.rest,group:ex.group,completed:ex.completed||[]});
-        }
-    });
-    if(state.gymHistory.length>500) state.gymHistory=state.gymHistory.slice(-500);
-}
-
 function load(){
     const r=localStorage.getItem(SK);
     if(r) state=JSON.parse(r);
@@ -577,61 +488,80 @@ function load(){
     if(!state.food) state.food=[];
     if(!state.history) state.history=[];
     if(!state.gymHistory) state.gymHistory=[];
-
-    // Migração automática — ANTES da recuperação, para que patches de migrate
-    // não confundam o check de integridade abaixo
-    migrate();
-
-    // ✅ RECUPERAÇÃO ROBUSTA: roda DEPOIS de migrate() e sem a condição "> 0"
-    // Detecta supps corrompido/incompleto comparando contra o protocolo master
-    if(state.supps.length < SUPPS.length){
-        // Preserva estado done/log de itens que já estavam marcados hoje
-        const doneMap={};
-        state.supps.forEach(t=>{
-            doneMap[t.id]={done:!!t.done,log:t.log||'',suspended:t.suspended,userNote:t.userNote||''};
-        });
-        state.supps=JSON.parse(JSON.stringify(SUPPS));
-        state.supps.forEach(t=>{
-            if(doneMap[t.id]){
-                t.done=doneMap[t.id].done;
-                t.log=doneMap[t.id].log;
-                if(doneMap[t.id].suspended!=null) t.suspended=doneMap[t.id].suspended;
-                if(doneMap[t.id].userNote) t.userNote=doneMap[t.id].userNote;
-            }
-        });
-        // Reaplicar patches de migrate() nos itens reconstruídos
-        const fix2=(id,changes)=>{const t=state.supps.find(x=>x.id===id);if(t) Object.assign(t,changes);};
-        fix2('s36',{time:'09:30',qty:'💧 10 gotas',title:'Canabidiol (CBD) — manhã'});
-        if(!state.supps.find(x=>x.id==='s36b'))
-            state.supps.push({id:'s36b',time:'19:00',qty:'💧 20 gotas',title:'Canabidiol (CBD) — noite',cat:'Sono',note:'⚠ ≥12h antes dutasterida · Com jantar · Inibidor CYP2C19',done:false,log:'',suspended:false});
-        fix2('s07',{time:'19:00',title:'Cobre Quelato 3mg (SEG/QUA/SEX)',ironOnly:true});
-        fix2('s42',{suspended:true,title:'Saw Palmetto + Pygeum (SUSPENSO — dutasterida iniciada)'});
-        state.supps=state.supps.filter(x=>x.id!=='s28');
-        fix2('s14',{time:'19:00',qty:'💊 2 Caps (1.200mg)',title:'NAC 1.200mg — dose única consolidada'});
-        state.supps.sort((a,b)=>a.time.localeCompare(b.time));
-    }
-    if(state.derm.length < DERM.length) state.derm=JSON.parse(JSON.stringify(DERM));
-
-    // Restaurar timer se estava ativo
-    restoreTimer();
     const today=new Date().toLocaleDateString('pt-BR');
-    if(state.date!==today){
-        autoSaveDay();
-        if(!state.supps.length) state.supps=JSON.parse(JSON.stringify(SUPPS));
-        if(!state.derm.length) state.derm=JSON.parse(JSON.stringify(DERM));
+    if(!state.date){
+        // Primeiro uso
+        state.date=today;
+        state.supps=JSON.parse(JSON.stringify(SUPPS));
+        state.derm=JSON.parse(JSON.stringify(DERM));
+        const dow=new Date().getDay();
+        const isIron=[1,3,5].includes(dow);
+        state.supps.forEach(t=>{if(t.ironOnly) t.suspended=!isIron;});
+        save();
+    } else if(state.date!==today){
+        // Dia mudou — perguntar se quer encerrar dia anterior antes de resetar
+        const hasPendingData=state.supps.some(t=>t.done)||
+            state.derm.some(t=>t.done)||
+            state.gym.length>0||
+            (state.fluids.pure+state.fluids.decaf+state.fluids.other)>0;
+        if(hasPendingData){
+            const shouldClose=confirm(
+                `📅 O dia ${state.date} não foi encerrado.\n\nDeseja salvar os dados de ${state.date} no histórico antes de iniciar ${today}?`
+            );
+            if(shouldClose){
+                // Salvar dia anterior no histórico
+                const allActive=[...state.supps,...state.derm].filter(t=>!t.suspended);
+                const done=allActive.filter(t=>t.done).length;
+                const score=Math.round((done/(allActive.length||1))*100);
+                const itemLogs={};
+                [...state.supps,...state.derm].forEach(t=>{
+                    if(!t.suspended) itemLogs[t.id]={done:!!t.done,log:t.log||null,title:t.title,time:t.time};
+                });
+                state.history.unshift({
+                    date:state.date,score,
+                    water:state.fluids.pure+state.fluids.decaf+state.fluids.other,
+                    gym:state.gym.length,
+                    items:itemLogs,
+                    autoSaved:false
+                });
+                if(state.history.length>90) state.history.pop();
+                state.gym.forEach(ex=>{
+                    const key=ex.name.trim().toLowerCase();
+                    if(!state.gymHistory) state.gymHistory=[];
+                    if(ex.type==='cardio'){
+                        state.gymHistory.push({date:state.date,name:ex.name,key,type:'cardio',duration:ex.duration,calories:ex.calories,distance:ex.distance,hr:ex.hr,done:ex.done});
+                    } else {
+                        state.gymHistory.push({date:state.date,name:ex.name,key,type:'resistido',series:ex.series,reps:ex.reps,load:ex.load,rest:ex.rest,group:ex.group,completed:ex.completed||[]});
+                    }
+                });
+                if(state.gymHistory.length>500) state.gymHistory=state.gymHistory.slice(-500);
+            }
+        }
+        // Resetar para novo dia
+        state.supps=JSON.parse(JSON.stringify(SUPPS));
+        state.derm=JSON.parse(JSON.stringify(DERM));
         state.supps.forEach(t=>{t.done=false;t.log='';});
         state.derm.forEach(t=>{t.done=false;t.log='';});
         state.fluids={pure:0,decaf:0,other:0};
         state.food=[];
+        state.gym=[];
         state.date=today;
         const dow=new Date().getDay();
         const isIron=[1,3,5].includes(dow);
         state.supps.forEach(t=>{if(t.ironOnly) t.suspended=!isIron;});
+        save();
+    } else {
+        // Mesmo dia — garantir que listas estejam populadas
+        if(!state.supps.length) state.supps=JSON.parse(JSON.stringify(SUPPS));
+        if(!state.derm.length) state.derm=JSON.parse(JSON.stringify(DERM));
+        const dow=new Date().getDay();
+        const isIron=[1,3,5].includes(dow);
+        state.supps.forEach(t=>{if(t.ironOnly&&t.suspended===undefined) t.suspended=!isIron;});
+        save();
     }
-    save();
 }
 
-function save(){localStorage.setItem(SK,JSON.stringify(state));refreshNotifSchedule();render();}
+function save(){localStorage.setItem(SK,JSON.stringify(state));render();}
 
 // ═══ TABS ═══
 let activeTab='supps';
@@ -679,27 +609,6 @@ function saveEdit(){
 }
 function deleteItem(){const id=document.getElementById('editId').value,p=document.getElementById('editPanel').value;if(confirm('Excluir?')){state[p]=state[p].filter(x=>x.id!==id);save();closeModal('editModal');}}
 function toggleSuspend(){const id=document.getElementById('editId').value,p=document.getElementById('editPanel').value,t=state[p].find(x=>x.id===id);if(t){t.suspended=!t.suspended;if(t.suspended){t.done=false;t.log='';}save();closeModal('editModal');}}
-function duplicateItem(){
-    const id=document.getElementById('editId').value,p=document.getElementById('editPanel').value;
-    const t=state[p].find(x=>x.id===id);
-    if(!t) return;
-    // Salvar primeiro quaisquer edições pendentes nos campos antes de duplicar
-    const d={
-        title:document.getElementById('editTitle').value||t.title,
-        qty:document.getElementById('editQty').value||t.qty,
-        time:document.getElementById('editTime').value||t.time,
-        cat:document.getElementById('editCat').value||t.cat,
-        userNote:document.getElementById('editNotes').value||t.userNote||'',
-        note:t.note||'',
-        ironOnly:t.ironOnly||false,
-    };
-    const copy={...t,...d,id:'c'+Date.now(),done:false,log:'',suspended:false};
-    state[p].push(copy);
-    state[p].sort((a,b)=>a.time.localeCompare(b.time));
-    save();closeModal('editModal');
-    // Abrir o item duplicado já em edição para ajuste de horário
-    requestAnimationFrame(()=>openEdit(copy.id,p));
-}
 function closeModal(m){document.getElementById(m).classList.remove('open');}
 
 // ═══ EXERCISE ═══
@@ -752,25 +661,47 @@ function saveEx(){
     save();closeModal('exModal');
 }
 function deleteEx(){const id=document.getElementById('exEditId').value;if(confirm('Excluir?')){state.gym=state.gym.filter(x=>x.id!==id);save();closeModal('exModal');}}
+function toggleExSet(eid,si){const ex=state.gym.find(x=>x.id===eid);if(!ex) return;if(!ex.completed) ex.completed=[];const i=ex.completed.indexOf(si);if(i>-1) ex.completed.splice(i,1);else ex.completed.push(si);save();}
+function toggleCardioDone(eid){const ex=state.gym.find(x=>x.id===eid);if(!ex) return;ex.done=!ex.done;save();}
 
 // ═══ FINISH DAY — salva dados detalhados para gráficos ═══
 function finishDay(){
     if(!confirm('Encerrar o dia e salvar no histórico?')) return;
-    // Remove eventual auto-save do mesmo dia (finishDay tem prioridade)
-    if(state.history.length&&state.history[0].date===state.date&&state.history[0].autoSaved){
-        state.history.shift();
+    const allActive=[...state.supps,...state.derm].filter(t=>!t.suspended);
+    const done=allActive.filter(t=>t.done).length;
+    const score=Math.round((done/(allActive.length||1))*100);
+    const itemLogs={};
+    [...state.supps,...state.derm].forEach(t=>{
+        if(!t.suspended) itemLogs[t.id]={done:!!t.done,log:t.log||null,title:t.title,time:t.time};
+    });
+    // Verificar se já existe entrada do dia (evitar duplicata)
+    if(state.history.length>0&&state.history[0].date===state.date){
+        state.history.shift(); // substituir entrada existente
     }
-    autoSaveDay();
+    state.history.unshift({
+        date:state.date,score,
+        water:state.fluids.pure+state.fluids.decaf+state.fluids.other,
+        gym:state.gym.length,
+        items:itemLogs,
+        autoSaved:false
+    });
+    if(state.history.length>90) state.history.pop();
+    state.gym.forEach(ex=>{
+        const key=ex.name.trim().toLowerCase();
+        if(!state.gymHistory) state.gymHistory=[];
+        if(ex.type==='cardio'){
+            state.gymHistory.push({date:state.date,name:ex.name,key,type:'cardio',duration:ex.duration,calories:ex.calories,distance:ex.distance,hr:ex.hr,done:ex.done});
+        } else {
+            state.gymHistory.push({date:state.date,name:ex.name,key,type:'resistido',series:ex.series,reps:ex.reps,load:ex.load,rest:ex.rest,group:ex.group,completed:ex.completed||[]});
+        }
+    });
+    if(state.gymHistory.length>500) state.gymHistory=state.gymHistory.slice(-500);
     state.supps.forEach(t=>{t.done=false;t.log='';});
     state.derm.forEach(t=>{t.done=false;t.log='';});
     state.gym=[];
     state.fluids={pure:0,decaf:0,other:0};
-    // Marca o registro recém-inserido como manual (não autoSaved)
-    if(state.history.length&&state.history[0].date===state.date){
-        delete state.history[0].autoSaved;
-    }
     save();
-    alert('Dia salvo!');
+    alert('✅ Dia salvo no histórico!');
 }
 
 // ═══ ITEM PROGRESS CHART ═══
@@ -1010,17 +941,17 @@ const ITEM_INFO={
 // Supplements
 's01':{obj:'Corrigir ferritina (39 ng/mL → meta 80-100)',rec:'Jejum obrigatório. Tomar com vit C. Não tomar com café, chá ou laticínios.',interval:'≥6h antes do zinco · ≥3h antes do cálcio · ≥5h antes do cobre'},
 's02':{obj:'Corrigir B12 (251 pg/mL → meta >500)',rec:'Sublingual para bypass GI. Forma metilcobalamina preferível.',interval:'Sem restrição significativa'},
-'s03':{obj:'Tratamento ansiedade social (dose terapêutica)',rec:'Tomar no mesmo horário diariamente. Não interromper sem orientação médica.',interval:'Efeito pleno após 4-6 semanas. Inibição CYP2C19 pelo CBD pode ↑ nível sérico'},
+'s03':{obj:'Tratamento ansiedade social (dose terapêutica)',rec:'Tomar no mesmo horário diariamente. Não interromper sem orientação médica.',interval:'Efeito pleno após 4-6 semanas. CBD descontinuado em mar/2026 — nível sérico voltou ao real de 10mg'},
 's04':{obj:'TRT — otimizar testosterona (358 ng/dL → meta 600-900)',rec:'Aplicar em pele limpa e seca (braço/abdômen). Lavar mãos após. Evitar contato com mulheres/crianças.',interval:'Absorção ~4h. Aplicar antes de vestir camisa'},
 's05':{obj:'Corrigir vitamina D (34,2 → meta ≥40 ng/mL)',rec:'COM GORDURA obrigatório (lipossolúvel). Se próximo exame <40, aumentar para 6.000 UI.',interval:'Tomar junto com ômega-3 e K2 para sinergismo'},
-'s06':{obj:'Veículo lipídico + anti-inflamatório + cardioproteção — Vitafor 900mg/dia',rec:'2 caps pela manhã COM GORDURA (serve como veículo para D3, K2, CoQ10). 1 cap à noite no jantar. Total: 900mg Ômega-3 = 540mg EPA + 360mg DHA/dia.',interval:'Sem restrições significativas'},
-'s07':{obj:'Prevenir deficiência de cobre (obrigatório c/ zinco >25mg/dia)',rec:'Zinco depleta cobre a longo prazo. SEG/QUA/SEX junto com o ferro da noite.',interval:'SEG/QUA/SEX · ≥12h após ferro manhã · ≥7h após zinco (12:00→19:00 ✓)'},
+'s06':{obj:'Veículo lipídico + anti-inflamatório + cardioproteção',rec:'COM GORDURA da refeição. Serve como veículo para D3, K2, CoQ10.',interval:'Sem restrições significativas'},
+'s07':{obj:'Prevenir deficiência de cobre (obrigatório c/ zinco >25mg/dia)',rec:'Zinco depleta cobre a longo prazo. Suplementar cobre é obrigatório.',interval:'≥5h antes do zinco (competem por absorção) · ≥5h após ferro'},
 's08':{obj:'Controle de PA (hipertensão)',rec:'Dose fixa diária. Monitorar PA especialmente com minoxidil.',interval:'Sem restrição alimentar. Pico 3-4h'},
-'s09':{obj:'Bloquear DHT (alopecia androgenética) — inibição tipo I e II',rec:'COM GORDURA melhora absorção. CBD noturno às 19h garante intervalo ≥12h.',interval:'≥12h do CBD noturno (07:00→19:00 = 12h ✓) · Meia-vida ~5 semanas — efeito pleno 3-6 meses'},
+'s09':{obj:'Bloquear DHT (alopecia androgenética)',rec:'COM GORDURA melhora absorção. CBD descontinuado — sem restrição de janela.',interval:'Sem restrição de horário com CBD · Meia-vida longa (~5 semanas)'},
 's10':{obj:'Estimular crescimento capilar (vasodilatação)',rec:'Monitorar PA e FC nas primeiras semanas. Efeito vasodilatador pode causar hipotensão.',interval:'Efeito em 3-6 meses. Avaliar PA em 2 semanas'},
 's12':{obj:'Energia mitocondrial + cardioproteção + antioxidante',rec:'COM GORDURA obrigatório (lipossolúvel). Ubiquinol > ubiquinona.',interval:'Sem restrições significativas'},
 's13':{obj:'Proteção renal e cardiovascular',rec:'Melhor absorção em jejum. Auxilia controle de PA.',interval:'Sem competição significativa'},
-'s14':{obj:'Precursor de glutationa (antioxidante master) + proteção renal — dose diária consolidada',rec:'1.200mg em dose única com o jantar. COM COMIDA reduz desconforto GI. Componente do protocolo GlyNAC.',interval:'Sem restrição de intervalo nesse horário — ferro já foi 12h antes'},
+'s14':{obj:'Precursor de glutationa (antioxidante master) + proteção renal',rec:'Jejum maximiza absorção. Componente do protocolo GlyNAC.',interval:'Dose 1 de 2 (dose 2 no jantar)'},
 's15':{obj:'Imunidade, testosterona, cicatrização, pele',rec:'≥6h após ferro, ≥5h após cobre. COM COMIDA melhora tolerância GI.',interval:'≥2h antes do cálcio · Competição ferro/cobre'},
 's17':{obj:'Anti-inflamatório natural sistêmico',rec:'COM COMIDA obrigatório. Pimenta preta ↑ biodisponibilidade 2000%.',interval:'Inibidor CYP — considerar janela com dutasterida'},
 's18':{obj:'Oxidação de gordura + saúde da pele',rec:'Com refeição. Pré-treino potencializa uso de gordura como combustível em zona 2.',interval:'Dose 1 almoço + dose 2 pré-treino'},
@@ -1029,9 +960,9 @@ const ITEM_INFO={
 's30':{obj:'Saúde óssea (prevenir osteopenia)',rec:'≥2h após zinco. COM COMIDA. K1 da fórmula ≠ K2 suplementada.',interval:'≥3h após ferro · ≥2h após zinco'},
 's32':{obj:'Neuroproteção + sono + relaxamento muscular',rec:'Forma treonato cruza barreira hematoencefálica (superior a outras formas).',interval:'≥45min após jantar. Efeito sedativo leve'},
 's33':{obj:'Ansiolítico natural (substituto ashwagandha)',rec:'Ashwagandha contraindicada c/ TSH 0,627 (risco tireoidiano). L-teanina é segura.',interval:'Sinérgica com magnésio. Efeito em 30-60min'},
-'s34':{obj:'Indução e manutenção do sono',rec:'Dose baixa (15-25mg) = efeito sedativo sem efeito antidepressivo.',interval:'30-60min antes de dormir'},
-'s36':{obj:'Ansiolítico + anti-inflamatório + suporte sono (dose matinal 10 gotas)',rec:'Tomar ≥2h após dutasterida. Sublingual 60-90s. Dose menor de manhã para efeito ansiolítico diurno sem sedação.',interval:'≥2h após dutasterida · Inibidor CYP3A4/CYP2C19 — eleva nível sérico escitalopram e dutasterida'},
-'s36b':{obj:'Ansiolítico + indução sono + anti-inflamatório (dose noturna 20 gotas)',rec:'Tomar às 19:00 com o jantar para respeitar intervalo mínimo de 12h antes da dutasterida. Dose maior favorece sono. Observar sonolência excessiva — inibição CYP2C19 aumenta nível sérico do escitalopram.',interval:'≥12h antes da dutasterida do dia seguinte · Máx 20 gotas nessa dose (não aumentar >75mg total/dia)'},
+'s35':{obj:'Âncora circadiana — avançar fase do sono progressivamente',rec:'Tomar às 21h fixo, 2h antes do horário alvo de adormecer. Dose fisiológica (0,21mg) — não é sedativo, é sincronizador circadiano. Formato orodispersível tem onset mais rápido.',interval:'Sem interações relevantes com o stack atual · Efeito acumulativo em 2-3 semanas'},
+'s45':{obj:'Reduzir cortisol crônico (eixo HPA) e melhorar recuperação',rec:'COM REFEIÇÃO. Não tomar à noite — leve efeito estimulante cognitivo pode atrasar sono. Derivado de soja.',interval:'Pode ser tomada no almoço ou jantar · Sem interações relevantes com o stack atual'},
+'s46':{obj:'Reduzir latência do sono — facilitar o adormecer',rec:'Agonista GABA-A natural (flavonoide da camomila). Reduz arousal cortical sem sedação pesada. Farmácia de manipulação — informar farmacêutico sobre escitalopram.',interval:'Onset ~30-60min · Tomar junto com Magnésio e L-Teanina'},
 's37':{obj:'Componente GlyNAC + sono + síntese de glutationa',rec:'Com NAC forma o protocolo GlyNAC (longevidade). Auxilia qualidade do sono.',interval:'Tomar junto ou próximo ao NAC dose 2'},
 's41':{obj:'Neuroplasticidade + fator de crescimento nervoso (NGF/BDNF)',rec:'Absorção não depende de gordura. Sinérgico com lítio orotato.',interval:'Jejum ou com comida — sem restrição'},
 's42':{obj:'Bridge anti-DHT até dutasterida fazer efeito pleno',rec:'TEMPORÁRIO — suspender em 04/03 quando dutasterida estiver em steady-state.',interval:'COM GORDURA (fitoesteróis lipossolúveis)'},
@@ -1044,7 +975,7 @@ const ITEM_INFO={
 'd19':{obj:'Resgate SOS para ptose — agonista alfa-1 (mecanismo diferente)',rec:'Usar se brimonidina insuficiente após 30-45min. Pode causar midríase e fotossensibilidade.',interval:'≥30min após brimonidina · Max 3-4x/semana combinados · NÃO usar gel facial brimonidina no mesmo dia'},
 'd07':{obj:'Tratamento rosácea: anti-inflamatório + antivascular + clareamento',rec:'Niacinamida 4% + Telangyn 2% + Azeloglicina 5% + Alfa-bisabolol 0,3%.',interval:'Após limpeza, antes de barreira e filtro solar'},
 'd10':{obj:'SOS flushing — vasoconstrição facial imediata',rec:'Máx 3-4x/semana. NÃO usar no mesmo dia que combinar os dois colírios (triple-dose adrenérgica).',interval:'Onset 15-30min, dura 8-12h. Rebote possível se uso >4x/semana'},
-'d16':{obj:'Tratamento noturno rosácea: antiparasitário + anti-inflamatório',rec:'Ivermectina 1% (Demodex) + Ác. Azelaico 15% + Metronidazol 0,75%.',interval:'15-20min antes da barreira (Nutrel)'},
+'d16':{obj:'Tratamento noturno rosácea: antiparasitário (Demodex) + anti-inflamatório',rec:'Ivermectina 1% + Ác. Azelaico 15%. ⚠ Remover Metronidazol 0,75% da próxima manipulação — redundante com ivermectina.',interval:'Aguardar 15-20min antes de aplicar CM-01 · Aplicar após Mineral 89'},
 };
 
 function openItemInfo(id,panel){
@@ -1068,60 +999,12 @@ function openItemInfo(id,panel){
 }
 
 // ═══ WORKOUT TIMER ═══
-const TK='thobias_timer_v57'; // chave separada para o timer
-
 let wkTimer={running:false,start:0,elapsed:0,interval:null,
-    subMode:'idle',subStart:0,subElapsed:0,subInterval:null,
-    totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0,
-    activeExId:null,activeSetIdx:-1
+    // Sub-timer for series/rest
+    subMode:'idle', // idle, series, rest
+    subStart:0,subElapsed:0,subInterval:null,
+    totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0
 };
-
-// Salva estado do timer no localStorage (sem os IDs de interval)
-function saveTimer(){
-    const now=Date.now();
-    // Snapshot dos tempos acumulados até agora
-    const snap={
-        running:wkTimer.running,
-        elapsed:wkTimer.running?(wkTimer.elapsed+now-wkTimer.start):wkTimer.elapsed,
-        subMode:wkTimer.subMode,
-        subElapsed:wkTimer.subMode!=='idle'&&wkTimer.subInterval?(wkTimer.subElapsed+now-wkTimer.subStart):wkTimer.subElapsed,
-        totalSeriesTime:wkTimer.totalSeriesTime,
-        totalRestTime:wkTimer.totalRestTime,
-        seriesCount:wkTimer.seriesCount,
-        restCount:wkTimer.restCount,
-        activeExId:wkTimer.activeExId,
-        activeSetIdx:wkTimer.activeSetIdx,
-        savedAt:now
-    };
-    localStorage.setItem(TK,JSON.stringify(snap));
-}
-
-// Restaura timer do localStorage (chamado no load())
-function restoreTimer(){
-    const r=localStorage.getItem(TK);
-    if(!r) return;
-    try{
-        const t=JSON.parse(r);
-        // Só restaura se foi salvo há menos de 4h (14400000ms)
-        if(Date.now()-t.savedAt>14400000){localStorage.removeItem(TK);return;}
-        // Recalcula elapsed: se estava rodando, soma o tempo que passou
-        const extra=t.running?Math.max(0,Date.now()-t.savedAt):0;
-        wkTimer.elapsed=t.elapsed+extra;
-        wkTimer.subMode=t.subMode||'idle';
-        // Sub-timer: se estava em série/descanso, conta o tempo extra também
-        wkTimer.subElapsed=t.subElapsed+(t.running&&t.subMode!=='idle'?extra:0);
-        wkTimer.totalSeriesTime=t.totalSeriesTime||0;
-        wkTimer.totalRestTime=t.totalRestTime||0;
-        wkTimer.seriesCount=t.seriesCount||0;
-        wkTimer.restCount=t.restCount||0;
-        wkTimer.activeExId=t.activeExId||null;
-        wkTimer.activeSetIdx=t.activeSetIdx||-1;
-        // Sempre restaura como pausado — usuário decide retomar
-        wkTimer.running=false;
-        wkTimer.start=Date.now();
-        wkTimer.subStart=Date.now();
-    }catch(e){localStorage.removeItem(TK);}
-}
 
 function fmtTimer(ms){
     const s=Math.floor(ms/1000),m=Math.floor(s/60),h=Math.floor(m/60);
@@ -1129,104 +1012,40 @@ function fmtTimer(ms){
 }
 
 function openWorkoutTimer(){
-    // Reinicia intervals se foram perdidos (reload de página, retorno do background)
-    if(wkTimer.running&&!wkTimer.interval){
-        wkTimer.start=Date.now(); // ancora o timestamp ao momento do resume
-        wkTimer.interval=setInterval(()=>{renderTimerUI();saveTimer();},500);
-    }
-    if(wkTimer.subMode!=='idle'&&!wkTimer.subInterval){
-        wkTimer.subStart=Date.now();
-        wkTimer.subInterval=setInterval(()=>{renderTimerUI();renderGym();},200);
-    }
     renderTimerUI();
     document.getElementById('timerModal').classList.add('open');
 }
 
-function adjustTimer(ms){
-    if(wkTimer.running){wkTimer.elapsed+=Date.now()-wkTimer.start;wkTimer.start=Date.now();}
-    wkTimer.elapsed=Math.max(0,wkTimer.elapsed+ms);
-    saveTimer();renderTimerUI();
-}
-function adjustSub(ms){
-    if(wkTimer.subInterval){wkTimer.subElapsed+=Date.now()-wkTimer.subStart;wkTimer.subStart=Date.now();}
-    const before=wkTimer.subElapsed;
-    wkTimer.subElapsed=Math.max(0,wkTimer.subElapsed+ms);
-    const delta=wkTimer.subElapsed-before;
-    if(wkTimer.subMode==='series') wkTimer.totalRestTime=Math.max(0,wkTimer.totalRestTime-delta);
-    else if(wkTimer.subMode==='rest') wkTimer.totalSeriesTime=Math.max(0,wkTimer.totalSeriesTime-delta);
-    saveTimer();renderTimerUI();
-}
-function adjustSeriesCount(delta){
-    wkTimer.seriesCount=Math.max(0,wkTimer.seriesCount+delta);
-    saveTimer();renderTimerUI();
-}
-
 function renderTimerUI(){
     const el=document.getElementById('timerContent');
-    if(!el) return;
-    // ─── cálculo robusto — não depende de subInterval existir ───
-    const now=Date.now();
-    const elapsed=wkTimer.running?(wkTimer.elapsed+now-wkTimer.start):wkTimer.elapsed;
-    const rawSubElapsed=wkTimer.subMode!=='idle'
-        ?(wkTimer.subInterval?(wkTimer.subElapsed+now-wkTimer.subStart):wkTimer.subElapsed)
-        :0;
-    const adjBtnStyle='background:rgba(255,255,255,.07);border:1px solid var(--border2);color:var(--text2);border-radius:8px;padding:6px 10px;font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0';
+    const elapsed=wkTimer.running?(wkTimer.elapsed+Date.now()-wkTimer.start):wkTimer.elapsed;
+    const subElapsed=(wkTimer.subMode!=='idle'&&wkTimer.subInterval)?(wkTimer.subElapsed+Date.now()-wkTimer.subStart):wkTimer.subElapsed;
 
-    // Exercício ativo
-    let activeExHtml='';
-    if(wkTimer.activeExId&&wkTimer.subMode==='series'){
-        const ex=state.gym.find(x=>x.id===wkTimer.activeExId);
-        if(ex){
-            const rA=ex.reps?ex.reps.split(',').map(s=>s.trim()):[];
-            const lA=ex.load?ex.load.split(',').map(s=>s.trim()):[];
-            const si=wkTimer.activeSetIdx;
-            const r=rA[si]||rA[rA.length-1]||'?';
-            const l=lA[si]||lA[lA.length-1]||'?';
-            activeExHtml=`<div style="text-align:center;margin-bottom:10px;padding:8px;background:rgba(52,211,153,.08);border-radius:10px;border:1px solid rgba(52,211,153,.25)">
-                <div style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">Exercício Ativo</div>
-                <div style="font-size:12px;font-weight:700;color:var(--accent);margin-top:2px">${ex.name}</div>
-                <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2)">Série ${si+1} · ${r} reps × ${l}kg</div>
-            </div>`;
-        }
-    }
-
-    let html=`${activeExHtml}<div style="text-align:center;margin:16px 0">
+    let html=`<div style="text-align:center;margin:16px 0">
         <div style="font-family:'JetBrains Mono',monospace;font-size:42px;font-weight:800;color:${wkTimer.running?'var(--accent)':'var(--text2)'}">${fmtTimer(elapsed)}</div>
         <div style="font-size:10px;color:var(--text3);margin-top:4px">TEMPO TOTAL DO TREINO</div>
-        <div style="display:flex;gap:6px;justify-content:center;margin-top:8px">
-            <button style="${adjBtnStyle}" onclick="adjustTimer(-5000)">−5s</button>
-            <button style="${adjBtnStyle}" onclick="adjustTimer(-30000)">−30s</button>
-            <button style="${adjBtnStyle}" onclick="adjustTimer(30000)">+30s</button>
-            <button style="${adjBtnStyle}" onclick="adjustTimer(5000)">+5s</button>
-        </div>
     </div>`;
 
-    // Botões principais — pausa pequena, à direita
-    html+=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px">`;
+    // Main timer buttons
+    html+=`<div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px">`;
     if(!wkTimer.running&&wkTimer.elapsed===0){
-        html+=`<button class="mbtn mbtn-save" onclick="startWorkoutTimer()" style="flex:1;font-size:14px;padding:14px">▶ Iniciar Treino</button>`;
+        html+=`<button class="mbtn mbtn-save" onclick="startWorkoutTimer()" style="flex:1">▶ Iniciar Treino</button>`;
     } else if(wkTimer.running){
-        html+=`<div style="flex:1;padding-left:4px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;line-height:1.5">Treino<br>em andamento</div>
-        <button onclick="pauseWorkoutTimer()" style="background:rgba(251,146,60,.12);border:1.5px solid var(--orange);color:var(--orange);border-radius:12px;padding:10px 18px;font-family:'Outfit',sans-serif;font-weight:700;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0"><svg width="12" height="14" viewBox="0 0 12 14" fill="var(--orange)"><rect x="0" y="0" width="4" height="14" rx="1"/><rect x="8" y="0" width="4" height="14" rx="1"/></svg>Pausar</button>`;
+        html+=`<button class="mbtn mbtn-del" onclick="pauseWorkoutTimer()" style="flex:1">⏸ Pausar</button>`;
     } else {
-        html+=`<button class="mbtn mbtn-save" onclick="resumeWorkoutTimer()" style="flex:1;font-size:13px">▶ Retomar</button>
-        <button onclick="finishWorkoutTimer()" style="background:rgba(248,113,113,.1);border:1.5px solid var(--red);color:var(--red);border-radius:12px;padding:10px 14px;font-family:'Outfit',sans-serif;font-weight:700;font-size:11px;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0">⏹ Encerrar</button>`;
+        html+=`<button class="mbtn mbtn-save" onclick="resumeWorkoutTimer()" style="flex:1">▶ Retomar</button>`;
+        html+=`<button class="mbtn mbtn-del" onclick="finishWorkoutTimer()" style="flex:1">⏹ Finalizar</button>`;
     }
     html+=`</div>`;
 
-    // Sub-timer — sempre visível se há elapsed, mesmo com timer pausado
-    if(elapsed>0||wkTimer.subMode!=='idle'){
+    // Sub-timer (series/rest) — only when main timer is running
+    if(wkTimer.running||wkTimer.elapsed>0){
         const subColor=wkTimer.subMode==='series'?'var(--accent)':wkTimer.subMode==='rest'?'var(--orange)':'var(--text3)';
         const subLabel=wkTimer.subMode==='series'?'🏋️ SÉRIE':wkTimer.subMode==='rest'?'⏳ INTERVALO':'—';
-        html+=`<div style="border-top:1px solid var(--border2);padding-top:14px;margin-top:4px">
-            <div style="text-align:center;margin-bottom:8px">
+        html+=`<div style="border-top:1px solid var(--border2);padding-top:14px;margin-top:8px">
+            <div style="text-align:center;margin-bottom:10px">
                 <div style="font-size:10px;font-weight:700;color:${subColor};text-transform:uppercase;margin-bottom:4px">${subLabel}</div>
-                <div style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:800;color:${subColor}">${fmtTimer(rawSubElapsed)}</div>
-                <div style="font-size:9px;color:var(--text3);margin-top:2px">±5s redistribui entre série e descanso</div>
-                <div style="display:flex;gap:6px;justify-content:center;margin-top:6px">
-                    <button style="${adjBtnStyle};font-size:10px;padding:5px 10px" onclick="adjustSub(-5000)">−5s</button>
-                    <button style="${adjBtnStyle};font-size:10px;padding:5px 10px" onclick="adjustSub(5000)">+5s</button>
-                </div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:800;color:${subColor}">${fmtTimer(wkTimer.subMode!=='idle'&&wkTimer.subInterval?subElapsed:0)}</div>
             </div>
             <div style="display:flex;gap:8px;justify-content:center;margin-bottom:12px">`;
         if(wkTimer.subMode==='idle'){
@@ -1236,139 +1055,91 @@ function renderTimerUI(){
         } else if(wkTimer.subMode==='rest'){
             html+=`<button class="mbtn" onclick="endSub()" style="flex:1;background:rgba(251,146,60,.15);color:var(--orange);border:1px solid var(--orange)">✓ Fim do Intervalo</button>`;
         }
-        html+=`</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px">
+        html+=`</div>`;
+
+        // Accumulated stats
+        html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px">
             <div style="background:rgba(52,211,153,.06);padding:8px;border-radius:8px;text-align:center">
                 <div style="color:var(--accent);font-weight:800;font-size:16px">${fmtTimer(wkTimer.totalSeriesTime)}</div>
-                <div style="color:var(--text3);margin-bottom:4px">Sob tensão</div>
-                <div style="display:flex;align-items:center;justify-content:center;gap:4px">
-                    <button style="${adjBtnStyle};padding:3px 8px;font-size:11px" onclick="adjustSeriesCount(-1)">−</button>
-                    <span style="color:var(--accent);font-weight:800;min-width:30px;text-align:center">${wkTimer.seriesCount} sér.</span>
-                    <button style="${adjBtnStyle};padding:3px 8px;font-size:11px" onclick="adjustSeriesCount(1)">+</button>
-                </div>
+                <div style="color:var(--text3)">Sob tensão (${wkTimer.seriesCount} séries)</div>
             </div>
             <div style="background:rgba(251,146,60,.06);padding:8px;border-radius:8px;text-align:center">
                 <div style="color:var(--orange);font-weight:800;font-size:16px">${fmtTimer(wkTimer.totalRestTime)}</div>
-                <div style="color:var(--text3)">Descanso (${wkTimer.restCount}×)</div>
+                <div style="color:var(--text3)">Intervalo (${wkTimer.restCount}x)</div>
             </div>
-        </div></div>`;
+        </div>`;
+        html+=`</div>`;
     }
     el.innerHTML=html;
 }
 
 function startWorkoutTimer(){
-    if(wkTimer.interval) clearInterval(wkTimer.interval);
-    if(wkTimer.subInterval) clearInterval(wkTimer.subInterval);
     wkTimer.running=true;wkTimer.start=Date.now();wkTimer.elapsed=0;
-    wkTimer.totalSeriesTime=0;wkTimer.totalRestTime=0;wkTimer.seriesCount=0;wkTimer.restCount=0;
-    wkTimer.subMode='idle';wkTimer.subElapsed=0;wkTimer.subInterval=null;
-    wkTimer.activeExId=null;wkTimer.activeSetIdx=-1;
-    wkTimer.interval=setInterval(()=>{renderTimerUI();saveTimer();},500);
-    saveTimer();renderTimerUI();
+    wkTimer.totalSeriesTime=0;wkTimer.totalRestTime=0;wkTimer.seriesCount=0;wkTimer.restCount=0;wkTimer.subMode='idle';
+    wkTimer.interval=setInterval(renderTimerUI,500);renderTimerUI();
 }
 function pauseWorkoutTimer(){
-    wkTimer.elapsed+=Date.now()-wkTimer.start;
-    wkTimer.running=false;
+    wkTimer.running=false;wkTimer.elapsed+=Date.now()-wkTimer.start;
     clearInterval(wkTimer.interval);wkTimer.interval=null;
     if(wkTimer.subMode!=='idle') pauseSub();
-    saveTimer();renderTimerUI();
+    renderTimerUI();
 }
 function resumeWorkoutTimer(){
     wkTimer.running=true;wkTimer.start=Date.now();
-    if(wkTimer.interval) clearInterval(wkTimer.interval);
-    wkTimer.interval=setInterval(()=>{renderTimerUI();saveTimer();},500);
-    // Retomar sub-timer se estava ativo
-    if(wkTimer.subMode!=='idle'&&!wkTimer.subInterval){
-        wkTimer.subStart=Date.now();
-        wkTimer.subInterval=setInterval(()=>{renderTimerUI();renderGym();},200);
-    }
-    saveTimer();renderTimerUI();
+    wkTimer.interval=setInterval(renderTimerUI,500);renderTimerUI();
 }
 function stopWorkoutTimer(){
+    // Don't reset — just stop updating
     if(wkTimer.interval){clearInterval(wkTimer.interval);wkTimer.interval=null;}
     if(wkTimer.subInterval){clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}
 }
 function finishWorkoutTimer(){
-    // Captura tempo final antes de encerrar sub-timer
+    const totalMs=wkTimer.elapsed;
     if(wkTimer.subMode!=='idle') endSub();
     clearInterval(wkTimer.interval);wkTimer.interval=null;
-    const totalMs=wkTimer.running?(wkTimer.elapsed+Date.now()-wkTimer.start):wkTimer.elapsed;
     const totalMin=Math.round(totalMs/60000);
     const seriesMin=(wkTimer.totalSeriesTime/60000).toFixed(1);
     const restMin=(wkTimer.totalRestTime/60000).toFixed(1);
+
+    // Add generic musculação exercise
     const cals=prompt('Calorias estimadas (smartwatch):','0');
-    const notes=`⏱ ${totalMin}min total · 🏋️ ${seriesMin}min tensão (${wkTimer.seriesCount} sér.) · ⏳ ${restMin}min descanso (${wkTimer.restCount}×)`;
+    const notes=`⏱ ${totalMin}min total · 🏋️ ${seriesMin}min tensão (${wkTimer.seriesCount} séries) · ⏳ ${restMin}min intervalo (${wkTimer.restCount}x)`;
     state.gym.push({
         id:'ex'+Date.now(),name:'Musculação',type:'cardio',
         duration:totalMin,calories:parseInt(cals)||0,
         distance:'',hr:0,notes,done:true,
         time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
-        isGeneric:true
+        isGeneric:true,seriesTime:wkTimer.totalSeriesTime,restTime:wkTimer.totalRestTime,
+        seriesCount:wkTimer.seriesCount,restCount:wkTimer.restCount
     });
-    // Reset completo
-    wkTimer={running:false,start:0,elapsed:0,interval:null,subMode:'idle',subStart:0,subElapsed:0,subInterval:null,totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0,activeExId:null,activeSetIdx:-1};
-    localStorage.removeItem(TK);
+
+    // Reset timer
+    wkTimer={running:false,start:0,elapsed:0,interval:null,subMode:'idle',subStart:0,subElapsed:0,subInterval:null,totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0};
     save();closeModal('timerModal');
 }
 
-function startSub(mode, exId=null, setIdx=-1){
-    if(wkTimer.subInterval){clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}
+function startSub(mode){
     wkTimer.subMode=mode;wkTimer.subStart=Date.now();wkTimer.subElapsed=0;
-    if(mode==='series'){wkTimer.activeExId=exId;wkTimer.activeSetIdx=setIdx;}
-    else{wkTimer.activeExId=null;wkTimer.activeSetIdx=-1;}
-    wkTimer.subInterval=setInterval(()=>{renderTimerUI();renderGym();},200);
-    saveTimer();renderTimerUI();renderGym();
+    wkTimer.subInterval=setInterval(renderTimerUI,200);renderTimerUI();
 }
 function pauseSub(){
     if(wkTimer.subInterval){wkTimer.subElapsed+=Date.now()-wkTimer.subStart;clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}
 }
 function endSub(){
     const elapsed=wkTimer.subElapsed+(wkTimer.subInterval?Date.now()-wkTimer.subStart:0);
+    if(wkTimer.subMode==='series'){wkTimer.totalSeriesTime+=elapsed;wkTimer.seriesCount++;wkTimer.subMode='rest';}
+    else if(wkTimer.subMode==='rest'){wkTimer.totalRestTime+=elapsed;wkTimer.restCount++;wkTimer.subMode='idle';}
     if(wkTimer.subInterval){clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}
-    if(wkTimer.subMode==='series'){
-        wkTimer.totalSeriesTime+=elapsed;
-        wkTimer.seriesCount++;
-        if(wkTimer.activeExId!==null&&wkTimer.activeSetIdx>=0){
-            const ex=state.gym.find(x=>x.id===wkTimer.activeExId);
-            if(ex&&!(ex.completed||[]).includes(wkTimer.activeSetIdx)){
-                if(!ex.completed) ex.completed=[];
-                ex.completed.push(wkTimer.activeSetIdx);
-                localStorage.setItem(SK,JSON.stringify(state));
-            }
-        }
-        wkTimer.activeExId=null;wkTimer.activeSetIdx=-1;
-        wkTimer.subMode='rest';
-    } else if(wkTimer.subMode==='rest'){
-        wkTimer.totalRestTime+=elapsed;
-        wkTimer.restCount++;
-        wkTimer.subMode='idle';
-    }
     wkTimer.subElapsed=0;wkTimer.subStart=Date.now();
-    saveTimer();
-    if(wkTimer.subMode==='rest') startSub('rest');
-    else{renderTimerUI();renderGym();}
+    // Auto-start next phase
+    if(wkTimer.subMode==='rest'){startSub('rest');}
+    else{renderTimerUI();}
 }
-function toggleExSet(eid,si){
-    const ex=state.gym.find(x=>x.id===eid);if(!ex) return;
-    if(!ex.completed) ex.completed=[];
-    const i=ex.completed.indexOf(si);
-    if(i>-1){ex.completed.splice(i,1);save();return;}
-    if(wkTimer.subMode==='idle'){
-        if(!wkTimer.running&&wkTimer.elapsed===0) startWorkoutTimer();
-        else if(!wkTimer.running) resumeWorkoutTimer();
-        startSub('series',eid,si);
-        document.getElementById('timerModal').classList.add('open');
-    } else {
-        ex.completed.push(si);save();
-    }
-}
-function toggleCardioDone(eid){const ex=state.gym.find(x=>x.id===eid);if(!ex) return;ex.done=!ex.done;save();}
 function openHistory(){
     const list=document.getElementById('histList');list.innerHTML='';
     if(!state.history.length){list.innerHTML='<p style="color:var(--text3);font-size:12px;text-align:center;padding:20px">Nenhum registro</p>';}
     state.history.forEach(h=>{
-        const autoIcon=h.autoSaved?'<span title="Salvo automaticamente na virada do dia" style="font-size:9px;color:var(--text3);margin-left:4px">⚡</span>':'';
-        list.innerHTML+=`<div class="hist-item"><div><div class="hist-date">${h.date}${autoIcon}</div><div class="hist-water">💧 ${h.water||0}ml · 🏋️ ${h.gym||0}</div></div><div class="hist-score">${h.score}%</div></div>`;
+        list.innerHTML+=`<div class="hist-item"><div><div class="hist-date">${h.date}</div><div class="hist-water">💧 ${h.water||0}ml · 🏋️ ${h.gym||0}</div></div><div class="hist-score">${h.score}%</div></div>`;
     });
     document.getElementById('histModal').classList.add('open');
 }
@@ -1424,10 +1195,10 @@ function renderList(panel,cid){
 function renderGym(){
     const el=document.getElementById('exList');el.innerHTML='';
     if(!state.gym.length){el.innerHTML='<p style="color:var(--text3);font-size:12px;text-align:center;padding:30px">Nenhum exercício registrado hoje.<br>Toque + para adicionar.</p>';return;}
-    const timerOn=wkTimer.running||wkTimer.elapsed>0;
     state.gym.forEach(ex=>{
         const card=document.createElement('div');card.className='ex-card';
         if(ex.type==='cardio'){
+            // Cardio card
             const doneClass=ex.done?' done':'';
             card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center">
                 <div class="ex-name">🫀 ${ex.name}</div>
@@ -1443,38 +1214,19 @@ function renderGym(){
             </div>
             ${ex.notes?`<div class="ex-meta">📝 ${ex.notes}</div>`:''}`;
         } else {
-            // Resistido card — série ativa fica destacada
-            let sH='';
-            const rA=ex.reps?ex.reps.split(',').map(s=>s.trim()):[];
-            const lA=ex.load?ex.load.split(',').map(s=>s.trim()):[];
-            for(let i=0;i<ex.series;i++){
-                const done=ex.completed&&ex.completed.includes(i);
-                const isActive=wkTimer.activeExId===ex.id&&wkTimer.activeSetIdx===i&&wkTimer.subMode==='series';
-                const r=rA[i]||rA[rA.length-1]||'?';
-                const l=lA[i]||lA[lA.length-1]||'?';
-                let cls='ex-set'+(done?' done':'')+(isActive?' ex-set-active':'');
-                const label=isActive?`▶ S${i+1}: ${r}×${l}kg`:`S${i+1}: ${r}×${l}kg`;
-                sH+=`<div class="${cls}" onclick="toggleExSet('${ex.id}',${i})">${label}</div>`;
-            }
-            // Badge mostrando timer ativo nesse exercício
-            const activeHere=wkTimer.activeExId===ex.id;
-            const exBadge=activeHere?`<span class="timer-active-badge">⏱ EM EXECUÇÃO</span>`:'';
-            // Progresso das séries
-            const completedCount=(ex.completed||[]).length;
-            const progColor=completedCount===ex.series?'var(--accent)':completedCount>0?'var(--yellow)':'var(--text3)';
-            card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
-                <div style="flex:1;min-width:0">
-                    <div class="ex-name" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${ex.name} ${exBadge}</div>
-                    ${ex.group?`<div class="ex-meta" style="color:var(--purple)">${ex.group}</div>`:''}
-                </div>
-                <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:${progColor};flex-shrink:0">${completedCount}/${ex.series}</div>
+            // Resistido card
+            let sH='';const rA=ex.reps?ex.reps.split(',').map(s=>s.trim()):[];const lA=ex.load?ex.load.split(',').map(s=>s.trim()):[];
+            for(let i=0;i<ex.series;i++){const done=ex.completed&&ex.completed.includes(i);const r=rA[i]||rA[rA.length-1]||'?';const l=lA[i]||lA[lA.length-1]||'?';sH+=`<div class="ex-set${done?' done':''}" onclick="toggleExSet('${ex.id}',${i})">S${i+1}: ${r}×${l}kg</div>`;}
+            card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center">
+                <div class="ex-name">${ex.name}</div>
                 <div class="task-btns">
                     <button class="task-chart" onclick="openExHistory('${ex.id}')" title="Histórico">📊</button>
                     <button class="task-edit" onclick="openExModal('${ex.id}')" title="Editar">⚙️</button>
                 </div>
             </div>
-            <div class="ex-sets" style="margin-top:6px">${sH}</div>
-            <div class="ex-meta">⏱ ${ex.rest}s descanso${ex.notes?' · '+ex.notes:''}</div>`;
+            ${ex.group?`<div class="ex-meta" style="color:var(--purple);margin-bottom:6px">${ex.group}</div>`:''}
+            <div class="ex-sets">${sH}</div>
+            <div class="ex-meta">⏱ ${ex.rest}s${ex.notes?' · '+ex.notes:''}</div>`;
         }
         el.appendChild(card);
     });
@@ -1623,190 +1375,10 @@ function render(){
     document.getElementById('barW').style.width=Math.min((fp/4000)*100,100)+'%';
     document.getElementById('barC').style.width=Math.min((fd/4000)*100,100)+'%';
     document.getElementById('barO').style.width=Math.min((fo/4000)*100,100)+'%';
-    // Badge do timer no botão cronômetro
-    const tb=document.getElementById('timerBtn');
-    if(tb){
-        const hasTimer=wkTimer.running||(wkTimer.elapsed>0&&wkTimer.subMode!=='idle')||(wkTimer.elapsed>0);
-        if(wkTimer.running){
-            tb.style.background='rgba(52,211,153,.2)';tb.style.borderColor='var(--accent)';
-            tb.textContent='⏱ TREINO EM ANDAMENTO ●';
-        } else if(wkTimer.elapsed>0){
-            tb.style.background='rgba(251,146,60,.15)';tb.style.borderColor='var(--orange)';tb.style.color='var(--orange)';
-            tb.textContent='⏱ Cronômetro Pausado — Toque para retomar';
-        } else {
-            tb.style.background='rgba(52,211,153,.1)';tb.style.borderColor='var(--accent)';tb.style.color='var(--accent)';
-            tb.textContent='⏱ Cronômetro Musculação';
-        }
-    }
     renderList('supps','panel-supps');
     renderList('derm','panel-derm');
     renderGym();
     renderFood();
-}
-
-// ═══ TREINOS PRESCRITOS ═══
-const WORKOUT_PRESETS={
-  'A':{
-    name:'🏋️ Foco Peitoral e Definição',
-    exercises:[
-      // Superset 1
-      {name:'Supino reto aberto máquina',type:'resistido',series:3,reps:'15, 15, 15',load:'0, 0, 0',rest:0,group:'Peitoral',notes:'Superset → Flexão de braço'},
-      {name:'Flexão de braço',type:'resistido',series:3,reps:'15, 15, 15',load:'0, 0, 0',rest:90,group:'Peitoral',notes:'Superset c/ Supino reto aberto máquina'},
-      // Superset 2
-      {name:'Supino inclinado com halter',type:'resistido',series:3,reps:'12, 12, 12',load:'12, 12, 12',rest:0,group:'Peitoral Superior',notes:'Superset → Abdução de ombros em pé'},
-      {name:'Abdução de ombros em pé',type:'resistido',series:3,reps:'15, 15, 15',load:'0, 0, 0',rest:90,group:'Ombro',notes:'Superset c/ Supino inclinado com halter'},
-      // Superset 3
-      {name:'Voador peitoral máquina',type:'resistido',series:3,reps:'12, 12, 12',load:'0, 0, 0',rest:0,group:'Peitoral',notes:'PICO: No topo do movimento, aperte o músculo por 2 segundos. | Superset → Tríceps supinado com halter'},
-      {name:'Tríceps supinado com halter',type:'resistido',series:3,reps:'12, 12, 12',load:'0, 0, 0',rest:90,group:'Tríceps',notes:'Superset c/ Voador peitoral máquina'},
-      // Superset 4
-      {name:'Desenvolvimento aberto sentado com halter',type:'resistido',series:3,reps:'12, 12, 12',load:'15, 15, 15',rest:0,group:'Ombro',notes:'Superset → Abdominal remador'},
-      {name:'Abdominal remador',type:'resistido',series:3,reps:'20, 20, 20',load:'0, 0, 0',rest:90,group:'Core',notes:'Superset c/ Desenvolvimento aberto com halter'},
-    ]
-  },
-  'B':{
-    name:'💪 Dorsal, Bíceps e Cardio',
-    exercises:[
-      {name:'Corrida/Caminhada na esteira',type:'cardio',duration:20,calories:0,distance:'',hr:0,notes:'Aquecimento inicial'},
-      {name:'Puxada fechada na máquina',type:'resistido',series:3,reps:'12, 12, 12',load:'54, 54, 54',rest:90,group:'Costas',notes:''},
-      {name:'Remada fechada máquina',type:'resistido',series:3,reps:'12, 12, 12',load:'20, 20, 20',rest:90,group:'Costas',notes:''},
-      {name:'Remada curvada com kettlebell',type:'resistido',series:3,reps:'12, 12, 12',load:'0, 0, 0',rest:90,group:'Costas',notes:''},
-      {name:'Crucifixo inverso no crossover',type:'resistido',series:3,reps:'12, 12, 12',load:'15, 15, 15',rest:90,group:'Posterior Ombro',notes:''},
-      {name:'Elíptico',type:'cardio',duration:20,calories:0,distance:'',hr:0,notes:'Cardio intermediário'},
-      {name:'Bíceps barra H',type:'resistido',series:3,reps:'12, 12, 12',load:'0, 0, 0',rest:90,group:'Bíceps',notes:''},
-      {name:'Bíceps barra reta banco Scott',type:'resistido',series:3,reps:'10, 10, 10',load:'0, 0, 0',rest:90,group:'Bíceps',notes:''},
-      {name:'Bíceps banco inclinado 45°',type:'resistido',series:3,reps:'12, 12, 12',load:'8, 8, 8',rest:90,group:'Bíceps',notes:''},
-    ]
-  },
-  'C':{
-    name:'🦵 Membros Inferiores e Core',
-    exercises:[
-      // Superset 1
-      {name:'Leg press máquina',type:'resistido',series:3,reps:'12, 12, 12',load:'90, 90, 90',rest:0,group:'Quadríceps/Glúteo',notes:'PICO: No topo (sem travar joelhos), aperte a coxa por 2 segundos. | Superset → Abdominal total'},
-      {name:'Abdominal total',type:'resistido',series:3,reps:'20, 20, 20',load:'0, 0, 0',rest:90,group:'Core',notes:'Superset c/ Leg press máquina'},
-      // Superset 2
-      {name:'Stiff na máquina',type:'resistido',series:3,reps:'12, 12, 12',load:'25, 25, 25',rest:0,group:'Posterior/Glúteo',notes:'Superset → Abdominal braços cruzados'},
-      {name:'Abdominal braços cruzados',type:'resistido',series:3,reps:'20, 20, 20',load:'0, 0, 0',rest:90,group:'Core',notes:'Superset c/ Stiff na máquina'},
-      // Superset 3
-      {name:'Cadeira extensora',type:'resistido',series:3,reps:'12, 12, 12',load:'0, 0, 0',rest:0,group:'Quadríceps',notes:'ISO: Na última repetição, segure as pernas esticadas por 10 segundos. | Superset → Agachamento com halter'},
-      {name:'Agachamento com halter',type:'resistido',series:3,reps:'15, 15, 15',load:'0, 0, 0',rest:90,group:'Quadríceps/Glúteo',notes:'Superset c/ Cadeira extensora'},
-      // Superset 4
-      {name:'Cadeira flexora',type:'resistido',series:3,reps:'12, 12, 12',load:'42, 42, 42',rest:0,group:'Posterior',notes:'Superset → Agachamento unilateral com halter (afundo)'},
-      {name:'Agachamento unilateral com halter (afundo)',type:'resistido',series:3,reps:'10, 10, 10',load:'0, 0, 0',rest:90,group:'Glúteo/Quadríceps',notes:'Superset c/ Cadeira flexora'},
-      // Isolado
-      {name:'Panturrilha no leg press',type:'resistido',series:4,reps:'15, 15, 15, 15',load:'40, 40, 40, 40',rest:60,group:'Panturrilha',notes:''},
-    ]
-  }
-};
-
-function loadPreset(key){
-    const preset=WORKOUT_PRESETS[key];
-    if(!preset) return;
-    if(state.gym.length>0&&!confirm(`Substituir os ${state.gym.length} exercício(s) atuais pelo treino "${preset.name}"?`)) return;
-    state.gym=preset.exercises.map(ex=>({
-        ...ex,
-        id:'ex'+Date.now()+Math.random().toString(36).substr(2,5),
-        completed:[],
-        done:false,
-        time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
-    }));
-    save();
-    // Garantir que a aba treino esteja ativa
-    switchTab('gym');
-}
-
-// ═══ NOTIFICAÇÕES DE SUPLEMENTOS ═══
-let notifState={enabled:false,scheduled:[],ticker:null};
-
-async function toggleNotifications(){
-    if(notifState.enabled){
-        disableNotifications();return;
-    }
-    if(!('Notification' in window)){
-        alert('Este navegador não suporta notificações. Use Chrome ou Safari no iOS 16.4+.');return;
-    }
-    const perm=await Notification.requestPermission();
-    if(perm!=='granted'){
-        alert('Permissão de notificação negada. Habilite nas configurações do navegador.');return;
-    }
-    enableNotifications();
-}
-
-function enableNotifications(){
-    notifState.enabled=true;
-    const btn=document.getElementById('notifBtn');
-    if(btn){btn.classList.add('on');btn.textContent='🔔';}
-    scheduleAllNotifications();
-    // Checar a cada 30 segundos se há alguma notificação a disparar
-    if(notifState.ticker) clearInterval(notifState.ticker);
-    notifState.ticker=setInterval(checkAndFireNotifications,30000);
-}
-
-function disableNotifications(){
-    notifState.enabled=false;
-    notifState.scheduled=[];
-    if(notifState.ticker){clearInterval(notifState.ticker);notifState.ticker=null;}
-    const btn=document.getElementById('notifBtn');
-    if(btn){btn.classList.remove('on');btn.textContent='🔔';}
-}
-
-function scheduleAllNotifications(){
-    notifState.scheduled=[];
-    const now=new Date();
-    const todayStr=now.toLocaleDateString('pt-BR');
-    const activeSupps=state.supps.filter(t=>!t.suspended&&!t.done);
-    activeSupps.forEach(t=>{
-        const[h,m]=t.time.split(':').map(Number);
-        const fireTime=new Date();
-        fireTime.setHours(h,m,0,0);
-        // Se o horário já passou hoje, não agendar
-        if(fireTime>now){
-            notifState.scheduled.push({id:t.id,title:t.title,qty:t.qty,time:t.time,fireTime:fireTime.getTime(),fired:false});
-        }
-    });
-}
-
-function checkAndFireNotifications(){
-    if(!notifState.enabled||Notification.permission!=='granted') return;
-    const now=Date.now();
-    // Reagendar se mudou de dia
-    const today=new Date().toLocaleDateString('pt-BR');
-    if(notifState.lastDay&&notifState.lastDay!==today){scheduleAllNotifications();}
-    notifState.lastDay=today;
-    notifState.scheduled.forEach(n=>{
-        if(!n.fired&&now>=n.fireTime&&now<n.fireTime+120000){// janela de 2 minutos
-            n.fired=true;
-            const t=state.supps.find(x=>x.id===n.id);
-            if(t&&!t.done&&!t.suspended){
-                fireNotification(t);
-            }
-        }
-    });
-}
-
-function fireNotification(item){
-    try{
-        const notif=new Notification('💊 Thobias Pro — '+item.time,{
-            body:`${item.qty} · ${item.title}`,
-            icon:'icon-192.png',
-            badge:'icon-192.png',
-            tag:'supps-'+item.id,
-            requireInteraction:false,
-            silent:false
-        });
-        notif.onclick=()=>{window.focus();notif.close();switchTab('supps');};
-        // Vibração se disponível
-        if(navigator.vibrate) navigator.vibrate([200,100,200]);
-    }catch(e){console.warn('Notificação falhou:',e);}
-}
-
-// Atualiza agendamento quando um item é marcado como feito
-function refreshNotifSchedule(){
-    if(!notifState.enabled) return;
-    // Remover do agendamento itens já concluídos
-    notifState.scheduled=notifState.scheduled.filter(n=>{
-        const t=state.supps.find(x=>x.id===n.id);
-        return t&&!t.done&&!t.suspended;
-    });
 }
 
 load();
@@ -1816,4 +1388,3 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch
 </script>
 </body>
 </html>
-
