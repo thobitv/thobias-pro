@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thobias Pro | v58</title>
+    <title>Thobias Pro | v60</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -133,6 +133,7 @@
             <div>
                 <div class="brand">Thobias Pro</div>
                 <div class="brand-sub" id="displayDate">--/--/----</div>
+                <div class="brand-sub" style="color:var(--text3);opacity:.5">v60</div>
             </div>
             <div class="score-ring">
                 <svg viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="15.5"/><circle class="fg" id="scoreArc" cx="18" cy="18" r="15.5" stroke-dasharray="97.4" stroke-dashoffset="97.4"/></svg>
@@ -179,6 +180,14 @@
     <div id="panel-gym" class="panel">
         <div style="display:flex;gap:8px;margin-bottom:10px">
             <button class="add-btn" onclick="openWorkoutTimer()" style="flex:1;margin:0;background:rgba(52,211,153,.1);border-color:var(--accent);color:var(--accent)">⏱ Cronômetro Musculação</button>
+        </div>
+        <div style="margin-bottom:10px">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">📋 Carregar Treino Prescrito</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+                <button class="wbtn" onclick="loadPreset('A')" style="padding:10px 4px;border-color:rgba(248,113,113,.3);color:var(--red);background:rgba(248,113,113,.06);font-size:8.5px;flex-direction:column;gap:2px"><span style="font-size:13px">🏋️</span>Peitoral<br>Definição</button>
+                <button class="wbtn" onclick="loadPreset('B')" style="padding:10px 4px;border-color:rgba(96,165,250,.3);color:var(--blue);background:rgba(96,165,250,.06);font-size:8.5px;flex-direction:column;gap:2px"><span style="font-size:13px">🔵</span>Dorsal<br>Tríceps+Cardio</button>
+                <button class="wbtn" onclick="loadPreset('C')" style="padding:10px 4px;border-color:rgba(167,139,250,.3);color:var(--purple);background:rgba(167,139,250,.06);font-size:8.5px;flex-direction:column;gap:2px"><span style="font-size:13px">🦵</span>Inferiores<br>Core</button>
+            </div>
         </div>
         <div id="exList"></div>
         <button class="add-btn" onclick="openExModal('new')">+ Adicionar Exercício</button>
@@ -317,8 +326,31 @@
 <div id="timerModal" class="modal-bg"><div class="modal" style="max-width:440px">
     <h3>⏱ Cronômetro de Treino</h3>
     <div id="timerContent"></div>
-    <div class="modal-row"><button class="mbtn mbtn-close" onclick="stopWorkoutTimer();closeModal('timerModal')" style="flex:1">Fechar</button></div>
+    <div class="modal-row" style="gap:8px">
+        <button class="mbtn" onclick="minimizeTimer()" id="btnMinimize" style="display:none;background:var(--card2);color:var(--text2);flex:1">⬇ Minimizar</button>
+        <button class="mbtn mbtn-close" onclick="closeTimerModal()" style="flex:1">Fechar</button>
+    </div>
 </div></div>
+
+<!-- PiP FLUTUANTE -->
+<div id="timerPip" style="display:none;position:fixed;bottom:90px;right:14px;z-index:3000;
+    background:var(--card);border:1px solid rgba(52,211,153,.3);border-radius:16px;
+    padding:10px 12px;min-width:170px;box-shadow:0 8px 32px rgba(0,0,0,.7);
+    cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;pointer-events:none">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px">⏱ Em treino</span>
+        <div style="display:flex;gap:6px;pointer-events:auto">
+            <button onclick="expandTimer()" title="Expandir" style="background:none;border:none;color:var(--text2);font-size:14px;cursor:pointer;padding:2px 4px;line-height:1">⬆</button>
+            <button onclick="closePip()" title="Encerrar" style="background:none;border:none;color:var(--text3);font-size:14px;cursor:pointer;padding:2px 4px;line-height:1">✕</button>
+        </div>
+    </div>
+    <div id="pipMain" style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:800;color:var(--accent);line-height:1;margin-bottom:3px;pointer-events:none">00:00</div>
+    <div id="pipSub" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);margin-bottom:8px;pointer-events:none">—</div>
+    <div style="display:flex;gap:6px;pointer-events:auto">
+        <button id="pipPlayPause" onclick="pipTogglePlay()" style="flex:1;padding:7px 4px;border-radius:8px;border:none;font-size:12px;font-weight:700;background:var(--accent);color:#0a0f1e;cursor:pointer">⏸</button>
+        <button id="pipSubBtn" onclick="pipSubAction()" style="flex:2;padding:7px 4px;border-radius:8px;border:1px solid var(--border2);font-size:10px;font-weight:700;background:transparent;color:var(--text2);cursor:pointer">🏋️ Série</button>
+    </div>
+</div>
 
 <canvas id="snapCanvas" width="1080"></canvas>
 
@@ -342,28 +374,30 @@ const SUPPS=[
 {id:'s11',time:'07:00',qty:'💊 ~1g',title:'Vitamina B5 (Dose 1)',cat:'Pele',note:'⚠ ≥2h antes da biotina · Fracionada em 3 doses diárias'},
 {id:'s12',time:'07:00',qty:'💊 2 Caps',title:'CoQ10 100mg × 2 (com gordura)',cat:'Energia',note:'🍳 COM GORDURA obrigatório (lipossolúvel) · 2 cáps de 100mg'},
 {id:'s13',time:'06:15',qty:'💊 2 Caps',title:'Taurina 1.600mg',cat:'Renal',note:'Melhor absorção em jejum · Não compete com ferro'},
-{id:'s14',time:'06:15',qty:'💊 1 Cap',title:'NAC 600mg (Dose 1)',cat:'Nefro',note:'Melhor absorção em jejum · Precursor glutationa · Não compete com ferro'},
+{id:'s28',time:'19:00',qty:'💊 1 Cap',title:'NAC 600mg',cat:'Nefro',note:'🍽 COM COMIDA · Dose única noturna · Precursor glutationa · Componente GlyNAC (com Glicina)'},
 {id:'s41',time:'06:15',qty:'💊 1 Cap',title:'Juba de Leão 500mg (Lion\'s Mane)',cat:'Neuro',note:'Absorção não depende de gordura · Estimula NGF/BDNF · Sinérgico c/ lítio'},
-{id:'s42',time:'07:00',qty:'💊 2 Caps',title:'Saw Palmetto 150mg + Pygeum 50mg (BRIDGE até 04/03)',cat:'DHT',note:'⚠ TEMPORÁRIO — suspender ao iniciar Dutasterida · 2 cáps = 300mg SP + 100mg Pyg · COM GORDURA (fitoesteróis lipossolúveis)'},
+{id:'s42',time:'07:00',qty:'💊 2 Caps',title:'Saw Palmetto 300mg + Pygeum 100mg',cat:'DHT',note:'COM GORDURA (fitoesteróis lipossolúveis) · Suspender se retomar dutasterida',suspended:true},
 // ── 12:00 ALMOÇO ──
 {id:'s15',time:'12:00',qty:'💊 29,5mg',title:'Zinco Quelato (6h+ após ferro)',cat:'Mineral',note:'⚠ ≥6h após ferro (06:15→12:15 ✓) · ≥5h após cobre (07:00→12:00 ✓) · ≥2h antes do cálcio (19h)'},
 {id:'s16',time:'12:00',qty:'💊 ~1g',title:'Vitamina B5 (Dose 2)',cat:'Pele',note:'≥2h antes da biotina da tarde · Dose 2 de 3'},
 {id:'s17',time:'12:00',qty:'💊 2 Caps',title:'Cúrcuma + pimenta preta (com comida)',cat:'Inflama',note:'🍽 COM COMIDA · Pimenta preta ↑ biodisponibilidade 2000%'},
-{id:'s18',time:'12:00',qty:'💊 500-750mg',title:'L-Carnitina (Dose 1)',cat:'Fat/Pele',note:'Com refeição · Nos dias sem treino, dose única'},
+{id:'s18',time:'12:00',qty:'💊 500-750mg',title:'L-Carnitina (Dose 1)',cat:'Fat/Pele',note:'Com refeição · Nos dias sem treino, dose única',suspended:true},
 {id:'s19',time:'12:00',qty:'💊 300mcg',title:'Biotina (2h+ após B5 matinal)',cat:'Base',note:'⚠ ≥2h após B5 dose 1 (07:00→12:00 = 5h ✓) · Competem por absorção'},
-{id:'s20',time:'12:00',qty:'💊 1 CP',title:'Trental 400mg (Dose 1)',cat:'Reologia',note:'🍽 COM COMIDA reduz desconforto GI · Dose 1 de 3'},
+{id:'s20',time:'12:00',qty:'💊 1 CP',title:'Trental 400mg (Dose 1)',cat:'Reologia',note:'🍽 COM COMIDA reduz desconforto GI · Dose 1 de 3',suspended:true},
 // ── 15:00 TARDE ──
 {id:'s21',time:'15:00',qty:'💊 ~1g',title:'Vitamina B5 (Dose 3)',cat:'Pele',note:'Dose 3 de 3 · Total diário ~3g'},
-{id:'s22',time:'15:00',qty:'💊 1 CP',title:'Trental 400mg (Dose 2)',cat:'Reologia',note:'Dose 2 de 3 · Pode tomar com lanche'},
+{id:'s22',time:'15:00',qty:'💊 1 CP',title:'Trental 400mg (Dose 2)',cat:'Reologia',note:'Dose 2 de 3 · Pode tomar com lanche',suspended:true},
 // ── 16:30 PRÉ-TREINO (treino ~17:30) ──
-{id:'s23',time:'16:30',qty:'💊 500-750mg',title:'L-Carnitina (Dose 2 — pré-treino)',cat:'Fat/Pele',note:'30-60 min antes do treino · Potencializa oxidação de gordura'},
+{id:'s23',time:'16:30',qty:'💊 500-750mg',title:'L-Carnitina (Dose 2 — pré-treino)',cat:'Fat/Pele',note:'30-60 min antes do treino · Potencializa oxidação de gordura',suspended:true},
 // ── 18:30 PÓS-TREINO ──
 {id:'s45',time:'12:00',qty:'💊 1 Cap (200mg)',title:'Fosfatidilserina 200mg',cat:'Cortisol',note:'🍽 COM REFEIÇÃO · Redução de cortisol crônico · Não tomar à noite (leve efeito estimulante cognitivo) · Derivado de soja'},
 {id:'s25',time:'18:30',qty:'🥄 3-5g',title:'Creatina (com carboidrato/proteína)',cat:'Força',note:'🍽 COM CARBOIDRATO/PROTEÍNA · Insulina ↑ captação muscular'},
 // ── 19:00 JANTAR ──
 {id:'s26',time:'19:00',qty:'💊 1 CP',title:'Metformina XR 500mg (Glifage)',cat:'Metab',note:'🍽 COM COMIDA obrigatório · Reduz desconforto GI'},
-{id:'s27',time:'19:00',qty:'💊 1 CP',title:'Trental 400mg (Dose 3)',cat:'Reologia',note:'🍽 COM COMIDA · Dose 3 de 3'},
-{id:'s28',time:'19:00',qty:'💊 1 Cap',title:'NAC 600mg (Dose 2)',cat:'Nefro',note:'Dose 2 de 2 · Componente do protocolo GlyNAC'},
+{id:'s27',time:'19:00',qty:'💊 1 CP',title:'Trental 400mg (Dose 3)',cat:'Reologia',note:'🍽 COM COMIDA · Dose 3 de 3',suspended:true},
+{id:'s28',time:'19:00',qty:'💊 1 Cap',title:'NAC 600mg',cat:'Nefro',note:'🍽 COM COMIDA · Dose única noturna · Precursor glutationa · Componente GlyNAC (com Glicina)'},
+{id:'s47',time:'19:00',qty:'💊 1 Cap',title:'Nattokinase 100mg',cat:'Reologia',note:'🍽 COM COMIDA · Fibrinolítico natural · ≥2h de intervalo de outros anticoagulantes · Potencializa saúde cardiovascular'},
+{id:'s48',time:'19:00',qty:'💊 1 Cap',title:'Naringina 500mg',cat:'Reologia',note:'🍽 COM COMIDA · Flavonoide cítrico — anti-inflamatório + melhora perfil lipídico · Sem interações relevantes com o stack atual'},
 {id:'s29',time:'19:00',qty:'💊 1 Cap',title:'Ômega-3 (Dose 2, com comida)',cat:'Lipossolúvel',note:'🍳 COM GORDURA da refeição · Dose 2 de 2'},
 {id:'s30',time:'19:00',qty:'💊 4 Caps',title:'Cálcio 800mg + D3 500UI + K1 (≥2h do zinco)',cat:'Ósseo',note:'⚠ ≥2h após zinco (12:00→19:00 = 7h ✓) · ≥3h após ferro · COM COMIDA · K1 ≠ K2: a K2 150mcg da manhã é que direciona cálcio aos ossos'},
 {id:'s31',time:'19:00',qty:'💊 1 Cap',title:'Cardo Mariano 500mg (com comida)',cat:'Fígado',note:'🍽 COM COMIDA · Hepatoprotetor'},
@@ -391,7 +425,6 @@ const DERM=[
 {id:'d21',time:'06:32',qty:'🧴',title:'Sensibio AR+ (Bioderma)',cat:'Rosácea',note:'Hidratante terapêutico Rosactiv™ antivermelhidão · Absorver completamente antes do filtro solar'},
 {id:'d09',time:'06:37',qty:'🧴',title:'Protetor solar mineral FPS 50+ (Bioderma Photoderm Mineral / Adcos Fluid Mineral)',cat:'Rosto',note:'Último passo obrigatório · Filtro mineral — não gera calor · Needs FPS 70 aceito provisoriamente'},
 {id:'d10',time:'06:40',qty:'🧴 SOS',title:'Brimonidina 0,33% gel facial (flushing agudo)',cat:'Rosácea',note:'⚠ Máx 3-4x/semana · NÃO usar no mesmo dia que combinar os dois colírios · Onset 15-30min · Dura 8-12h'},
-{id:'d11',time:'06:45',qty:'🧴',title:'Epidrat Corpo Intenso (tórax)',cat:'Corpo',note:'Hidratação corporal · Evitar rosto'},
 {id:'d12',time:'08:00',qty:'🧴 5min',title:'BP 5% sabonete (tórax — 5min contato)',cat:'Corpo',note:'Acne/foliculite tórax · Manter 5min antes de enxaguar'},
 {id:'d13',time:'08:00',qty:'🧴 5min',title:'Cetoconazol 2% hairline (5min)',cat:'Cabelo',note:'Dermatite seborreica hairline · 5min contato antes de enxaguar'},
 // ── NOITE ──
@@ -661,7 +694,31 @@ function saveEx(){
     save();closeModal('exModal');
 }
 function deleteEx(){const id=document.getElementById('exEditId').value;if(confirm('Excluir?')){state.gym=state.gym.filter(x=>x.id!==id);save();closeModal('exModal');}}
-function toggleExSet(eid,si){const ex=state.gym.find(x=>x.id===eid);if(!ex) return;if(!ex.completed) ex.completed=[];const i=ex.completed.indexOf(si);if(i>-1) ex.completed.splice(i,1);else ex.completed.push(si);save();}
+function toggleExSet(eid,si){
+    const ex=state.gym.find(x=>x.id===eid);
+    if(!ex) return;
+    if(!ex.completed) ex.completed=[];
+    const i=ex.completed.indexOf(si);
+    if(i>-1){
+        ex.completed.splice(i,1);
+    } else {
+        ex.completed.push(si);
+        // Auto-start timer se ainda não iniciou
+        if(!wkTimer.running && wkTimer.elapsed===0) startWorkoutTimer();
+        // Auto-start sub série se idle
+        if(wkTimer.running && wkTimer.subMode==='idle'){
+            wkTimer.activeExId=eid; wkTimer.activeSetIdx=si;
+            startSub('series');
+        }
+        // Abrir timer para feedback visual
+        if(document.getElementById('timerPip').style.display==='none'){
+            document.getElementById('timerModal').classList.add('open');
+            document.getElementById('btnMinimize').style.display='';
+            renderTimerUI();
+        }
+    }
+    save();
+}
 function toggleCardioDone(eid){const ex=state.gym.find(x=>x.id===eid);if(!ex) return;ex.done=!ex.done;save();}
 
 // ═══ FINISH DAY — salva dados detalhados para gráficos ═══
@@ -951,7 +1008,7 @@ const ITEM_INFO={
 's10':{obj:'Estimular crescimento capilar (vasodilatação)',rec:'Monitorar PA e FC nas primeiras semanas. Efeito vasodilatador pode causar hipotensão.',interval:'Efeito em 3-6 meses. Avaliar PA em 2 semanas'},
 's12':{obj:'Energia mitocondrial + cardioproteção + antioxidante',rec:'COM GORDURA obrigatório (lipossolúvel). Ubiquinol > ubiquinona.',interval:'Sem restrições significativas'},
 's13':{obj:'Proteção renal e cardiovascular',rec:'Melhor absorção em jejum. Auxilia controle de PA.',interval:'Sem competição significativa'},
-'s14':{obj:'Precursor de glutationa (antioxidante master) + proteção renal',rec:'Jejum maximiza absorção. Componente do protocolo GlyNAC.',interval:'Dose 1 de 2 (dose 2 no jantar)'},
+'s28':{obj:'Precursor de glutationa (antioxidante master) + proteção renal',rec:'COM COMIDA às 19h. Dose única noturna — mais prático e sinérgico com Glicina (GlyNAC). Absorção adequada com ou sem jejum.',interval:'Dose única 600mg · Tomar junto com Glicina 3g para protocolo GlyNAC completo'},
 's15':{obj:'Imunidade, testosterona, cicatrização, pele',rec:'≥6h após ferro, ≥5h após cobre. COM COMIDA melhora tolerância GI.',interval:'≥2h antes do cálcio · Competição ferro/cobre'},
 's17':{obj:'Anti-inflamatório natural sistêmico',rec:'COM COMIDA obrigatório. Pimenta preta ↑ biodisponibilidade 2000%.',interval:'Inibidor CYP — considerar janela com dutasterida'},
 's18':{obj:'Oxidação de gordura + saúde da pele',rec:'Com refeição. Pré-treino potencializa uso de gordura como combustível em zona 2.',interval:'Dose 1 almoço + dose 2 pré-treino'},
@@ -961,6 +1018,8 @@ const ITEM_INFO={
 's32':{obj:'Neuroproteção + sono + relaxamento muscular',rec:'Forma treonato cruza barreira hematoencefálica (superior a outras formas).',interval:'≥45min após jantar. Efeito sedativo leve'},
 's33':{obj:'Ansiolítico natural (substituto ashwagandha)',rec:'Ashwagandha contraindicada c/ TSH 0,627 (risco tireoidiano). L-teanina é segura.',interval:'Sinérgica com magnésio. Efeito em 30-60min'},
 's35':{obj:'Âncora circadiana — avançar fase do sono progressivamente',rec:'Tomar às 21h fixo, 2h antes do horário alvo de adormecer. Dose fisiológica (0,21mg) — não é sedativo, é sincronizador circadiano. Formato orodispersível tem onset mais rápido.',interval:'Sem interações relevantes com o stack atual · Efeito acumulativo em 2-3 semanas'},
+'s47':{obj:'Fibrinólise natural — dissolver fibrina e melhorar fluxo sanguíneo',rec:'COM COMIDA. Fibrinolítico naturoterápico bem estudado. Manter ≥2h de intervalo de AAS ou anticoagulantes se usar. Complementar ao Trental quando suspenso.',interval:'1 cápsula/dia · Efeito cumulativo em 4-8 semanas'},
+'s48':{obj:'Anti-inflamatório + melhora perfil lipídico + antioxidante',rec:'COM COMIDA. Flavonoide da casca de laranja amarga. Inibidor CYP3A4 leve — sem impacto relevante no stack atual (CBD descontinuado).',interval:'500mg/dia · Pode tomar junto com Nattokinase e NAC'},
 's45':{obj:'Reduzir cortisol crônico (eixo HPA) e melhorar recuperação',rec:'COM REFEIÇÃO. Não tomar à noite — leve efeito estimulante cognitivo pode atrasar sono. Derivado de soja.',interval:'Pode ser tomada no almoço ou jantar · Sem interações relevantes com o stack atual'},
 's46':{obj:'Reduzir latência do sono — facilitar o adormecer',rec:'Agonista GABA-A natural (flavonoide da camomila). Reduz arousal cortical sem sedação pesada. Farmácia de manipulação — informar farmacêutico sobre escitalopram.',interval:'Onset ~30-60min · Tomar junto com Magnésio e L-Teanina'},
 's37':{obj:'Componente GlyNAC + sono + síntese de glutationa',rec:'Com NAC forma o protocolo GlyNAC (longevidade). Auxilia qualidade do sono.',interval:'Tomar junto ou próximo ao NAC dose 2'},
@@ -975,7 +1034,7 @@ const ITEM_INFO={
 'd19':{obj:'Resgate SOS para ptose — agonista alfa-1 (mecanismo diferente)',rec:'Usar se brimonidina insuficiente após 30-45min. Pode causar midríase e fotossensibilidade.',interval:'≥30min após brimonidina · Max 3-4x/semana combinados · NÃO usar gel facial brimonidina no mesmo dia'},
 'd07':{obj:'Tratamento rosácea: anti-inflamatório + antivascular + clareamento',rec:'Niacinamida 4% + Telangyn 2% + Azeloglicina 5% + Alfa-bisabolol 0,3%.',interval:'Após limpeza, antes de barreira e filtro solar'},
 'd10':{obj:'SOS flushing — vasoconstrição facial imediata',rec:'Máx 3-4x/semana. NÃO usar no mesmo dia que combinar os dois colírios (triple-dose adrenérgica).',interval:'Onset 15-30min, dura 8-12h. Rebote possível se uso >4x/semana'},
-'d16':{obj:'Tratamento noturno rosácea: antiparasitário (Demodex) + anti-inflamatório',rec:'Ivermectina 1% + Ác. Azelaico 15%. ⚠ Remover Metronidazol 0,75% da próxima manipulação — redundante com ivermectina.',interval:'Aguardar 15-20min antes de aplicar CM-01 · Aplicar após Mineral 89'},
+'d16':{obj:'Tratamento noturno rosácea: antiparasitário + anti-inflamatório',rec:'Ivermectina 1% (Demodex) + Ác. Azelaico 15% + Metronidazol 0,75%.',interval:'15-20min antes da barreira (Nutrel)'},
 };
 
 function openItemInfo(id,panel){
@@ -1000,10 +1059,10 @@ function openItemInfo(id,panel){
 
 // ═══ WORKOUT TIMER ═══
 let wkTimer={running:false,start:0,elapsed:0,interval:null,
-    // Sub-timer for series/rest
-    subMode:'idle', // idle, series, rest
+    subMode:'idle',
     subStart:0,subElapsed:0,subInterval:null,
-    totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0
+    totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0,
+    activeExId:null,activeSetIdx:-1
 };
 
 function fmtTimer(ms){
@@ -1014,6 +1073,132 @@ function fmtTimer(ms){
 function openWorkoutTimer(){
     renderTimerUI();
     document.getElementById('timerModal').classList.add('open');
+    document.getElementById('btnMinimize').style.display='';
+}
+
+function closeTimerModal(){
+    // Se timer ativo (rodando ou pausado com tempo), minimiza para PiP
+    if(wkTimer.running || wkTimer.elapsed > 0){
+        minimizeTimer();
+    } else {
+        // Timer zerado — fecha sem PiP
+        stopWorkoutTimer();
+        closeModal('timerModal');
+    }
+}
+
+function minimizeTimer(){
+    closeModal('timerModal');
+    const pip=document.getElementById('timerPip');
+    pip.style.display='block';
+    renderPip();
+}
+
+function expandTimer(){
+    document.getElementById('timerPip').style.display='none';
+    renderTimerUI();
+    document.getElementById('timerModal').classList.add('open');
+    document.getElementById('btnMinimize').style.display='';
+}
+
+function closePip(){
+    stopWorkoutTimer();
+    document.getElementById('timerPip').style.display='none';
+}
+
+function renderPip(){
+    const pip=document.getElementById('timerPip');
+    if(!pip||pip.style.display==='none') return;
+    const elapsed=wkTimer.running?(wkTimer.elapsed+Date.now()-wkTimer.start):wkTimer.elapsed;
+    const subElapsed=(wkTimer.subMode!=='idle'&&wkTimer.subInterval)?(wkTimer.subElapsed+Date.now()-wkTimer.subStart):wkTimer.subElapsed;
+    const mainEl=document.getElementById('pipMain');
+    const subEl=document.getElementById('pipSub');
+    const ppBtn=document.getElementById('pipPlayPause');
+    const subBtn=document.getElementById('pipSubBtn');
+    if(!mainEl) return;
+    mainEl.textContent=fmtTimer(elapsed);
+    mainEl.style.color=wkTimer.running?'var(--accent)':'var(--text2)';
+    ppBtn.textContent=wkTimer.running?'⏸':'▶';
+    ppBtn.style.background=wkTimer.running?'var(--accent)':'var(--blue)';
+    if(wkTimer.subMode==='idle'){
+        const sc=wkTimer.subMode==='idle';
+        subEl.textContent='—';subEl.style.color='var(--text3)';
+        subBtn.textContent='🏋️ Série';subBtn.style.color='var(--accent)';subBtn.style.borderColor='rgba(52,211,153,.4)';
+    } else if(wkTimer.subMode==='series'){
+        subEl.textContent='🏋️ SÉRIE '+fmtTimer(subElapsed);subEl.style.color='var(--accent)';
+        subBtn.textContent='✓ Fim série';subBtn.style.color='var(--accent)';subBtn.style.borderColor='rgba(52,211,153,.4)';
+    } else {
+        subEl.textContent='⏳ INTERVALO '+fmtTimer(subElapsed);subEl.style.color='var(--orange)';
+        subBtn.textContent='✓ Fim intervalo';subBtn.style.color='var(--orange)';subBtn.style.borderColor='rgba(251,146,60,.4)';
+    }
+}
+
+function pipTogglePlay(){
+    if(wkTimer.elapsed===0&&!wkTimer.running){startWorkoutTimer();return;}
+    if(wkTimer.running) pauseWorkoutTimer(); else resumeWorkoutTimer();
+}
+
+function pipSubAction(){
+    if(wkTimer.subMode==='idle') startSub('series');
+    else endSub();
+}
+
+// ── PiP DRAG (mouse + touch) ──
+(function initPipDrag(){
+    let drag=false,ox=0,oy=0;
+    function getEl(){return document.getElementById('timerPip');}
+    function start(e){
+        if(e.target.tagName==='BUTTON') return;
+        drag=true;
+        const el=getEl(), r=el.getBoundingClientRect();
+        const cx=e.touches?e.touches[0].clientX:e.clientX;
+        const cy=e.touches?e.touches[0].clientY:e.clientY;
+        ox=cx-r.left; oy=cy-r.top;
+        el.style.cursor='grabbing';
+        e.preventDefault();
+    }
+    function move(e){
+        if(!drag) return;
+        const el=getEl();
+        const cx=e.touches?e.touches[0].clientX:e.clientX;
+        const cy=e.touches?e.touches[0].clientY:e.clientY;
+        let nx=cx-ox, ny=cy-oy;
+        nx=Math.max(0,Math.min(nx,window.innerWidth-el.offsetWidth));
+        ny=Math.max(0,Math.min(ny,window.innerHeight-el.offsetHeight));
+        el.style.right='auto';el.style.bottom='auto';
+        el.style.left=nx+'px';el.style.top=ny+'px';
+        e.preventDefault();
+    }
+    function end(){drag=false;const el=getEl();if(el) el.style.cursor='grab';}
+    document.addEventListener('DOMContentLoaded',function(){
+        const el=getEl();
+        if(!el) return;
+        el.addEventListener('mousedown',start);
+        el.addEventListener('touchstart',start,{passive:false});
+        document.addEventListener('mousemove',move);
+        document.addEventListener('touchmove',move,{passive:false});
+        document.addEventListener('mouseup',end);
+        document.addEventListener('touchend',end);
+    });
+})();
+
+function adjustTimer(ms){
+    if(wkTimer.running){wkTimer.elapsed+=Date.now()-wkTimer.start;wkTimer.start=Date.now();}
+    wkTimer.elapsed=Math.max(0,wkTimer.elapsed+ms);
+    renderTimerUI();renderPip();
+}
+function adjustSub(ms){
+    if(wkTimer.subInterval){wkTimer.subElapsed+=Date.now()-wkTimer.subStart;wkTimer.subStart=Date.now();}
+    const before=wkTimer.subElapsed;
+    wkTimer.subElapsed=Math.max(0,wkTimer.subElapsed+ms);
+    const delta=wkTimer.subElapsed-before;
+    if(wkTimer.subMode==='series') wkTimer.totalRestTime=Math.max(0,wkTimer.totalRestTime-delta);
+    else if(wkTimer.subMode==='rest') wkTimer.totalSeriesTime=Math.max(0,wkTimer.totalSeriesTime-delta);
+    renderTimerUI();renderPip();
+}
+function adjustSeriesCount(delta){
+    wkTimer.seriesCount=Math.max(0,wkTimer.seriesCount+delta);
+    renderTimerUI();renderPip();
 }
 
 function renderTimerUI(){
@@ -1021,9 +1206,17 @@ function renderTimerUI(){
     const elapsed=wkTimer.running?(wkTimer.elapsed+Date.now()-wkTimer.start):wkTimer.elapsed;
     const subElapsed=(wkTimer.subMode!=='idle'&&wkTimer.subInterval)?(wkTimer.subElapsed+Date.now()-wkTimer.subStart):wkTimer.subElapsed;
 
+    const adjBtnStyle='background:rgba(255,255,255,.07);border:1px solid var(--border2);color:var(--text2);border-radius:8px;padding:6px 10px;font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;cursor:pointer';
+
     let html=`<div style="text-align:center;margin:16px 0">
         <div style="font-family:'JetBrains Mono',monospace;font-size:42px;font-weight:800;color:${wkTimer.running?'var(--accent)':'var(--text2)'}">${fmtTimer(elapsed)}</div>
         <div style="font-size:10px;color:var(--text3);margin-top:4px">TEMPO TOTAL DO TREINO</div>
+        <div style="display:flex;gap:6px;justify-content:center;margin-top:8px">
+            <button style="${adjBtnStyle}" onclick="adjustTimer(-30000)">−30s</button>
+            <button style="${adjBtnStyle}" onclick="adjustTimer(-5000)">−5s</button>
+            <button style="${adjBtnStyle}" onclick="adjustTimer(5000)">+5s</button>
+            <button style="${adjBtnStyle}" onclick="adjustTimer(30000)">+30s</button>
+        </div>
     </div>`;
 
     // Main timer buttons
@@ -1056,12 +1249,22 @@ function renderTimerUI(){
             html+=`<button class="mbtn" onclick="endSub()" style="flex:1;background:rgba(251,146,60,.15);color:var(--orange);border:1px solid var(--orange)">✓ Fim do Intervalo</button>`;
         }
         html+=`</div>`;
-
+        if(wkTimer.subMode!=='idle'){
+            html+=`<div style="display:flex;gap:6px;justify-content:center;margin-bottom:10px">
+                <button style="${adjBtnStyle}" onclick="adjustSub(-5000)">−5s</button>
+                <button style="${adjBtnStyle}" onclick="adjustSub(5000)">+5s</button>
+            </div>`;
+        }
         // Accumulated stats
         html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px">
             <div style="background:rgba(52,211,153,.06);padding:8px;border-radius:8px;text-align:center">
                 <div style="color:var(--accent);font-weight:800;font-size:16px">${fmtTimer(wkTimer.totalSeriesTime)}</div>
-                <div style="color:var(--text3)">Sob tensão (${wkTimer.seriesCount} séries)</div>
+                <div style="color:var(--text3);margin:3px 0">Sob tensão</div>
+                <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+                    <button style="${adjBtnStyle};padding:3px 8px" onclick="adjustSeriesCount(-1)">−</button>
+                    <span style="color:var(--accent);font-weight:800">${wkTimer.seriesCount} séries</span>
+                    <button style="${adjBtnStyle};padding:3px 8px" onclick="adjustSeriesCount(1)">+</button>
+                </div>
             </div>
             <div style="background:rgba(251,146,60,.06);padding:8px;border-radius:8px;text-align:center">
                 <div style="color:var(--orange);font-weight:800;font-size:16px">${fmtTimer(wkTimer.totalRestTime)}</div>
@@ -1076,17 +1279,17 @@ function renderTimerUI(){
 function startWorkoutTimer(){
     wkTimer.running=true;wkTimer.start=Date.now();wkTimer.elapsed=0;
     wkTimer.totalSeriesTime=0;wkTimer.totalRestTime=0;wkTimer.seriesCount=0;wkTimer.restCount=0;wkTimer.subMode='idle';
-    wkTimer.interval=setInterval(renderTimerUI,500);renderTimerUI();
+    wkTimer.interval=setInterval(function(){renderTimerUI();renderPip();},500);renderTimerUI();renderPip();
 }
 function pauseWorkoutTimer(){
     wkTimer.running=false;wkTimer.elapsed+=Date.now()-wkTimer.start;
     clearInterval(wkTimer.interval);wkTimer.interval=null;
     if(wkTimer.subMode!=='idle') pauseSub();
-    renderTimerUI();
+    renderTimerUI();renderPip();
 }
 function resumeWorkoutTimer(){
     wkTimer.running=true;wkTimer.start=Date.now();
-    wkTimer.interval=setInterval(renderTimerUI,500);renderTimerUI();
+    wkTimer.interval=setInterval(function(){renderTimerUI();renderPip();},500);renderTimerUI();renderPip();
 }
 function stopWorkoutTimer(){
     // Don't reset — just stop updating
@@ -1120,7 +1323,7 @@ function finishWorkoutTimer(){
 
 function startSub(mode){
     wkTimer.subMode=mode;wkTimer.subStart=Date.now();wkTimer.subElapsed=0;
-    wkTimer.subInterval=setInterval(renderTimerUI,200);renderTimerUI();
+    wkTimer.subInterval=setInterval(function(){renderTimerUI();renderPip();},200);renderTimerUI();renderPip();
 }
 function pauseSub(){
     if(wkTimer.subInterval){wkTimer.subElapsed+=Date.now()-wkTimer.subStart;clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}
@@ -1379,6 +1582,64 @@ function render(){
     renderList('derm','panel-derm');
     renderGym();
     renderFood();
+}
+
+// ═══ TREINOS PRESCRITOS ═══
+const WORKOUT_PRESETS={
+  'A':{
+    name:'🏋️ Peitoral e Definição',
+    exercises:[
+      {name:'Supino reto aberto máquina',type:'resistido',series:3,reps:'15, 15, 15',load:'0, 0, 0',rest:0,group:'Peitoral',notes:'Superset → Flexão de braço'},
+      {name:'Flexão de braço',type:'resistido',series:3,reps:'15, 15, 15',load:'0, 0, 0',rest:90,group:'Peitoral',notes:'Superset c/ Supino reto aberto máquina'},
+      {name:'Supino inclinado com halter',type:'resistido',series:3,reps:'12, 12, 12',load:'0, 0, 0',rest:0,group:'Peitoral Superior',notes:'Superset → Abdução de ombros em pé'},
+      {name:'Abdução de ombros em pé',type:'resistido',series:3,reps:'15, 15, 15',load:'0, 0, 0',rest:90,group:'Ombro',notes:'Superset c/ Supino inclinado com halter'},
+      {name:'Voador peitoral máquina',type:'resistido',series:3,reps:'12, 12, 12',load:'0, 0, 0',rest:0,group:'Peitoral',notes:'Superset → Tríceps supinado com halter'},
+      {name:'Tríceps supinado com halter',type:'resistido',series:3,reps:'12, 12, 12',load:'0, 0, 0',rest:90,group:'Tríceps',notes:'Superset c/ Voador peitoral máquina'},
+      {name:'Desenvolvimento aberto sentado com halter',type:'resistido',series:3,reps:'12, 12, 12',load:'15, 15, 15',rest:0,group:'Ombro',notes:'Superset → Abdominal remador'},
+      {name:'Abdominal remador',type:'resistido',series:3,reps:'20, 20, 20',load:'0, 0, 0',rest:90,group:'Core',notes:'Superset c/ Desenvolvimento aberto'},
+      {name:'Rotação de tronco no cabo',type:'resistido',series:3,reps:'15, 15, 15',load:'0, 0, 0',rest:60,group:'Core/Oblíquo',notes:''},
+    ]
+  },
+  'B':{
+    name:'🔵 Dorsal, Tríceps e Cardio',
+    exercises:[
+      {name:'Remada apoiada máquina aberta',type:'resistido',series:3,reps:'15, 15, 15',load:'0, 0, 0',rest:0,group:'Costas',notes:'Superset → Bíceps cabo extensão'},
+      {name:'Bíceps cabo extensão',type:'resistido',series:3,reps:'12, 12, 12',load:'0, 0, 0',rest:90,group:'Bíceps',notes:'Superset c/ Remada apoiada máquina'},
+      {name:'Puxada aberta frente máquina',type:'resistido',series:3,reps:'12, 12, 12',load:'0, 0, 0',rest:0,group:'Costas/Dorsal',notes:'Superset → Tríceps testa no cabo'},
+      {name:'Tríceps testa no cabo',type:'resistido',series:3,reps:'12, 12, 12',load:'0, 0, 0',rest:90,group:'Tríceps',notes:'Superset c/ Puxada aberta frente'},
+      {name:'Remada unilateral com halter',type:'resistido',series:3,reps:'12, 12, 12',load:'0, 0, 0',rest:0,group:'Costas/Rombóides',notes:'Superset → Elevação lateral máquina'},
+      {name:'Elevação lateral máquina',type:'resistido',series:3,reps:'15, 15, 15',load:'0, 0, 0',rest:90,group:'Ombro Lateral',notes:'Superset c/ Remada unilateral'},
+      {name:'Cardio Zona 2 (esteira inclinada)',type:'cardio',duration:35,calories:0,distance:'',hr:0,notes:'Inclinação 8-12% · FC alvo 113-133 bpm · L-Carnitina pré-treino'},
+    ]
+  },
+  'C':{
+    name:'🦵 Inferiores e Core',
+    exercises:[
+      {name:'Cadeira extensora',type:'resistido',series:3,reps:'15, 15, 15',load:'0, 0, 0',rest:0,group:'Quadríceps',notes:'Superset → Agachamento unilateral com halter'},
+      {name:'Agachamento unilateral com halter (afundo)',type:'resistido',series:3,reps:'10, 10, 10',load:'0, 0, 0',rest:90,group:'Glúteo/Quadríceps',notes:'Superset c/ Cadeira extensora'},
+      {name:'Cadeira flexora',type:'resistido',series:3,reps:'12, 12, 12',load:'42, 42, 42',rest:0,group:'Posterior',notes:'Superset → Agachamento unilateral (afundo)'},
+      {name:'Stiff na máquina',type:'resistido',series:3,reps:'12, 12, 12',load:'25, 25, 25',rest:0,group:'Posterior/Glúteo',notes:'Superset → Abdominal braços cruzados'},
+      {name:'Abdominal braços cruzados',type:'resistido',series:3,reps:'20, 20, 20',load:'0, 0, 0',rest:90,group:'Core',notes:'Superset c/ Stiff na máquina'},
+      {name:'Leg press máquina',type:'resistido',series:3,reps:'12, 12, 12',load:'0, 0, 0',rest:0,group:'Quadríceps/Glúteo',notes:'Superset → Abdominal total'},
+      {name:'Abdominal total',type:'resistido',series:3,reps:'20, 20, 20',load:'0, 0, 0',rest:90,group:'Core',notes:'Superset c/ Leg press máquina'},
+      {name:'Panturrilha no leg press',type:'resistido',series:4,reps:'15, 15, 15, 15',load:'40, 40, 40, 40',rest:60,group:'Panturrilha',notes:''},
+    ]
+  }
+};
+
+function loadPreset(key){
+    const preset=WORKOUT_PRESETS[key];
+    if(!preset) return;
+    if(state.gym.length>0&&!confirm(`Substituir os ${state.gym.length} exercício(s) atuais pelo treino "${preset.name}"?`)) return;
+    state.gym=preset.exercises.map(ex=>({
+        ...ex,
+        id:'ex'+Date.now()+Math.random().toString(36).substr(2,5),
+        completed:[],
+        done:false,
+        time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
+    }));
+    save();
+    switchTab('gym');
 }
 
 load();
