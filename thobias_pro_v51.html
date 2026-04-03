@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thobias Pro | v61</title>
+    <title>Thobias Pro | v61 · 03/04/2026</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -121,7 +121,7 @@
             <div>
                 <div class="brand">Thobias Pro</div>
                 <div class="brand-sub" id="displayDate">--/--/----</div>
-                <div class="brand-sub" style="color:var(--text3);opacity:.5">v61</div>
+                <div class="brand-sub" style="color:var(--text3);opacity:.5">v61 · <span id="buildDate">…</span></div>
             </div>
             <div class="score-ring">
                 <svg viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="15.5"/><circle class="fg" id="scoreArc" cx="18" cy="18" r="15.5" stroke-dasharray="97.4" stroke-dashoffset="97.4"/></svg>
@@ -389,7 +389,7 @@ const SUPPS=[
 // ── 19:00 JANTAR ──
 {id:'s26',time:'19:00',qty:'💊 1 CP',title:'Metformina XR 500mg (Glifage)',cat:'Metab',note:'🍽 COM COMIDA obrigatório · Reduz desconforto GI · Suspender 5-7d antes do MOTS-c'},
 {id:'s27',time:'19:00',qty:'💊 1 CP',title:'Trental 400mg (Dose 3)',cat:'Reologia',note:'🍽 COM COMIDA · Dose 3 de 3',suspended:true},
-{id:'s28',time:'19:00',qty:'💊 1 Cap',title:'NAC 600mg',cat:'Nefro',note:'🍽 COM COMIDA · Dose única noturna · Precursor glutationa · Componente GlyNAC (com Glicina)'},
+{id:'s28',time:'19:00',qty:'💊 2 Caps (1.200mg)',title:'NAC 600mg × 2',cat:'Nefro',note:'🍽 COM COMIDA · 2 comprimidos de 600mg = 1.200mg/dia · Precursor glutationa · Componente GlyNAC (com Glicina 3g)'},
 {id:'s47',time:'19:00',qty:'💊 1 Cap',title:'Nattokinase 100mg',cat:'Reologia',note:'🍽 COM COMIDA · Fibrinolítico natural · ≥2h de intervalo de outros anticoagulantes'},
 {id:'s48',time:'19:00',qty:'💊 1 Cap',title:'Naringina 500mg',cat:'Reologia',note:'🍽 COM COMIDA · Flavonoide cítrico — anti-inflamatório + melhora perfil lipídico'},
 {id:'s29',time:'19:00',qty:'💊 1 Cap',title:'Ômega-3 (Dose 2, com comida)',cat:'Lipossolúvel',note:'🍳 COM GORDURA da refeição · Dose 2 de 2'},
@@ -1344,6 +1344,46 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+
+// ═══ BUILD DATE via GitHub API ═══
+(function fetchBuildDate(){
+  const el=document.getElementById('buildDate');
+  const CACHE_KEY='thobias_buildDate';
+  const CACHE_TTL=3600000; // 1h em ms
+
+  function fmt(isoStr){
+    const d=new Date(isoStr);
+    const dd=String(d.getDate()).padStart(2,'0');
+    const mm=String(d.getMonth()+1).padStart(2,'0');
+    const yyyy=d.getFullYear();
+    const hh=String(d.getHours()).padStart(2,'0');
+    const mi=String(d.getMinutes()).padStart(2,'0');
+    return `${dd}/${mm}/${yyyy} ${hh}:${mi}`;
+  }
+
+  // Tenta cache local primeiro
+  try{
+    const cached=JSON.parse(localStorage.getItem(CACHE_KEY)||'null');
+    if(cached&&Date.now()-cached.ts<CACHE_TTL){
+      el.textContent=cached.val;
+      return;
+    }
+  }catch(e){}
+
+  fetch('https://api.github.com/repos/thobitv/thobias-pro/commits?path=thobias_pro_v51.html&per_page=1',{headers:{Accept:'application/vnd.github.v3+json'}})
+    .then(r=>r.json())
+    .then(data=>{
+      const iso=data[0]?.commit?.committer?.date;
+      if(!iso) throw new Error('no date');
+      const val=fmt(iso);
+      el.textContent=val;
+      try{localStorage.setItem(CACHE_KEY,JSON.stringify({val,ts:Date.now()}));}catch(e){}
+    })
+    .catch(()=>{
+      // Fallback: data de compilação hardcoded
+      el.textContent='03/04/2026';
+    });
+})();
 </script>
 </body>
 </html>
