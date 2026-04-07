@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thobias Pro | v61 · 03/04/2026</title>
+    <title>Thobias Pro | v61 · 06/04/2026</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -353,60 +353,58 @@
 <script>
 // ═══ PROTOCOLO ═══
 const SUPPS=[
-// ── 06:15 JEJUM ──
-{id:'s01',time:'06:15',qty:'💊 1 Dose',title:'Ferro 60mg + Vitamina C 200mg (SEG/QUA/SEX)',cat:'Nutri',ironOnly:true,note:'⚠ JEJUM obrigatório · Vit C potencializa absorção · ≥6h antes do zinco · ≥3h antes do cálcio · ≥5h antes do cobre'},
-{id:'s02',time:'06:15',qty:'💊 Sublingual',title:'Vitamina B12 1.000mcg',cat:'Base',note:'Sublingual = bypass GI, não compete com ferro'},
-{id:'s38',time:'06:15',qty:'🥄 5g',title:'Glutamina (jejum)',cat:'Intestino',note:'⚠ JEJUM maximiza absorção intestinal · Não compete com ferro · Diluir em água'},
+// ── 06:15 JEJUM (mínimo — só o que exige estômago vazio de manhã) ──
+{id:'s01',time:'06:15',qty:'💊 1 Dose',title:'Ferro 60mg + Vitamina C 200mg (SEG/QUA/SEX)',cat:'Nutri',ironOnly:true,note:'⚠ JEJUM obrigatório · Vit C potencializa absorção · ≥6h antes do zinco (12h) · ≥5h antes do cobre (21:15 anterior → 06:15 = ~9h ✓)'},
+{id:'s38',time:'06:15',qty:'🥄 5g',title:'Glutamina (jejum)',cat:'Intestino',note:'⚠ JEJUM maximiza absorção intestinal · Diluir em água'},
 {id:'s13',time:'06:15',qty:'💊 2 Caps',title:'Taurina 1.600mg',cat:'Renal',note:'Melhor absorção em jejum · Não compete com ferro'},
-{id:'s41',time:'06:15',qty:'💊 1 Cap',title:'Juba de Leão 500mg (Lion\'s Mane)',cat:'Neuro',note:'Absorção não depende de gordura · Estimula NGF/BDNF · Sinérgico c/ lítio'},
-// ── 07:00 CAFÉ DA MANHÃ (com gordura) ──
-{id:'s04',time:'07:00',qty:'🧴 1 Pump',title:'Testosterona Gel 20% (Pentravan)',cat:'Hormonal',note:'Aplicar em pele limpa e seca · Lavar mãos após'},
-{id:'s05',time:'07:00',qty:'💊 2 Caps',title:'Vitamina D3 2.000 UI × 2 (4.000 UI)',cat:'Lipossolúvel',note:'🍳 COM GORDURA obrigatório · 25(OH)D atual 51,3 ng/mL · Meta atingida'},
-{id:'s39',time:'07:00',qty:'💊 1 Cap',title:'Vitamina K2 150mcg',cat:'Lipossolúvel',note:'🍳 COM GORDURA · Direciona cálcio aos ossos · 150mcg suficiente'},
-{id:'s06',time:'07:00',qty:'💊 1 Cap',title:'Ômega-3 (Dose 1)',cat:'Lipossolúvel',note:'🍳 COM GORDURA · Serve como veículo lipídico para D3/K2/CoQ10'},
-{id:'s07',time:'07:00',qty:'💊 1 Cap',title:'Cobre Quelato 3mg (Lauton)',cat:'Mineral',note:'⚠ ≥5h antes do zinco (12h) · Obrigatório com zinco >25mg/dia'},
-{id:'s08',time:'07:00',qty:'💊 1 CP',title:'Candesartana 16mg (Venzer)',cat:'PA',note:'Com ou sem alimento — sem restrição'},
-{id:'s09',time:'07:00',qty:'💊 1 CP',title:'Dutasterida 0,5mg',cat:'DHT',note:'🍳 COM GORDURA melhora absorção · Sem restrição de horário com CBD (descontinuado)'},
-{id:'s10',time:'07:00',qty:'💊 1 CP',title:'Minoxidil oral 2,5mg',cat:'Cabelo',note:'Monitorar PA e FC nas primeiras semanas'},
-{id:'s11',time:'07:00',qty:'💊 ~1g',title:'Vitamina B5 (Dose 1)',cat:'Pele',note:'⚠ ≥2h antes da biotina · Fracionada em 3 doses diárias'},
-{id:'s12',time:'07:00',qty:'💊 2 Caps',title:'CoQ10 Ubiquinol 100mg × 2 (True Source)',cat:'Energia',note:'🍳 COM GORDURA obrigatório (lipossolúvel) · Ubiquinol = forma ativa, biodisponibilidade 2-8× superior à ubiquinona · MCT veículo · Contém Vitamina E 200mg'},
-{id:'s42',time:'07:00',qty:'💊 2 Caps',title:'Saw Palmetto 300mg + Pygeum 100mg',cat:'DHT',note:'COM GORDURA (fitoesteróis lipossolúveis) · Suspender se retomar dutasterida',suspended:true},
+// ── 07:00 MANHÃ (só Testosterona — consistência horária) ──
+{id:'s04',time:'07:00',qty:'🧴 1 Pump',title:'Testosterona Gel 20% (Pentravan)',cat:'Hormonal',note:'Aplicar em pele limpa e seca · Lavar mãos após · Manhã = consistência de absorção'},
 // ── 12:00 ALMOÇO ──
-{id:'s15',time:'12:00',qty:'💊 29,5mg',title:'Zinco Quelato (6h+ após ferro)',cat:'Mineral',note:'⚠ ≥6h após ferro (06:15→12:15 ✓) · ≥5h após cobre (07:00→12:00 ✓) · ≥2h antes do cálcio (19h)'},
-{id:'s16',time:'12:00',qty:'💊 ~1g',title:'Vitamina B5 (Dose 2)',cat:'Pele',note:'≥2h antes da biotina da tarde · Dose 2 de 3'},
-{id:'s17',time:'12:00',qty:'💊 2 Caps',title:'Cúrcuma + pimenta preta (com comida)',cat:'Inflama',note:'🍽 COM COMIDA · Pimenta preta ↑ biodisponibilidade 2000%'},
-{id:'s18',time:'12:00',qty:'🥃 15ml (1.000mg)',title:'L-Carnitina Líquida (Dose 1 — almoço)',cat:'Fat/Pele',note:'🍽 COM REFEIÇÃO · Body Action L-Carnitina 2000 líquida · 15ml = 1.000mg · Dose 1 de 2'},
-{id:'s19',time:'12:00',qty:'💊 300mcg',title:'Biotina (2h+ após B5 matinal)',cat:'Base',note:'⚠ ≥2h após B5 dose 1 (07:00→12:00 = 5h ✓) · Competem por absorção'},
-{id:'s20',time:'12:00',qty:'💊 1 CP',title:'Trental 400mg (Dose 1)',cat:'Reologia',note:'🍽 COM COMIDA reduz desconforto GI · Dose 1 de 3',suspended:true},
-{id:'s45',time:'12:00',qty:'💊 1 Cap (200mg)',title:'Fosfatidilserina 200mg',cat:'Cortisol',note:'🍽 COM REFEIÇÃO · Redução de cortisol crônico · Não tomar à noite (leve efeito estimulante cognitivo) · Derivado de soja'},
+{id:'s15',time:'12:00',qty:'💊 29,5mg',title:'Zinco Quelato (6h+ após ferro)',cat:'Mineral',note:'⚠ ≥6h após ferro (06:15→12:15 ✓) · ≥5h após cobre (21:15 anterior→12:00 = ~15h ✓) · ≥2h antes do cálcio (19h)'},
+{id:'s11',time:'12:00',qty:'💊 ~2g',title:'Vitamina B5 (Dose 1+2 — manhã/almoço)',cat:'Pele',note:'Dose dupla consolidada · ≥3h antes da biotina (15h) · Total diário: ~3g'},
+{id:'s18',time:'12:00',qty:'🥃 15ml (1.000mg)',title:'L-Carnitina Líquida (Dose 1 — almoço)',cat:'Fat/Pele',note:'🍽 COM REFEIÇÃO · Body Action L-Carnitina 2000 · 15ml = 1.000mg · Dose 1 de 2'},
+{id:'s45',time:'12:00',qty:'💊 1 Cap (200mg)',title:'Fosfatidilserina 200mg',cat:'Cortisol',note:'🍽 COM REFEIÇÃO obrigatório · ⚠ NÃO pode ser tomada à noite (efeito estimulante cognitivo) · Reduz cortisol crônico'},
+{id:'s20',time:'12:00',qty:'💊 1 CP',title:'Trental 400mg (Dose 1)',cat:'Reologia',note:'🍽 COM COMIDA · Dose 1 de 3',suspended:true},
 // ── 15:00 TARDE ──
-{id:'s21',time:'15:00',qty:'💊 ~1g',title:'Vitamina B5 (Dose 3)',cat:'Pele',note:'Dose 3 de 3 · Total diário ~3g'},
-{id:'s22',time:'15:00',qty:'💊 1 CP',title:'Trental 400mg (Dose 2)',cat:'Reologia',note:'Dose 2 de 3 · Pode tomar com lanche',suspended:true},
+{id:'s19',time:'15:00',qty:'💊 300mcg',title:'Biotina (≥3h após B5 almoço)',cat:'Base',note:'⚠ ≥3h após B5 dose 12:00 (12:00→15:00 = 3h ✓) · Competem por absorção'},
+{id:'s22',time:'15:00',qty:'💊 1 CP',title:'Trental 400mg (Dose 2)',cat:'Reologia',note:'Dose 2 de 3',suspended:true},
 // ── 16:30 PRÉ-TREINO ──
-{id:'s23',time:'16:30',qty:'🥃 15ml (1.000mg)',title:'L-Carnitina Líquida (Dose 2 — pré-treino)',cat:'Fat/Pele',note:'⚠ 30-60 min antes do treino · Body Action L-Carnitina 2000 líquida · 15ml = 1.000mg · Dose 2 de 2'},
-// ── 18:30 PÓS-TREINO ──
-{id:'s25',time:'18:30',qty:'🥄 3-5g',title:'Creatina (com carboidrato/proteína)',cat:'Força',note:'🍽 COM CARBOIDRATO/PROTEÍNA · Insulina ↑ captação muscular'},
+{id:'s23',time:'16:30',qty:'🥃 15ml (1.000mg)',title:'L-Carnitina Líquida (Dose 2 — pré-treino)',cat:'Fat/Pele',note:'⚠ 30-60 min antes do treino · 15ml = 1.000mg · Dose 2 de 2'},
 // ── 19:00 JANTAR ──
-{id:'s26',time:'19:00',qty:'💊 1 CP',title:'Metformina XR 500mg (Glifage)',cat:'Metab',note:'🍽 COM COMIDA obrigatório · Reduz desconforto GI · Suspender 5-7d antes do MOTS-c'},
+{id:'s26',time:'19:00',qty:'💊 1 CP',title:'Metformina XR 500mg (Glifage)',cat:'Metab',note:'🍽 COM COMIDA obrigatório · Suspender 5-7d antes do MOTS-c'},
 {id:'s27',time:'19:00',qty:'💊 1 CP',title:'Trental 400mg (Dose 3)',cat:'Reologia',note:'🍽 COM COMIDA · Dose 3 de 3',suspended:true},
-{id:'s28',time:'19:00',qty:'💊 2 Caps (1.200mg)',title:'NAC 600mg × 2',cat:'Nefro',note:'🍽 COM COMIDA · 2 comprimidos de 600mg = 1.200mg/dia · Precursor glutationa · Componente GlyNAC (com Glicina 3g)'},
-{id:'s47',time:'19:00',qty:'💊 1 Cap',title:'Nattokinase 100mg',cat:'Reologia',note:'🍽 COM COMIDA · Fibrinolítico natural · ≥2h de intervalo de outros anticoagulantes'},
-{id:'s48',time:'19:00',qty:'💊 1 Cap',title:'Naringina 500mg',cat:'Reologia',note:'🍽 COM COMIDA · Flavonoide cítrico — anti-inflamatório + melhora perfil lipídico'},
-{id:'s29',time:'19:00',qty:'💊 1 Cap',title:'Ômega-3 (Dose 2, com comida)',cat:'Lipossolúvel',note:'🍳 COM GORDURA da refeição · Dose 2 de 2'},
-{id:'s30',time:'19:00',qty:'💊 4 Caps',title:'Cálcio 800mg + D3 500UI + K1 (≥2h do zinco)',cat:'Ósseo',note:'⚠ ≥2h após zinco (12:00→19:00 = 7h ✓) · ≥3h após ferro · COM COMIDA · K1 ≠ K2'},
-{id:'s31',time:'19:00',qty:'💊 1 Cap',title:'Cardo Mariano 500mg (com comida)',cat:'Fígado',note:'🍽 COM COMIDA · Hepatoprotetor'},
-// ── 21:00-21:15 NOITE ──
-{id:'s35',time:'21:00',qty:'💊 0,21mg',title:'Melatonina 0,21mg (âncora circadiana)',cat:'Sono',note:'Tomar 2h antes do horário alvo de adormecer · Dose fisiológica para sincronização circadiana · Orodispersível se disponível'},
-{id:'s03',time:'21:15',qty:'💊 10mg',title:'Escitalopram 10mg (Exodus)',cat:'Mood',note:'Dose terapêutica para ansiedade social · Movido para noite — pode auxiliar sono · Nível sérico real de 10mg (CBD descontinuado)'},
-{id:'s32',time:'21:15',qty:'💊 300-400mg',title:'Magnésio Treonato',cat:'Neuro',note:'⚠ ≥45 min após jantar · Forma treonato cruza barreira hematoencefálica'},
-{id:'s40',time:'21:15',qty:'💊 1 Cap',title:'Lítio Orotato 5mg (elementar)',cat:'Neuro',note:'Dose nutricional (≠ lítio psiquiátrico) · Neuroprotetor · Sinérgico c/ Mg treonato · Monitorar TSH (atual 0,627)'},
-{id:'s33',time:'21:15',qty:'💊 200-400mg',title:'L-Teanina',cat:'Relax',note:'Substituto da ashwagandha (risco tireoidiano c/ TSH 0,627)'},
-{id:'s46',time:'21:15',qty:'💊 50mg',title:'Apigenina 50mg',cat:'Sono',note:'Agonista GABA-A · Reduz arousal cortical e latência do sono · Farmácia de manipulação'},
-{id:'s37',time:'21:15',qty:'🥄 3g',title:'Glicina (GlyNAC)',cat:'Sono',note:'Componente GlyNAC (com NAC) · Auxilia sono e glutationa'},
+{id:'s50',time:'19:00',qty:'💊 2 Caps (1.200mg)',title:'NAC 600mg × 2',cat:'Nefro',note:'🍽 COM COMIDA · 2 comprimidos de 600mg = 1.200mg/dia · Precursor glutationa · Componente GlyNAC (com Glicina 3g às 21:15)'},
+{id:'s47',time:'19:00',qty:'💊 1 Cap',title:'Nattokinase 100mg',cat:'Reologia',note:'🍽 COM COMIDA · Fibrinolítico natural'},
+{id:'s48',time:'19:00',qty:'💊 1 Cap',title:'Naringina 500mg',cat:'Reologia',note:'🍽 COM COMIDA · Flavonoide cítrico — anti-inflamatório + perfil lipídico'},
+{id:'s30',time:'19:00',qty:'💊 4 Caps',title:'Cálcio 800mg + D3 500UI + K1 (≥2h do zinco)',cat:'Ósseo',note:'⚠ ≥2h após zinco (12:00→19:00 = 7h ✓) · ≥3h após ferro · COM COMIDA'},
+{id:'s31',time:'19:00',qty:'💊 1 Cap',title:'Cardo Mariano 500mg',cat:'Fígado',note:'🍽 COM COMIDA · Hepatoprotetor'},
+{id:'s25',time:'19:00',qty:'🥄 3-5g',title:'Creatina (com jantar)',cat:'Força',note:'🍽 COM CARBOIDRATO/PROTEÍNA · Timing pós-treino ou jantar — sem diferença comprovada'},
+// ── 21:00 ──
+{id:'s35',time:'21:00',qty:'💊 0,21mg',title:'Melatonina 0,21mg (âncora circadiana)',cat:'Sono',note:'Tomar 2h antes do horário alvo de adormecer · Sincronizador circadiano, não sedativo'},
+// ── 21:15 PACK NOTURNO (lanche com gordura: castanhas, chocolate 85%, etc.) ──
+{id:'s03',time:'21:15',qty:'💊 10mg',title:'Escitalopram 10mg',cat:'Mood',note:'Dose terapêutica · Noite pode auxiliar sono · Nível sérico real de 10mg (CBD descontinuado)'},
+{id:'s32',time:'21:15',qty:'💊 300-400mg',title:'Magnésio Treonato',cat:'Neuro',note:'Forma treonato cruza barreira hematoencefálica · Noite ideal'},
+{id:'s40',time:'21:15',qty:'💊 1 Cap',title:'Lítio Orotato 5mg',cat:'Neuro',note:'Dose nutricional · Neuroprotetor · Sinérgico c/ Mg treonato · Monitorar TSH'},
+{id:'s33',time:'21:15',qty:'💊 200-400mg',title:'L-Teanina',cat:'Relax',note:'Ansiolítico natural · Sinérgico com Magnésio e Apigenina'},
+{id:'s46',time:'21:15',qty:'💊 50mg',title:'Apigenina 50mg',cat:'Sono',note:'Agonista GABA-A · Reduz latência do sono · Farmácia de manipulação'},
+{id:'s37',time:'21:15',qty:'🥄 3g',title:'Glicina (GlyNAC)',cat:'Sono',note:'Componente GlyNAC (com NAC 19:00) · Auxilia sono + glutationa'},
+{id:'s05',time:'21:15',qty:'💊 2 Caps',title:'Vitamina D3 4.000 UI',cat:'Lipossolúvel',note:'🍳 COM GORDURA (lanche noturno) · Lipossolúvel — horário irrelevante, noite ótimo para absorção durante sono'},
+{id:'s39',time:'21:15',qty:'💊 1 Cap',title:'Vitamina K2 150mcg',cat:'Lipossolúvel',note:'🍳 COM GORDURA (lanche noturno) · Direciona cálcio aos ossos · Sinérgico com D3'},
+{id:'s06',time:'21:15',qty:'💊 3 Caps',title:'Ômega-3 (3 caps — dose única consolidada)',cat:'Lipossolúvel',note:'🍳 COM GORDURA (lanche noturno) · 900mg EPA+DHA · Veículo lipídico para D3/K2/CoQ10 · Pico absorção 2-4h = durante sono'},
+{id:'s12',time:'21:15',qty:'💊 2 Caps',title:'CoQ10 Ubiquinol 100mg × 2 (True Source)',cat:'Energia',note:'🍳 COM GORDURA (lanche noturno) · Ubiquinol = forma ativa · Contém Vitamina E 200mg'},
+{id:'s07',time:'21:15',qty:'💊 1 Cap',title:'Cobre Quelato 3mg',cat:'Mineral',note:'🍳 COM GORDURA (lanche noturno) · ≥5h antes do zinco (21:15→12:00 próximo dia = ~15h ✓) · Obrigatório com zinco >25mg/dia'},
+{id:'s08',time:'21:15',qty:'💊 1 CP',title:'Candesartana 16mg (Venzer)',cat:'PA',note:'Sem restrição alimentar · Evidência favorece dose noturna em hipertensão (cronofarmacologia)'},
+{id:'s09',time:'21:15',qty:'💊 1 CP',title:'Dutasterida 0,5mg',cat:'DHT',note:'🍳 COM GORDURA (lanche noturno) · Meia-vida ~5 semanas — horário irrelevante'},
+{id:'s10',time:'21:15',qty:'💊 1 CP',title:'Minoxidil oral 2,5mg',cat:'Cabelo',note:'Sem restrição alimentar · Monitorar PA'},
+{id:'s41',time:'21:15',qty:'💊 1 Cap',title:'Juba de Leão 500mg (Lion\'s Mane)',cat:'Neuro',note:'Sem restrição alimentar · Noite: NGF/BDNF sinérgico com consolidação de memória durante sono · Sinérgico c/ lítio'},
+{id:'s17',time:'21:15',qty:'💊 2 Caps',title:'Cúrcuma + pimenta preta',cat:'Inflama',note:'🍳 COM GORDURA (lanche noturno) · Pimenta preta ↑ biodisponibilidade 2000% · Efeito anti-inflamatório máximo durante sono'},
+{id:'s21',time:'21:15',qty:'💊 ~1g',title:'Vitamina B5 (Dose final)',cat:'Pele',note:'Dose 3 de 3 · Total diário ~3g · Água-solúvel, sem restrição noturna'},
+{id:'s02',time:'21:15',qty:'💊 Sublingual',title:'Vitamina B12 1.000mcg',cat:'Base',note:'Sublingual = bypass GI · Sem restrição de horário · Consolidado no pack noturno'},
+{id:'s42',time:'21:15',qty:'💊 2 Caps',title:'Saw Palmetto 300mg + Pygeum 100mg',cat:'DHT',note:'COM GORDURA · Suspender com dutasterida',suspended:true},
 // ── TER SEMANAL ──
-{id:'s49',time:'TER',qty:'💉 1,5mg SC',title:'Retatrutida 1,5mg (toda Terça-feira)',cat:'GLP-1',tuesdayOnly:true,note:'⚠ SC subcutâneo · Terças-feiras fixo · Suprime glicose, insulina, TG e ácido úrico — documentar timing relativo a coletas lab · Protocolo: 1,5mg→2mg 13/04→4mg 11/05→6mg 08/06→8mg 06/07'},
+{id:'s49',time:'TER',qty:'💉 1,5mg SC',title:'Retatrutida 1,5mg (toda Terça-feira)',cat:'GLP-1',tuesdayOnly:true,note:'⚠ SC subcutâneo · Terças-feiras fixo · Protocolo: 1,5mg→2mg 13/04→4mg 11/05→6mg 08/06→8mg 06/07'},
 // ── SOS ──
-{id:'s44',time:'SOS',qty:'💊 10-20mg',title:'Propranolol SOS (pré-evento social)',cat:'Ansiedade',note:'⚠ APENAS em eventos sociais · 30-60min antes · Monitorar PA (candesartana+minoxidil) · Discutir c/ psiquiatra'},
+{id:'s44',time:'SOS',qty:'💊 10-20mg',title:'Propranolol SOS (pré-evento social)',cat:'Ansiedade',note:'⚠ APENAS em eventos sociais · 30-60min antes · Monitorar PA · Discutir c/ psiquiatra'},
 ];
 
 const DERM=[
@@ -1025,7 +1023,7 @@ const ITEM_INFO={
 's18':{obj:'Oxidação de gordura + saúde da pele — Dose 1 (almoço)',rec:'Body Action L-Carnitina 2000 líquida. 15ml = 1.000mg. COM REFEIÇÃO. Total diário: 2.000mg (1 porção de 30ml dividida em 2 doses). Forma líquida = biodisponibilidade superior à cápsula.',interval:'Dose 1 almoço + dose 2 pré-treino = 1 porção (30ml) total'},
 's25':{obj:'Força, volume muscular, hidratação celular',rec:'COM CARBOIDRATO/PROTEÍNA. 3-5g/dia.',interval:'Pós-treino ideal'},
 's26':{obj:'Sensibilidade insulínica + longevidade + controle IGF-1',rec:'COM COMIDA obrigatório. Suspender 5-7 dias antes do MOTS-c.',interval:'Monitorar GI nas primeiras semanas'},
-'s28':{obj:'Precursor de glutationa + proteção renal',rec:'COM COMIDA às 19h. Dose única noturna.',interval:'Tomar junto com Glicina 3g para protocolo GlyNAC completo'},
+'s50':{obj:'Precursor de glutationa (antioxidante master) + proteção renal',rec:'COM COMIDA às 19h. 2 comprimidos de 600mg = 1.200mg/dia. Componente GlyNAC com Glicina 3g às 21:15.',interval:'Dose única noturna · Tomar junto com Glicina 3g para protocolo GlyNAC completo'},
 's30':{obj:'Saúde óssea (prevenir osteopenia)',rec:'≥2h após zinco. COM COMIDA.',interval:'≥3h após ferro · ≥2h após zinco'},
 's32':{obj:'Neuroproteção + sono + relaxamento muscular',rec:'Forma treonato cruza barreira hematoencefálica.',interval:'≥45min após jantar'},
 's33':{obj:'Ansiolítico natural (substituto ashwagandha)',rec:'Ashwagandha contraindicada c/ TSH 0,627. L-teanina é segura.',interval:'Sinérgica com magnésio. Efeito em 30-60min'},
@@ -1381,7 +1379,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch
     })
     .catch(()=>{
       // Fallback: data de compilação hardcoded
-      el.textContent='03/04/2026';
+      el.textContent='06/04/2026';
     });
 })();
 </script>
