@@ -1050,28 +1050,87 @@ function openItemInfo(id,panel){
 }
 
 // ═══ WORKOUT TIMER ═══
-let wkTimer={running:false,start:0,elapsed:0,interval:null,subMode:'idle',subStart:0,subElapsed:0,subInterval:null,totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0,activeExId:null,activeSetIdx:-1};
+let wkTimer={running:false,start:0,elapsed:0,interval:null,subMode:'idle',subStart:0,subElapsed:0,subInterval:null,totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0,activeExId:null,activeSetIdx:-1,countdown:0,countdownInterval:null};
+let pipScale=1.0;
 function fmtTimer(ms){const s=Math.floor(ms/1000),m=Math.floor(s/60),h=Math.floor(m/60);return(h?String(h).padStart(2,'0')+':':'')+String(m%60).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
 function openWorkoutTimer(){renderTimerUI();document.getElementById('timerModal').classList.add('open');document.getElementById('btnMinimize').style.display='';}
 function closeTimerModal(){if(wkTimer.running||wkTimer.elapsed>0){minimizeTimer();}else{stopWorkoutTimer();closeModal('timerModal');}}
 function minimizeTimer(){closeModal('timerModal');document.getElementById('timerPip').style.display='block';renderPip();}
 function expandTimer(){document.getElementById('timerPip').style.display='none';renderTimerUI();document.getElementById('timerModal').classList.add('open');document.getElementById('btnMinimize').style.display='';}
 function closePip(){stopWorkoutTimer();document.getElementById('timerPip').style.display='none';}
+function applyPipScale(){
+  const el=document.getElementById('timerPip');if(!el) return;
+  el.style.transformOrigin='center center';
+  el.style.transform=`scale(${pipScale})`;
+}
 function renderPip(){
   const pip=document.getElementById('timerPip');if(!pip||pip.style.display==='none') return;
   const elapsed=wkTimer.running?(wkTimer.elapsed+Date.now()-wkTimer.start):wkTimer.elapsed;
-  const subElapsed=(wkTimer.subMode!=='idle'&&wkTimer.subInterval)?(wkTimer.subElapsed+Date.now()-wkTimer.subStart):wkTimer.subElapsed;
+  const subElapsed=(wkTimer.subMode==='series'&&wkTimer.subInterval)?(wkTimer.subElapsed+Date.now()-wkTimer.subStart):wkTimer.subElapsed;
   const mainEl=document.getElementById('pipMain');const subEl=document.getElementById('pipSub');const ppBtn=document.getElementById('pipPlayPause');const subBtn=document.getElementById('pipSubBtn');
   if(!mainEl) return;
   mainEl.textContent=fmtTimer(elapsed);mainEl.style.color=wkTimer.running?'var(--accent)':'var(--text2)';
   ppBtn.textContent=wkTimer.running?'⏸':'▶';ppBtn.style.background=wkTimer.running?'var(--accent)':'var(--blue)';
-  if(wkTimer.subMode==='idle'){subEl.textContent='—';subEl.style.color='var(--text3)';subBtn.textContent='🏋️ Série';subBtn.style.color='var(--accent)';subBtn.style.borderColor='rgba(52,211,153,.4)';}
-  else if(wkTimer.subMode==='series'){subEl.textContent='🏋️ SÉRIE '+fmtTimer(subElapsed);subEl.style.color='var(--accent)';subBtn.textContent='✓ Fim série';subBtn.style.color='var(--accent)';}
-  else{subEl.textContent='⏳ INTERVALO '+fmtTimer(subElapsed);subEl.style.color='var(--orange)';subBtn.textContent='✓ Fim intervalo';subBtn.style.color='var(--orange)';}
+  if(wkTimer.subMode==='countdown'){
+    subEl.textContent='🏁 PREPARAR...';subEl.style.color='var(--yellow)';
+    subBtn.textContent=`${wkTimer.countdown}`;subBtn.style.color='var(--yellow)';subBtn.style.fontSize='22px';subBtn.style.fontWeight='800';subBtn.style.borderColor='rgba(251,191,36,.5)';
+  } else if(wkTimer.subMode==='idle'){
+    subBtn.style.fontSize='';subBtn.style.fontWeight='';
+    subEl.textContent='—';subEl.style.color='var(--text3)';subBtn.textContent='🏋️ Série';subBtn.style.color='var(--accent)';subBtn.style.borderColor='rgba(52,211,153,.4)';
+  } else if(wkTimer.subMode==='series'){
+    subBtn.style.fontSize='';subBtn.style.fontWeight='';
+    subEl.textContent='🏋️ SÉRIE '+fmtTimer(subElapsed);subEl.style.color='var(--accent)';subBtn.textContent='✓ Fim série';subBtn.style.color='var(--accent)';
+  } else {
+    subBtn.style.fontSize='';subBtn.style.fontWeight='';
+    subEl.textContent='⏳ INTERVALO '+fmtTimer(subElapsed);subEl.style.color='var(--orange)';subBtn.textContent='✓ Fim intervalo';subBtn.style.color='var(--orange)';
+  }
+  applyPipScale();
 }
 function pipTogglePlay(){if(wkTimer.elapsed===0&&!wkTimer.running){startWorkoutTimer();return;}if(wkTimer.running) pauseWorkoutTimer();else resumeWorkoutTimer();}
-function pipSubAction(){if(wkTimer.subMode==='idle') startSub('series');else endSub();}
-(function initPipDrag(){let drag=false,ox=0,oy=0;function getEl(){return document.getElementById('timerPip');}function start(e){if(e.target.tagName==='BUTTON') return;drag=true;const el=getEl(),r=el.getBoundingClientRect();const cx=e.touches?e.touches[0].clientX:e.clientX;const cy=e.touches?e.touches[0].clientY:e.clientY;ox=cx-r.left;oy=cy-r.top;el.style.cursor='grabbing';e.preventDefault();}function move(e){if(!drag) return;const el=getEl();const cx=e.touches?e.touches[0].clientX:e.clientX;const cy=e.touches?e.touches[0].clientY:e.clientY;let nx=cx-ox,ny=cy-oy;nx=Math.max(0,Math.min(nx,window.innerWidth-el.offsetWidth));ny=Math.max(0,Math.min(ny,window.innerHeight-el.offsetHeight));el.style.right='auto';el.style.bottom='auto';el.style.left=nx+'px';el.style.top=ny+'px';e.preventDefault();}function end(){drag=false;const el=getEl();if(el) el.style.cursor='grab';}document.addEventListener('DOMContentLoaded',function(){const el=getEl();if(!el) return;el.addEventListener('mousedown',start);el.addEventListener('touchstart',start,{passive:false});document.addEventListener('mousemove',move);document.addEventListener('touchmove',move,{passive:false});document.addEventListener('mouseup',end);document.addEventListener('touchend',end);});})();
+function pipSubAction(){
+  if(wkTimer.subMode==='idle') startSub('series');
+  else if(wkTimer.subMode==='countdown'){clearInterval(wkTimer.countdownInterval);wkTimer.countdownInterval=null;wkTimer.countdown=0;wkTimer.subMode='idle';renderTimerUI();renderPip();}
+  else endSub();
+}
+(function initPipDrag(){
+  let drag=false,ox=0,oy=0,pinchDist=null;
+  function getEl(){return document.getElementById('timerPip');}
+  function getDist(t){return Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);}
+  function start(e){
+    if(e.target.tagName==='BUTTON') return;
+    if(e.touches&&e.touches.length===2){pinchDist=getDist(e.touches);e.preventDefault();return;}
+    drag=true;const el=getEl(),r=el.getBoundingClientRect();
+    const cx=e.touches?e.touches[0].clientX:e.clientX;const cy=e.touches?e.touches[0].clientY:e.clientY;
+    ox=cx-r.left;oy=cy-r.top;el.style.cursor='grabbing';e.preventDefault();
+  }
+  function move(e){
+    if(e.touches&&e.touches.length===2&&pinchDist!==null){
+      const newDist=getDist(e.touches);const ratio=newDist/pinchDist;
+      pipScale=Math.min(2.5,Math.max(0.5,pipScale*ratio));
+      pinchDist=newDist;applyPipScale();e.preventDefault();return;
+    }
+    if(!drag) return;e.preventDefault();
+    const el=getEl();
+    const cx=e.touches?e.touches[0].clientX:e.clientX;const cy=e.touches?e.touches[0].clientY:e.clientY;
+    let nx=cx-ox,ny=cy-oy;
+    nx=Math.max(0,Math.min(nx,window.innerWidth-el.offsetWidth));
+    ny=Math.max(0,Math.min(ny,window.innerHeight-el.offsetHeight));
+    el.style.right='auto';el.style.bottom='auto';el.style.left=nx+'px';el.style.top=ny+'px';
+  }
+  function end(e){
+    if(e&&e.touches&&e.touches.length<2) pinchDist=null;
+    drag=false;const el=getEl();if(el) el.style.cursor='grab';
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    const el=getEl();if(!el) return;
+    el.addEventListener('mousedown',start);
+    el.addEventListener('touchstart',start,{passive:false});
+    document.addEventListener('mousemove',move);
+    document.addEventListener('touchmove',move,{passive:false});
+    document.addEventListener('mouseup',end);
+    document.addEventListener('touchend',end);
+  });
+})();
 function adjustTimer(ms){if(wkTimer.running){wkTimer.elapsed+=Date.now()-wkTimer.start;wkTimer.start=Date.now();}wkTimer.elapsed=Math.max(0,wkTimer.elapsed+ms);renderTimerUI();renderPip();}
 function adjustSub(ms){if(wkTimer.subInterval){wkTimer.subElapsed+=Date.now()-wkTimer.subStart;wkTimer.subStart=Date.now();}const before=wkTimer.subElapsed;wkTimer.subElapsed=Math.max(0,wkTimer.subElapsed+ms);const delta=wkTimer.subElapsed-before;if(wkTimer.subMode==='series') wkTimer.totalRestTime=Math.max(0,wkTimer.totalRestTime-delta);else if(wkTimer.subMode==='rest') wkTimer.totalSeriesTime=Math.max(0,wkTimer.totalSeriesTime-delta);renderTimerUI();renderPip();}
 function adjustSeriesCount(delta){wkTimer.seriesCount=Math.max(0,wkTimer.seriesCount+delta);renderTimerUI();renderPip();}
@@ -1087,10 +1146,13 @@ function renderTimerUI(){
   else{html+=`<button class="mbtn mbtn-save" onclick="resumeWorkoutTimer()" style="flex:1">▶ Retomar</button><button class="mbtn mbtn-del" onclick="finishWorkoutTimer()" style="flex:1">⏹ Finalizar</button>`;}
   html+=`</div>`;
   if(wkTimer.running||wkTimer.elapsed>0){
-    const subColor=wkTimer.subMode==='series'?'var(--accent)':wkTimer.subMode==='rest'?'var(--orange)':'var(--text3)';
-    const subLabel=wkTimer.subMode==='series'?'🏋️ SÉRIE':wkTimer.subMode==='rest'?'⏳ INTERVALO':'—';
-    html+=`<div style="border-top:1px solid var(--border2);padding-top:14px;margin-top:8px"><div style="text-align:center;margin-bottom:10px"><div style="font-size:10px;font-weight:700;color:${subColor};text-transform:uppercase;margin-bottom:4px">${subLabel}</div><div style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:800;color:${subColor}">${fmtTimer(wkTimer.subMode!=='idle'&&wkTimer.subInterval?subElapsed:0)}</div></div><div style="display:flex;gap:8px;justify-content:center;margin-bottom:12px">`;
-    if(wkTimer.subMode==='idle'){html+=`<button class="mbtn" onclick="startSub('series')" style="flex:1;background:rgba(52,211,153,.15);color:var(--accent);border:1px solid var(--accent)">🏋️ Iniciar Série</button>`;}
+    const subColor=wkTimer.subMode==='series'?'var(--accent)':wkTimer.subMode==='rest'?'var(--orange)':wkTimer.subMode==='countdown'?'var(--yellow)':'var(--text3)';
+    const subLabel=wkTimer.subMode==='series'?'🏋️ SÉRIE':wkTimer.subMode==='rest'?'⏳ INTERVALO':wkTimer.subMode==='countdown'?'🏁 PREPARAR':'—';
+    const subDisplay=wkTimer.subMode==='countdown'?`<div style="font-family:'JetBrains Mono',monospace;font-size:72px;font-weight:800;color:var(--yellow);line-height:1">${wkTimer.countdown}</div>`:
+      `<div style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:800;color:${subColor}">${fmtTimer(wkTimer.subMode==='series'&&wkTimer.subInterval?subElapsed:0)}</div>`;
+    html+=`<div style="border-top:1px solid var(--border2);padding-top:14px;margin-top:8px"><div style="text-align:center;margin-bottom:10px"><div style="font-size:10px;font-weight:700;color:${subColor};text-transform:uppercase;margin-bottom:4px">${subLabel}</div>${subDisplay}</div><div style="display:flex;gap:8px;justify-content:center;margin-bottom:12px">`;
+    if(wkTimer.subMode==='countdown'){html+=`<button class="mbtn" onclick="cancelCountdown()" style="flex:1;background:rgba(251,191,36,.15);color:var(--yellow);border:1px solid var(--yellow)">✕ Cancelar contagem</button>`;}
+    else if(wkTimer.subMode==='idle'){html+=`<button class="mbtn" onclick="startSub('series')" style="flex:1;background:rgba(52,211,153,.15);color:var(--accent);border:1px solid var(--accent)">🏋️ Iniciar Série</button>`;}
     else if(wkTimer.subMode==='series'){html+=`<button class="mbtn" onclick="endSub()" style="flex:1;background:rgba(52,211,153,.15);color:var(--accent);border:1px solid var(--accent)">✓ Fim da Série</button>`;}
     else if(wkTimer.subMode==='rest'){html+=`<button class="mbtn" onclick="endSub()" style="flex:1;background:rgba(251,146,60,.15);color:var(--orange);border:1px solid var(--orange)">✓ Fim do Intervalo</button>`;}
     html+=`</div>`;
@@ -1102,7 +1164,7 @@ function renderTimerUI(){
 function startWorkoutTimer(){wkTimer.running=true;wkTimer.start=Date.now();wkTimer.elapsed=0;wkTimer.totalSeriesTime=0;wkTimer.totalRestTime=0;wkTimer.seriesCount=0;wkTimer.restCount=0;wkTimer.subMode='idle';wkTimer.interval=setInterval(function(){renderTimerUI();renderPip();},500);renderTimerUI();renderPip();}
 function pauseWorkoutTimer(){wkTimer.running=false;wkTimer.elapsed+=Date.now()-wkTimer.start;clearInterval(wkTimer.interval);wkTimer.interval=null;if(wkTimer.subMode!=='idle') pauseSub();renderTimerUI();renderPip();}
 function resumeWorkoutTimer(){wkTimer.running=true;wkTimer.start=Date.now();wkTimer.interval=setInterval(function(){renderTimerUI();renderPip();},500);renderTimerUI();renderPip();}
-function stopWorkoutTimer(){if(wkTimer.interval){clearInterval(wkTimer.interval);wkTimer.interval=null;}if(wkTimer.subInterval){clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}}
+function stopWorkoutTimer(){if(wkTimer.interval){clearInterval(wkTimer.interval);wkTimer.interval=null;}if(wkTimer.subInterval){clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}if(wkTimer.countdownInterval){clearInterval(wkTimer.countdownInterval);wkTimer.countdownInterval=null;}}
 function finishWorkoutTimer(){
   const totalMs=wkTimer.elapsed;if(wkTimer.subMode!=='idle') endSub();
   clearInterval(wkTimer.interval);wkTimer.interval=null;
@@ -1110,12 +1172,40 @@ function finishWorkoutTimer(){
   const cals=prompt('Calorias estimadas (smartwatch):','0');
   const notes=`⏱ ${totalMin}min total · 🏋️ ${seriesMin}min tensão (${wkTimer.seriesCount} séries) · ⏳ ${restMin}min intervalo (${wkTimer.restCount}x)`;
   state.gym.push({id:'ex'+Date.now(),name:'Musculação',type:'cardio',duration:totalMin,calories:parseInt(cals)||0,distance:'',hr:0,notes,done:true,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),isGeneric:true,seriesTime:wkTimer.totalSeriesTime,restTime:wkTimer.totalRestTime,seriesCount:wkTimer.seriesCount,restCount:wkTimer.restCount});
-  wkTimer={running:false,start:0,elapsed:0,interval:null,subMode:'idle',subStart:0,subElapsed:0,subInterval:null,totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0};
+  wkTimer={running:false,start:0,elapsed:0,interval:null,subMode:'idle',subStart:0,subElapsed:0,subInterval:null,totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0,countdown:0,countdownInterval:null};
   save();closeModal('timerModal');
 }
-function startSub(mode){wkTimer.subMode=mode;wkTimer.subStart=Date.now();wkTimer.subElapsed=0;wkTimer.subInterval=setInterval(function(){renderTimerUI();renderPip();},200);renderTimerUI();renderPip();}
-function pauseSub(){if(wkTimer.subInterval){wkTimer.subElapsed+=Date.now()-wkTimer.subStart;clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}}
+function startSub(mode){
+  if(mode==='series'){
+    // 3-2-1 countdown antes de iniciar a série
+    wkTimer.subMode='countdown';wkTimer.countdown=3;
+    if(wkTimer.countdownInterval) clearInterval(wkTimer.countdownInterval);
+    wkTimer.countdownInterval=setInterval(function(){
+      wkTimer.countdown--;
+      if(wkTimer.countdown<=0){
+        clearInterval(wkTimer.countdownInterval);wkTimer.countdownInterval=null;wkTimer.countdown=0;
+        wkTimer.subMode='series';wkTimer.subStart=Date.now();wkTimer.subElapsed=0;
+        wkTimer.subInterval=setInterval(function(){renderTimerUI();renderPip();},200);
+      }
+      renderTimerUI();renderPip();
+    },1000);
+    renderTimerUI();renderPip();return;
+  }
+  // rest: inicia direto
+  wkTimer.subMode=mode;wkTimer.subStart=Date.now();wkTimer.subElapsed=0;
+  wkTimer.subInterval=setInterval(function(){renderTimerUI();renderPip();},200);
+  renderTimerUI();renderPip();
+}
+function cancelCountdown(){
+  if(wkTimer.countdownInterval){clearInterval(wkTimer.countdownInterval);wkTimer.countdownInterval=null;}
+  wkTimer.countdown=0;wkTimer.subMode='idle';renderTimerUI();renderPip();
+}
+function pauseSub(){
+  if(wkTimer.subMode==='countdown'){cancelCountdown();return;}
+  if(wkTimer.subInterval){wkTimer.subElapsed+=Date.now()-wkTimer.subStart;clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}
+}
 function endSub(){
+  if(wkTimer.subMode==='countdown'){cancelCountdown();return;}
   const elapsed=wkTimer.subElapsed+(wkTimer.subInterval?Date.now()-wkTimer.subStart:0);
   if(wkTimer.subMode==='series'){wkTimer.totalSeriesTime+=elapsed;wkTimer.seriesCount++;wkTimer.subMode='rest';}
   else if(wkTimer.subMode==='rest'){wkTimer.totalRestTime+=elapsed;wkTimer.restCount++;wkTimer.subMode='idle';}
