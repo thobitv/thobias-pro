@@ -169,18 +169,7 @@
         <div style="display:flex;gap:8px;margin-bottom:10px">
             <button class="add-btn" onclick="openWorkoutTimer()" style="flex:1;margin:0;background:rgba(52,211,153,.1);border-color:var(--accent);color:var(--accent)">⏱ Cronômetro Musculação</button>
         </div>
-        <div style="margin-bottom:10px">
-            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">📋 UL PPL · Carregar Treino</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-                <button class="wbtn" onclick="loadPreset('push_a')" style="padding:10px 4px;border-color:rgba(248,113,113,.3);color:var(--red);background:rgba(248,113,113,.06);font-size:8.5px;flex-direction:column;gap:2px"><span style="font-size:12px">🏋️</span><span>SEG · Push A</span><span style="font-size:7px;opacity:.7">Peito+Ombro+Tríceps</span></button>
-                <button class="wbtn" onclick="loadPreset('pull_a')" style="padding:10px 4px;border-color:rgba(96,165,250,.3);color:var(--blue);background:rgba(96,165,250,.06);font-size:8.5px;flex-direction:column;gap:2px"><span style="font-size:12px">🔵</span><span>TER · Pull A</span><span style="font-size:7px;opacity:.7">Costas+Bíceps</span></button>
-                <button class="wbtn" onclick="loadPreset('lower_a')" style="padding:10px 4px;border-color:rgba(167,139,250,.3);color:var(--purple);background:rgba(167,139,250,.06);font-size:8.5px;flex-direction:column;gap:2px"><span style="font-size:12px">🦵</span><span>QUA · Lower A</span><span style="font-size:7px;opacity:.7">Quad Dominante</span></button>
-                <button class="wbtn" onclick="loadPreset('upper')" style="padding:10px 4px;border-color:rgba(251,146,60,.3);color:var(--orange);background:rgba(251,146,60,.06);font-size:8.5px;flex-direction:column;gap:2px"><span style="font-size:12px">💪</span><span>QUI · Upper</span><span style="font-size:7px;opacity:.7">Push+Pull</span></button>
-                <button class="wbtn" onclick="loadPreset('lower_b')" style="padding:10px 4px;border-color:rgba(167,139,250,.3);color:var(--purple);background:rgba(167,139,250,.06);font-size:8.5px;flex-direction:column;gap:2px"><span style="font-size:12px">🍑</span><span>SEX · Lower B</span><span style="font-size:7px;opacity:.7">Post Dominante</span></button>
-                <button class="wbtn" onclick="loadPreset('comp_a')" style="padding:10px 4px;border-color:rgba(52,211,153,.25);color:var(--accent);background:rgba(52,211,153,.05);font-size:8.5px;flex-direction:column;gap:2px"><span style="font-size:12px">🌿</span><span>SÁB · Comp A*</span><span style="font-size:7px;opacity:.7">Full Body+Cardio</span></button>
-                <button class="wbtn" onclick="loadPreset('comp_b')" style="padding:10px 4px;border-color:rgba(52,211,153,.25);color:var(--accent);background:rgba(52,211,153,.05);font-size:8.5px;flex-direction:column;gap:2px;grid-column:span 2"><span style="font-size:12px">🌿</span><span>DOM · Comp B*</span><span style="font-size:7px;opacity:.7">Lower Regenerativo+Cardio</span></button>
-            </div>
-        </div>
+        <div id="presetGroups" style="margin-bottom:10px"></div>
         <div id="exList"></div>
         <button class="add-btn" onclick="openExModal('new')">+ Adicionar Exercício</button>
     </div>
@@ -667,6 +656,7 @@ function deleteItem(){const id=document.getElementById('editId').value,p=documen
 function toggleSuspend(){const id=document.getElementById('editId').value,p=document.getElementById('editPanel').value,t=state[p].find(x=>x.id===id);if(t){t.suspended=!t.suspended;if(t.suspended){t.done=false;t.log='';}ensureUserMods();state.userMods[p].suspended[id]=t.suspended;const addedItem=state.userMods[p].added.find(x=>x.id===id);if(addedItem)addedItem.suspended=t.suspended;save();closeModal('editModal');}}
 function duplicateItem(){const id=document.getElementById('editId').value,p=document.getElementById('editPanel').value;const orig=state[p].find(x=>x.id===id);if(!orig)return;closeModal('editModal');document.getElementById('editId').value='new';document.getElementById('editPanel').value=p;document.getElementById('editTitle').value='Cópia de '+orig.title;document.getElementById('editTime').value=orig.time.match(/^\d{2}:\d{2}$/)?orig.time:'08:00';document.getElementById('editLog').value='';document.getElementById('editQty').value=orig.qty;document.getElementById('editCat').value=orig.cat||'';document.getElementById('editNotes').value=orig.userNote||'';document.getElementById('editModalTitle').textContent='Novo Item (cópia)';document.getElementById('editRow1').style.display='none';document.getElementById('fldLog').style.display='none';document.getElementById('editModal').classList.add('open');}
 function closeModal(m){document.getElementById(m).classList.remove('open');}
+document.addEventListener('click',function(e){if(!e.target.classList.contains('modal-bg')||!e.target.classList.contains('open'))return;const id=e.target.id;if(id==='timerModal'){minimizeTimer();}else if(id==='pomoModal'){minimizePomo();}else{e.target.classList.remove('open');}});
 let dd={panel:null,fromId:null,fromEl:null,clone:null,oy:0};
 function ddStart(e,panel,id){e.preventDefault();e.stopPropagation();const touch=e.touches[0];dd.panel=panel;dd.fromId=id;dd.fromEl=e.currentTarget.closest('.task,.ex-card');if(!dd.fromEl)return;const rect=dd.fromEl.getBoundingClientRect();dd.oy=touch.clientY-rect.top;dd.fromEl.classList.add('dragging');dd.clone=dd.fromEl.cloneNode(true);dd.clone.style.cssText=`position:fixed;z-index:9999;opacity:.88;pointer-events:none;width:${rect.width}px;left:${rect.left}px;top:${rect.top}px;transform:rotate(1.5deg) scale(1.02);box-shadow:0 12px 40px rgba(0,0,0,.7);border-radius:14px;transition:none`;document.body.appendChild(dd.clone);}
 function ddMove(e){if(!dd.fromId)return;e.preventDefault();const touch=e.touches[0];dd.clone.style.top=(touch.clientY-dd.oy)+'px';dd.clone.style.display='none';const el=document.elementFromPoint(touch.clientX,touch.clientY);dd.clone.style.display='';document.querySelectorAll('.drag-over').forEach(x=>x.classList.remove('drag-over'));const card=el?.closest('[data-ddid]');if(card&&card.dataset.ddid!==dd.fromId)card.classList.add('drag-over');}
@@ -866,10 +856,140 @@ const WORKOUT_PRESETS={
 {name:'Panturrilha no degrau (excêntrico)',type:'resistido',series:3,reps:'15, 15, 15',load:'',rest:45,group:'Panturrilha',notes:'Foco na descida lenta'},
 {name:'Cardio regenerativo — bike/natação/caminhada',type:'cardio',duration:35,calories:0,distance:'',hr:0,notes:'5-6 km/h se caminhada · Recuperação ativa'},
 ]},
+// === ALLPFIT — Liu Young — Ficha 11.2 ABCD ===
+'allp_a':{name:'🅰️ AllpFit A — Peito+Ombro+Tríceps (Liu)',exercises:[
+{name:'Mobilidade Torácica',type:'resistido',series:1,reps:'5min',load:'',rest:0,group:'Mobilidade',notes:'Aquecimento'},
+{name:'Mobilidade de Ombros',type:'resistido',series:1,reps:'5min',load:'',rest:0,group:'Mobilidade',notes:''},
+{name:'Supino Reto Halteres Solo',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Peito',notes:''},
+{name:'Crucifixo Reto',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Peito',notes:''},
+{name:'Supino Inclinado Barra',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Peito Superior',notes:''},
+{name:'Desenvolvimento Arnold',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Ombro',notes:''},
+{name:'Elevação Lateral Máquina',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Ombro Lateral',notes:''},
+{name:'Tríceps Francês c/ Corda Cross',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Tríceps',notes:''},
+{name:'Tríceps Coice Unilateral Halter',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Tríceps',notes:''},
+]},
+'allp_b':{name:'🅱️ AllpFit B — Perna Quadríceps (Liu)',exercises:[
+{name:'Mobilidade de Quadril',type:'resistido',series:1,reps:'5min',load:'',rest:0,group:'Mobilidade',notes:''},
+{name:'Mobilidade de Tornozelos',type:'resistido',series:1,reps:'5min',load:'',rest:0,group:'Mobilidade',notes:''},
+{name:'Agachamento Livre c/ Barra',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Quadríceps',notes:''},
+{name:'Cadeira Extensora',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Quadríceps',notes:''},
+{name:'Leg Press 45°',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Quadríceps',notes:''},
+{name:'Passada c/ Barra Livre',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Quad/Glúteo',notes:''},
+{name:'Cadeira Adutora',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Adutores',notes:''},
+{name:'Panturrilha Banco Sóleo',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Panturrilha',notes:''},
+{name:'Abdominal Canivete',type:'resistido',series:4,reps:'30, 30, 30, 30',load:'',rest:60,group:'Core',notes:''},
+]},
+'allp_c':{name:'©️ AllpFit C — Pull Costas+Bíceps (Liu)',exercises:[
+{name:'Mobilidade Torácica',type:'resistido',series:1,reps:'5min',load:'',rest:0,group:'Mobilidade',notes:''},
+{name:'Mobilidade de Ombros',type:'resistido',series:1,reps:'5min',load:'',rest:0,group:'Mobilidade',notes:''},
+{name:'Barra Fixa Supinada',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Dorsal',notes:''},
+{name:'Remada Curvada Neutra c/ Halteres',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Costas',notes:''},
+{name:'Pulley Anterior Pronado',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Dorsal',notes:''},
+{name:'Remada Baixa Triângulo',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Costas',notes:''},
+{name:'Rosca Martelo Barra H',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Bíceps',notes:''},
+{name:'Rosca Direta Barra W',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Bíceps',notes:''},
+{name:'Prancha Abdominal Isométrica',type:'resistido',series:4,reps:'90s, 90s, 90s, 90s',load:'',rest:60,group:'Core',notes:''},
+]},
+'allp_d':{name:'🇩 AllpFit D — Lower Posterior (Liu)',exercises:[
+{name:'Mobilidade de Quadril',type:'resistido',series:1,reps:'5min',load:'',rest:0,group:'Mobilidade',notes:''},
+{name:'Mobilidade de Tornozelos',type:'resistido',series:1,reps:'5min',load:'',rest:0,group:'Mobilidade',notes:''},
+{name:'Leg Press 45° Sumô',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Posterior/Glúteo',notes:''},
+{name:'Mesa Flexora',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Posterior',notes:''},
+{name:'Stiff c/ Barra',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Posterior',notes:''},
+{name:'Levantamento Terra',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Post/Lombar',notes:''},
+{name:'Elevação Pélvica Máquina',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Glúteo',notes:''},
+{name:'Cadeira Abdutora',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:60,group:'Glúteo Médio',notes:''},
+{name:'Abdominal Oblíquo Banco Declinado',type:'resistido',series:4,reps:'30, 30, 30, 30',load:'',rest:60,group:'Core/Oblíquo',notes:''},
+]},
+// === BODYTECH — Daniel Carlos — ABC Iniciante ===
+'bt_a':{name:'🔴 Bodytech A — Peito+Ombro+Tríceps (Daniel)',exercises:[
+{name:'Supino Reto Aberto Máquina',type:'resistido',series:3,reps:'15, 15, 15',load:'',rest:60,group:'Peito',notes:''},
+{name:'Flexão de Braço',type:'resistido',series:1,reps:'15',load:'',rest:0,group:'Peito',notes:'Superset com Supino'},
+{name:'Supino Inclinado com Halter',type:'resistido',series:3,reps:'12, 12, 12',load:'12',rest:60,group:'Peito Superior',notes:''},
+{name:'Abdução de Ombros em Pé',type:'resistido',series:1,reps:'15',load:'',rest:0,group:'Ombro',notes:'Superset com Supino Inclinado'},
+{name:'Voador Peitoral Máquina',type:'resistido',series:3,reps:'12, 12, 12',load:'',rest:60,group:'Peito',notes:'PICO: apertar 2s no topo'},
+{name:'Tríceps Supinado com Halter',type:'resistido',series:1,reps:'12',load:'',rest:0,group:'Tríceps',notes:'Superset com Voador'},
+{name:'Desenvolvimento Aberto Sentado com Halter',type:'resistido',series:3,reps:'12, 12, 12',load:'15',rest:60,group:'Ombro',notes:''},
+{name:'Abdominal Remador',type:'resistido',series:1,reps:'20',load:'',rest:0,group:'Core',notes:'Superset com Desenv.'},
+]},
+'bt_b':{name:'🔵 Bodytech B — Dorsal+Bíceps+Cardio (Daniel)',exercises:[
+{name:'Corrida/Caminhada Esteira',type:'cardio',duration:10,calories:0,distance:'',hr:0,notes:'Aquecimento'},
+{name:'Puxada Fechada Máquina',type:'resistido',series:3,reps:'12, 12, 12',load:'54',rest:60,group:'Dorsal',notes:''},
+{name:'Remada Fechada Máquina',type:'resistido',series:3,reps:'12, 12, 12',load:'20',rest:60,group:'Costas',notes:''},
+{name:'Remada Curvada com Kettlebell',type:'resistido',series:3,reps:'12, 12, 12',load:'',rest:60,group:'Costas',notes:''},
+{name:'Crucifixo Inverso Crossover',type:'resistido',series:3,reps:'12, 12, 12',load:'15',rest:60,group:'Post. Deltóide',notes:''},
+{name:'Elíptico',type:'cardio',duration:10,calories:0,distance:'',hr:0,notes:'Intervalo cardio'},
+{name:'Bíceps Barra H',type:'resistido',series:3,reps:'12, 12, 12',load:'',rest:60,group:'Bíceps',notes:''},
+{name:'Bíceps Barra Reta Banco Scott',type:'resistido',series:3,reps:'10, 10, 10',load:'',rest:60,group:'Bíceps',notes:''},
+{name:'Bíceps Banco Inclinado 45°',type:'resistido',series:3,reps:'12, 12, 12',load:'8',rest:60,group:'Bíceps',notes:''},
+]},
+'bt_c':{name:'🟢 Bodytech C — Perna+Core (Daniel)',exercises:[
+{name:'Leg Press Máquina',type:'resistido',series:3,reps:'12, 12, 12',load:'90',rest:60,group:'Quadríceps',notes:'PICO: apertar 2s no topo sem travar joelhos'},
+{name:'Abdominal Total',type:'resistido',series:1,reps:'20',load:'',rest:0,group:'Core',notes:'Superset com Leg Press'},
+{name:'Stiff Máquina',type:'resistido',series:3,reps:'12, 12, 12',load:'25',rest:60,group:'Posterior',notes:''},
+{name:'Abdominal Braços Cruzados',type:'resistido',series:1,reps:'20',load:'',rest:0,group:'Core',notes:'Superset com Stiff'},
+{name:'Cadeira Extensora',type:'resistido',series:3,reps:'12, 12, 12',load:'',rest:60,group:'Quadríceps',notes:'ISO: segurar 10s pernas estendidas na última rep'},
+{name:'Agachamento com Halter',type:'resistido',series:1,reps:'15',load:'',rest:0,group:'Quadríceps',notes:'Superset com Extensora'},
+{name:'Cadeira Flexora',type:'resistido',series:3,reps:'12, 12, 12',load:'42',rest:60,group:'Posterior',notes:''},
+{name:'Afundo Unilateral com Halter',type:'resistido',series:1,reps:'10',load:'',rest:0,group:'Glúteo/Quad',notes:'Superset com Flexora · 10 cada lado'},
+{name:'Panturrilha Leg Press',type:'resistido',series:4,reps:'15, 15, 15, 15',load:'40',rest:45,group:'Panturrilha',notes:''},
+]},
+// === ARTHUR — AllpFit Ficha 2 (Upper/Lower/Push/Pull) ===
+'art_push':{name:'🟥 Arthur Push — Peitoral+Tríceps',exercises:[
+{name:'Alongamento Dorsal+Peitoral Graviton',type:'resistido',series:1,reps:'30s',load:'',rest:0,group:'Mobilidade',notes:''},
+{name:'Alongamento Cadeia Lateral',type:'resistido',series:2,reps:'30s, 30s',load:'',rest:0,group:'Mobilidade',notes:''},
+{name:'Supino Inclinado Máquina',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'37.5, 42.5, 45, 45',rest:60,group:'Peito Superior',notes:''},
+{name:'Crucifixo Máquina Anterior',type:'resistido',series:4,reps:'12, 12, 12, 12',load:'50',rest:60,group:'Peito',notes:''},
+{name:'Supino Reto Halteres',type:'resistido',series:4,reps:'Myo, 5, 5, 5',load:'14, 16, 16, 18',rest:60,group:'Peito',notes:'Myo reps'},
+{name:'Desenvolvimento Militar',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'20',rest:60,group:'Ombro',notes:'Ápice: barra montada'},
+{name:'Flexão Ombro Polia Corda + Abdução Ombros',type:'resistido',series:3,reps:'15, 15, 15',load:'',rest:60,group:'Ombro',notes:'Bi-set'},
+{name:'Tríceps Testa Halteres + Fase Excêntrica',type:'resistido',series:3,reps:'12, 12, 12',load:'6, 7, 7',rest:60,group:'Tríceps',notes:''},
+{name:'Tríceps Francês Unilateral Polia',type:'resistido',series:3,reps:'12, 12, 12',load:'5',rest:60,group:'Tríceps',notes:''},
+]},
+'art_pull':{name:'🟦 Arthur Pull — Costas+Bíceps',exercises:[
+{name:'Alongamento do Peitoral',type:'resistido',series:2,reps:'30s, 30s',load:'',rest:0,group:'Mobilidade',notes:''},
+{name:'Mobilidade Torácica Foam Roller',type:'resistido',series:1,reps:'12-15',load:'',rest:0,group:'Mobilidade',notes:''},
+{name:'Puxada Pronada Máquina',type:'resistido',series:3,reps:'12, 10, 10',load:'50, 65, 66.5',rest:60,group:'Dorsal',notes:''},
+{name:'Remada Aberta Articulada',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'47.5, 50, 52.5, 55',rest:60,group:'Costas',notes:''},
+{name:'Remada Curvada Pronada',type:'resistido',series:3,reps:'12, 12, 12',load:'8.75',rest:60,group:'Costas',notes:''},
+{name:'Face Pull',type:'resistido',series:3,reps:'15, 15, 15',load:'7.5, 9, 10',rest:60,group:'Post. Deltóide',notes:''},
+{name:'Rosca Spider',type:'resistido',series:3,reps:'12, 12, 12',load:'10',rest:60,group:'Bíceps',notes:''},
+{name:'Rosca Scott Máquina',type:'resistido',series:3,reps:'12, 12, 12',load:'37, 37, 39',rest:60,group:'Bíceps',notes:''},
+{name:'Cardio pós-treino',type:'cardio',duration:30,calories:0,distance:'',hr:0,notes:'30 min'},
+]},
+'art_lower':{name:'🟪 Arthur Lower — Perna (Ter+Sex)',exercises:[
+{name:'Alongamento Adutores + Eretores',type:'resistido',series:2,reps:'30s, 30s',load:'',rest:0,group:'Mobilidade',notes:''},
+{name:'Alongamento Posterior Máquina',type:'resistido',series:2,reps:'30s, 30s',load:'',rest:0,group:'Mobilidade',notes:''},
+{name:'Cadeira Abdutora 45°',type:'resistido',series:4,reps:'12, 12, 12, 12',load:'65',rest:60,group:'Glúteo Médio',notes:''},
+{name:'Elevação de Quadril Máquina',type:'resistido',series:3,reps:'12, 12, 12',load:'20, 20, 25',rest:60,group:'Glúteo',notes:''},
+{name:'Agachamento Barra Livre',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'15',rest:60,group:'Quadríceps',notes:''},
+{name:'Afundo com Halter',type:'resistido',series:3,reps:'10, 10, 10',load:'10',rest:60,group:'Glúteo/Quad',notes:'Myo reps · 10 cada lado'},
+{name:'Cadeira Extensora',type:'resistido',series:4,reps:'12, 12, 12, 12',load:'40',rest:60,group:'Quadríceps',notes:''},
+{name:'Mesa Flexora',type:'resistido',series:4,reps:'12, 12, 12, 12',load:'39',rest:60,group:'Posterior',notes:''},
+{name:'Cadeira Flexora',type:'resistido',series:4,reps:'12, 12, 12, 12',load:'42.5',rest:60,group:'Posterior',notes:''},
+]},
+'art_upper':{name:'🟧 Arthur FullUpper',exercises:[
+{name:'Mobilidade Torácica Foam Roller',type:'resistido',series:1,reps:'12-15',load:'',rest:0,group:'Mobilidade',notes:''},
+{name:'Alongamento do Peitoral',type:'resistido',series:2,reps:'30s, 30s',load:'',rest:0,group:'Mobilidade',notes:''},
+{name:'Alongamento Cadeia Lateral',type:'resistido',series:2,reps:'30s, 30s',load:'',rest:0,group:'Mobilidade',notes:''},
+{name:'Supino Inclinado Máquina',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'42.5, 42.5, 45, 50',rest:60,group:'Peito Superior',notes:''},
+{name:'Remada Cavalinho',type:'resistido',series:4,reps:'12, 12, 12, 12',load:'20, 30, 35, 40',rest:60,group:'Costas',notes:''},
+{name:'Crossover Polia Baixa',type:'resistido',series:3,reps:'15, 15, 15',load:'5.7, 7.9, 7.9',rest:60,group:'Peito',notes:''},
+{name:'Remada Pronada Máquina',type:'resistido',series:3,reps:'12, 12, 12',load:'45, 55, 65',rest:60,group:'Costas',notes:''},
+{name:'Desenvolvimento Militar',type:'resistido',series:3,reps:'12, 10, 10',load:'',rest:60,group:'Ombro',notes:''},
+{name:'Tríceps Testa Polia + Rosca Direta Polia Baixa',type:'resistido',series:3,reps:'12, 12, 12',load:'8.75',rest:60,group:'Tríceps/Bíceps',notes:'Bi-set'},
+]},
 };
+const PRESET_GROUPS=[
+{id:'claude',label:'📋 UL PPL · Claude',color:'var(--accent)',keys:['push_a','pull_a','lower_a','upper','lower_b','comp_a','comp_b']},
+{id:'allpfit',label:'🏋️ AllpFit ABCD · Liu Young',color:'var(--yellow)',keys:['allp_a','allp_b','allp_c','allp_d']},
+{id:'bodytech',label:'💪 Bodytech ABC · Daniel',color:'var(--red)',keys:['bt_a','bt_b','bt_c']},
+{id:'arthur',label:'🎯 Arthur · Upper/Lower/Push/Pull',color:'var(--blue)',keys:['art_push','art_pull','art_lower','art_upper']},
+];
+function renderPresetGroups(){const container=document.getElementById('presetGroups');if(!container)return;container.innerHTML='';PRESET_GROUPS.forEach(grp=>{const wrap=document.createElement('div');wrap.style.marginBottom='6px';const toggle=document.createElement('button');toggle.style.cssText=`width:100%;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:${grp.color};font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center`;const isOpen=container.dataset['open_'+grp.id]==='1';toggle.innerHTML=`<span>${grp.label}</span><span style="font-size:11px">${isOpen?'▾':'▸'}</span>`;const grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;'+(isOpen?'':'display:none');grp.keys.forEach(key=>{const p=WORKOUT_PRESETS[key];if(!p)return;const shortName=p.name.replace(/^[^\s]+\s/,'');const btn=document.createElement('button');btn.className='wbtn';btn.style.cssText=`padding:8px 4px;border-color:rgba(255,255,255,.1);color:var(--text2);background:rgba(255,255,255,.03);font-size:8px;flex-direction:column;gap:1px;text-align:center`;btn.innerHTML=`<span style="font-size:10px;font-weight:700;color:${grp.color}">${shortName.split('—')[0].trim()}</span><span style="font-size:7px;opacity:.6">${(shortName.split('—')[1]||'').trim()}</span>`;btn.onclick=function(){loadPreset(key);};grid.appendChild(btn);});toggle.onclick=function(){const open=grid.style.display==='none';grid.style.display=open?'grid':'none';container.dataset['open_'+grp.id]=open?'1':'0';toggle.querySelector('span:last-child').textContent=open?'▾':'▸';};wrap.appendChild(toggle);wrap.appendChild(grid);container.appendChild(wrap);});}
 function loadPreset(key){const preset=WORKOUT_PRESETS[key];if(!preset)return;if(state.gym.length>0&&!confirm(`Substituir os ${state.gym.length} exercício(s) atuais pelo treino "${preset.name}"?`))return;state.gym=preset.exercises.map(ex=>{const newEx={...ex,id:'ex'+Date.now()+Math.random().toString(36).substr(2,5),completed:[],done:false,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})};if(ex.type!=='cardio'){const last=getLastSession(ex.name);if(last){if(last.load&&!newEx.load)newEx.load=last.load;if(last.reps)newEx.reps=last.reps;if(last.rest)newEx.rest=last.rest;}}return newEx;});preset.exercises.forEach(ex=>updateExLibrary(ex));save();switchTab('gym');}
 load();
-document.addEventListener('DOMContentLoaded',function(){restoreTimerState();render();if(state._rollover)showRolloverModal();if(wkTimer.elapsed>0){document.getElementById('timerPip').style.display='block';renderPip();}});
+document.addEventListener('DOMContentLoaded',function(){restoreTimerState();render();renderPresetGroups();if(state._rollover)showRolloverModal();if(wkTimer.elapsed>0){document.getElementById('timerPip').style.display='block';renderPip();}});
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 (function fetchBuildDate(){const el=document.getElementById('buildDate');const CACHE_KEY='thobias_buildDate';const CACHE_TTL=3600000;function fmt(isoStr){const d=new Date(isoStr);const dd=String(d.getDate()).padStart(2,'0');const mm=String(d.getMonth()+1).padStart(2,'0');const yyyy=d.getFullYear();const hh=String(d.getHours()).padStart(2,'0');const mi=String(d.getMinutes()).padStart(2,'0');return`${dd}/${mm}/${yyyy} ${hh}:${mi}`;}try{const cached=JSON.parse(localStorage.getItem(CACHE_KEY)||'null');if(cached&&Date.now()-cached.ts<CACHE_TTL){el.textContent=cached.val;return;}}catch(e){}fetch('https://api.github.com/repos/thobitv/thobias-pro/commits?path=thobias_pro_v51.html&per_page=1',{headers:{Accept:'application/vnd.github.v3+json'}}).then(r=>r.json()).then(data=>{const iso=data[0]?.commit?.committer?.date;if(!iso)throw new Error('no date');const val=fmt(iso);el.textContent=val;try{localStorage.setItem(CACHE_KEY,JSON.stringify({val,ts:Date.now()}));}catch(e){}}).catch(()=>{el.textContent='25/05/2026';});})();
 </script>
