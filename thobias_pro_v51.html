@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thobias Pro | v64 · 25/05/2026</title>
+    <title>Thobias Pro | v63 · 03/05/2026</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -123,7 +123,7 @@
             <div>
                 <div class="brand">Thobias Pro</div>
                 <div class="brand-sub" id="displayDate">--/--/----</div>
-                <div class="brand-sub" style="color:var(--text3);opacity:.5">v64 · <span id="buildDate">…</span></div>
+                <div class="brand-sub" style="color:var(--text3);opacity:.5">v63 · <span id="buildDate">…</span></div>
             </div>
             <div class="score-ring">
                 <svg viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="15.5"/><circle class="fg" id="scoreArc" cx="18" cy="18" r="15.5" stroke-dasharray="97.4" stroke-dashoffset="97.4"/></svg>
@@ -157,12 +157,14 @@
             </div>
         </div>
     </div>
+
     <div class="tabs">
         <button class="tab active" onclick="switchTab('supps')"><span class="tab-icon">💊</span>Suplem.</button>
         <button class="tab" onclick="switchTab('derm')"><span class="tab-icon">🧴</span>Derma</button>
         <button class="tab" onclick="switchTab('gym')"><span class="tab-icon">🏋️</span>Treino</button>
         <button class="tab" onclick="switchTab('food')"><span class="tab-icon">🍽</span>Aliment.</button>
     </div>
+
     <div id="panel-supps" class="panel active"></div>
     <div id="panel-derm" class="panel"></div>
     <div id="panel-gym" class="panel">
@@ -198,6 +200,7 @@
     <button class="add-btn" id="addSuppBtn" onclick="openEdit('new','supps')">+ Adicionar Suplemento</button>
     <button class="add-btn" id="addDermBtn" onclick="openEdit('new','derm')" style="display:none">+ Adicionar Cuidado</button>
 </div>
+
 <div class="bar">
     <button class="bar-btn" onclick="openHistory()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Histórico</button>
     <button class="bar-btn peso-btn" onclick="openWeightModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>Peso</button>
@@ -205,6 +208,7 @@
     <button class="bar-btn pomo-btn" onclick="openPomoModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Foco</button>
     <button class="bar-btn primary" onclick="finishDay()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>Encerrar</button>
 </div>
+
 <!-- FOOD MODAL -->
 <div id="foodModal" class="modal-bg"><div class="modal">
     <h3 id="foodModalTitle">Alimento</h3><input type="hidden" id="foodEditId">
@@ -235,6 +239,7 @@
         <button class="mbtn mbtn-save" onclick="saveFood()">Salvar</button>
     </div>
 </div></div>
+
 <!-- EDIT MODAL -->
 <div id="editModal" class="modal-bg"><div class="modal">
     <h3 id="editModalTitle">Editar</h3>
@@ -252,6 +257,7 @@
     </div>
     <div class="modal-row"><button class="mbtn mbtn-close" onclick="closeModal('editModal')">Cancelar</button><button class="mbtn mbtn-save" onclick="saveEdit()">Salvar</button></div>
 </div></div>
+
 <!-- EXERCISE MODAL -->
 <div id="exModal" class="modal-bg"><div class="modal">
     <h3>Exercício</h3><input type="hidden" id="exEditId">
@@ -281,7 +287,6 @@
         <div class="fld"><label>Distância km (opcional)</label><input type="text" id="exDistance" placeholder="Ex: 5.2"></div>
         <div class="fld"><label>FC média (opcional)</label><input type="number" id="exHR" placeholder="Ex: 145" min="0"></div>
     </div>
-    <div id="exLastHint" style="display:none;font-family:'JetBrains Mono',monospace;font-size:10px;padding:8px;background:rgba(52,211,153,.08);border-radius:8px;margin-bottom:10px;border-left:3px solid var(--accent);color:var(--accent)"></div>
     <div class="fld"><label>Notas</label><textarea id="exNotes" placeholder="Observações..."></textarea></div>
     <div class="modal-row">
         <button class="mbtn mbtn-del" id="exDelBtn" onclick="deleteEx()" style="display:none">Excluir</button>
@@ -290,29 +295,34 @@
         <button class="mbtn mbtn-save" onclick="saveEx()">Salvar</button>
     </div>
 </div></div>
+
 <!-- HISTORY MODAL -->
 <div id="histModal" class="modal-bg"><div class="modal">
     <h3>Histórico</h3><div id="histList"></div>
     <div class="modal-row"><button class="mbtn mbtn-close" onclick="closeModal('histModal')" style="flex:1">Fechar</button></div>
 </div></div>
+
 <!-- ITEM PROGRESS CHART MODAL -->
 <div id="chartModal" class="modal-bg"><div class="modal" style="max-width:460px">
     <h3 id="chartTitle">Progresso</h3>
     <div id="chartContent"></div>
     <div class="modal-row"><button class="mbtn mbtn-close" onclick="closeModal('chartModal')" style="flex:1">Fechar</button></div>
 </div></div>
+
 <!-- EXERCISE HISTORY MODAL -->
 <div id="exHistModal" class="modal-bg"><div class="modal" style="max-width:460px">
     <h3 id="exHistTitle">Histórico do Exercício</h3>
     <div id="exHistContent"></div>
     <div class="modal-row"><button class="mbtn mbtn-close" onclick="closeModal('exHistModal')" style="flex:1">Fechar</button></div>
 </div></div>
+
 <!-- INFO DETAIL MODAL -->
 <div id="infoModal" class="modal-bg"><div class="modal" style="max-width:440px">
     <h3 id="infoTitle" style="font-size:14px">Detalhes</h3>
     <div id="infoContent" style="font-size:12px;line-height:1.6;max-height:60vh;overflow-y:auto"></div>
     <div class="modal-row"><button class="mbtn mbtn-close" onclick="closeModal('infoModal')" style="flex:1">Fechar</button></div>
 </div></div>
+
 <!-- WORKOUT TIMER MODAL -->
 <div id="timerModal" class="modal-bg"><div class="modal" style="max-width:440px">
     <h3>⏱ Cronômetro de Treino</h3>
@@ -322,6 +332,7 @@
         <button class="mbtn mbtn-close" onclick="closeTimerModal()" style="flex:1">Fechar</button>
     </div>
 </div></div>
+
 <!-- DAY ROLLOVER MODAL -->
 <div id="rolloverModal" class="modal-bg"><div class="modal" style="max-width:400px">
     <h3>📅 Dia Anterior não Encerrado</h3>
@@ -332,6 +343,7 @@
         <button class="mbtn" onclick="rolloverDiscard()" style="background:rgba(248,113,113,.08);color:var(--red);border:1px solid rgba(248,113,113,.2);padding:12px;font-size:12px;text-transform:none">⏭ Ignorar dia anterior sem salvar</button>
     </div>
 </div></div>
+
 <!-- WEIGHT MODAL -->
 <div id="weightModal" class="modal-bg"><div class="modal" style="max-width:440px">
     <h3>⚖️ Peso Corporal</h3>
@@ -341,19 +353,6 @@
         <div class="fld"><label>Data e Hora</label><input type="datetime-local" id="wDateTime" style="font-size:12px"></div>
     </div>
     <div class="fld"><label>Notas (opcional)</label><input type="text" id="wNotes" placeholder="Em jejum, após treino..."></div>
-    <div style="margin-bottom:12px">
-        <button type="button" id="wMeasToggle" onclick="document.getElementById('wMeasFields').style.display=document.getElementById('wMeasFields').style.display==='none'?'block':'none';this.textContent=document.getElementById('wMeasFields').style.display==='none'?'📏 + Medidas corporais':'📏 − Medidas corporais'" style="width:100%;padding:8px;border-radius:8px;border:1px dashed var(--border2);background:transparent;color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;cursor:pointer">📏 + Medidas corporais</button>
-        <div id="wMeasFields" style="display:none;margin-top:8px">
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-                <div class="fld" style="margin:0"><label>Cintura cm</label><input type="number" id="wCintura" step="0.1" min="40" max="200" placeholder="—" style="font-size:13px"></div>
-                <div class="fld" style="margin:0"><label>Quadril cm</label><input type="number" id="wQuadril" step="0.1" min="40" max="200" placeholder="—" style="font-size:13px"></div>
-                <div class="fld" style="margin:0"><label>Peitoral cm</label><input type="number" id="wPeitoral" step="0.1" min="40" max="200" placeholder="—" style="font-size:13px"></div>
-                <div class="fld" style="margin:0"><label>Braço cm</label><input type="number" id="wBraco" step="0.1" min="15" max="80" placeholder="—" style="font-size:13px"></div>
-                <div class="fld" style="margin:0"><label>Coxa cm</label><input type="number" id="wCoxa" step="0.1" min="20" max="100" placeholder="—" style="font-size:13px"></div>
-                <div class="fld" style="margin:0"><label>Panturr. cm</label><input type="number" id="wPanturr" step="0.1" min="15" max="70" placeholder="—" style="font-size:13px"></div>
-            </div>
-        </div>
-    </div>
     <div class="modal-row">
         <button class="mbtn mbtn-del" id="wDelBtn" onclick="deleteWeight()" style="display:none">Excluir</button>
         <button class="mbtn mbtn-close" onclick="cancelWeightEdit()">Cancelar</button>
@@ -362,12 +361,14 @@
     <div id="weightList" style="margin-top:16px"></div>
     <div class="modal-row"><button class="mbtn mbtn-close" onclick="closeModal('weightModal')" style="flex:1">Fechar</button></div>
 </div></div>
+
 <!-- METRONOME MODAL -->
 <div id="metroModal" class="modal-bg"><div class="modal" style="max-width:380px">
     <h3>🎵 Metrônomo</h3>
     <div id="metroContent"></div>
     <div class="modal-row"><button class="mbtn mbtn-close" onclick="stopMetro();closeModal('metroModal')">Fechar</button></div>
 </div></div>
+
 <!-- POMODORO MODAL -->
 <div id="pomoModal" class="modal-bg"><div class="modal" style="max-width:400px">
     <h3>🍅 Timer Foco (Pomodoro)</h3>
@@ -377,6 +378,7 @@
         <button class="mbtn mbtn-close" onclick="closePomoModal()" style="flex:1">Fechar</button>
     </div>
 </div></div>
+
 <!-- PiP WORKOUT TIMER -->
 <div id="timerPip" style="display:none;position:fixed;bottom:90px;right:14px;z-index:3000;background:var(--card);border:1px solid rgba(52,211,153,.3);border-radius:16px;padding:10px 12px;min-width:170px;box-shadow:0 8px 32px rgba(0,0,0,.7);cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;pointer-events:none">
@@ -394,6 +396,7 @@
         <button id="pipSubBtn" onclick="pipSubAction()" style="flex:2;padding:7px 4px;border-radius:8px;border:1px solid var(--border2);font-size:10px;font-weight:700;background:transparent;color:var(--text2);cursor:pointer">🏋️ Série</button>
     </div>
 </div>
+
 <!-- PiP POMODORO -->
 <div id="pomoPip" style="display:none;position:fixed;bottom:90px;left:14px;z-index:3000;background:var(--card);border:1px solid rgba(248,113,113,.35);border-radius:16px;padding:10px 12px;min-width:160px;box-shadow:0 8px 32px rgba(0,0,0,.7);cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;pointer-events:none">
@@ -409,12 +412,13 @@
         <button onclick="pomoReset()" style="flex:1;padding:7px 4px;border-radius:8px;border:1px solid var(--border2);font-size:10px;font-weight:700;background:transparent;color:var(--text2);cursor:pointer">↺</button>
     </div>
 </div>
+
 <canvas id="snapCanvas" width="1080"></canvas>
+
 <script>
 const SUPPS=[
 {id:'s51',time:'06:15',qty:'💊 2 Caps',title:'Complexo B+C+Ferro 60mg (2 caps) — diário',cat:'Nutri',note:'⚠ JEJUM obrigatório · 2 caps = 60mg bisglicianato ferroso · ≥6h antes do zinco (12:00) · ⚠ Contém cianocobalamina — monitorar acne/rosacea · Tecnofer separado à noite'},
 {id:'s38',time:'06:15',qty:'🥄 5g',title:'Glutamina (jejum)',cat:'Intestino',note:'⚠ JEJUM maximiza absorção intestinal · Diluir em água'},
-{id:'s61',time:'06:15',qty:'💊 1.500mg',title:'L-Lisina 1.500mg (jejum)',cat:'Aminoácido',note:'⚠ JEJUM obrigatório · Profilaxia HSV-1 durante GHK-Cu · ≥6h antes da Arginina/Citrulina (s55, 21:15) · Antagonismo Lis/Arg'},
 {id:'s04',time:'07:00',qty:'🧴 1 Pump',title:'Testosterona Gel 20% (Pentravan)',cat:'Hormonal',note:'Aplicar em pele limpa e seca · Lavar mãos após · Manhã = consistência de absorção'},
 {id:'s15',time:'12:00',qty:'💊 29,5mg',title:'Zinco Quelato (6h+ após ferro)',cat:'Mineral',note:'⚠ ≥6h após ferro (06:15→12:15 ✓) · ≥5h após cobre (21:15 anterior→12:00 = ~15h ✓) · ≥2h antes do cálcio (19h)'},
 {id:'s11',time:'12:00',qty:'💊 ~2g',title:'Vitamina B5 (Dose 1+2 — manhã/almoço)',cat:'Pele',note:'Dose dupla consolidada · ≥3h antes da biotina (15h) · Total diário: ~3g'},
@@ -460,6 +464,7 @@ const SUPPS=[
 {id:'s49',time:'TER',qty:'💉 1,5mg SC',title:'Retatrutida 1,5mg (toda Terça-feira)',cat:'GLP-1',tuesdayOnly:true,note:'⚠ SC subcutâneo · Terças-feiras fixo · Protocolo: 1,5mg→2mg 13/04→4mg 11/05→6mg 08/06→8mg 06/07'},
 {id:'s44',time:'SOS',qty:'💊 10-20mg',title:'Propranolol SOS (pré-evento social)',cat:'Ansiedade',note:'⚠ APENAS em eventos sociais · 30-60min antes · Monitorar PA · Discutir c/ psiquiatra'},
 ];
+
 const DERM=[
 {id:'d01',time:'06:00',qty:'🧊 5-10min',title:'Compressa fria (máscara gel olhos)',cat:'Ptose',note:'Primeira coisa ao acordar · Reduz edema palpebral'},
 {id:'d02',time:'06:05',qty:'🧹 1x',title:'Higiene palpebral',cat:'Ptose',note:'Com lenço ou solução própria · Previne blefarite'},
@@ -536,6 +541,7 @@ const FOODS=[
 {fid:'f82',name:'Arroz 7 Grãos Tio João (cozido)',unit:'g',defQty:150,per100:{kcal:140,prot:4.3,carb:24.0,fat:2.6,fib:5.4},cat:'🍚 Carboidrato'},
 {fid:'f83',name:'Mooving Hydro Protein (500ml)',unit:'ml',defQty:500,per100:{kcal:18,prot:4.0,carb:0,fat:0,fib:0},cat:'🥤 Suplemento'},
 ];
+
 let state={supps:[],derm:[],gym:[],food:[],fluids:{pure:0,decaf:0,other:0},history:[],gymHistory:[],exerciseLibrary:[],weightHistory:[],date:'',userMods:{supps:{suspended:{},deleted:[],added:[],edited:{},order:null},derm:{suspended:{},deleted:[],added:[],edited:{},order:null}}};
 const SK='thobias_v51';
 function ensureUserMods(){
@@ -595,7 +601,7 @@ function load(){
 }
 function saveTimerState(){
   if(wkTimer.elapsed>0||wkTimer.running){
-    const snap={elapsed:wkTimer.running?(wkTimer.elapsed+Date.now()-wkTimer.start):wkTimer.elapsed,subElapsed:wkTimer.subElapsed,subMode:wkTimer.subMode==='countdown'?'idle':wkTimer.subMode,totalSeriesTime:wkTimer.totalSeriesTime,totalRestTime:wkTimer.totalRestTime,seriesCount:wkTimer.seriesCount,restCount:wkTimer.restCount,wasRunning:wkTimer.running,savedAt:Date.now()};
+    const snap={elapsed:wkTimer.running?(wkTimer.elapsed+Date.now()-wkTimer.start):wkTimer.elapsed,subElapsed:wkTimer.subElapsed,subMode:wkTimer.subMode==='countdown'?'idle':wkTimer.subMode,totalSeriesTime:wkTimer.totalSeriesTime,totalRestTime:wkTimer.totalRestTime,seriesCount:wkTimer.seriesCount,restCount:wkTimer.restCount,savedAt:Date.now()};
     localStorage.setItem('thobias_timer',JSON.stringify(snap));
   } else {
     localStorage.removeItem('thobias_timer');
@@ -605,17 +611,12 @@ function restoreTimerState(){
   try{
     const raw=localStorage.getItem('thobias_timer');if(!raw)return;
     const snap=JSON.parse(raw);if(!snap||snap.elapsed<=0)return;
-    let restoredElapsed=snap.elapsed;
-    if(snap.wasRunning&&snap.savedAt){restoredElapsed+=Date.now()-snap.savedAt;}
-    wkTimer.elapsed=restoredElapsed;wkTimer.subElapsed=snap.subElapsed||0;wkTimer.subMode=snap.subMode||'idle';
+    wkTimer.elapsed=snap.elapsed;wkTimer.subElapsed=snap.subElapsed||0;wkTimer.subMode=snap.subMode||'idle';
     wkTimer.totalSeriesTime=snap.totalSeriesTime||0;wkTimer.totalRestTime=snap.totalRestTime||0;
     wkTimer.seriesCount=snap.seriesCount||0;wkTimer.restCount=snap.restCount||0;
-    if(snap.wasRunning){wkTimer.running=true;wkTimer.start=Date.now();wkTimer.interval=setInterval(function(){metroTick();renderTimerUI();renderPip();},500);}else{wkTimer.running=false;}
+    wkTimer.running=false;// pausado ao restaurar
   }catch(e){}
 }
-document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')saveTimerState();});
-window.addEventListener('pagehide',function(){saveTimerState();});
-window.addEventListener('beforeunload',function(){saveTimerState();});
 function save(){localStorage.setItem(SK,JSON.stringify(state));saveTimerState();render();}
 function showRolloverModal(){
   if(!state._rollover)return;const{oldDate,today}=state._rollover;
@@ -672,14 +673,11 @@ function ddMove(e){if(!dd.fromId)return;e.preventDefault();const touch=e.touches
 function ddEnd(e){if(!dd.fromId)return;const touch=e.changedTouches[0];if(dd.clone)dd.clone.style.display='none';const el=document.elementFromPoint(touch.clientX,touch.clientY);const card=el?.closest('[data-ddid]');if(card&&card.dataset.ddid&&card.dataset.ddid!==dd.fromId){const arr=dd.panel==='gym'?state.gym:state[dd.panel];const fi=arr.findIndex(x=>x.id===dd.fromId);const ti=arr.findIndex(x=>x.id===card.dataset.ddid);if(fi!==-1&&ti!==-1){const[item]=arr.splice(fi,1);arr.splice(ti,0,item);if(dd.panel!=='gym'){ensureUserMods();state.userMods[dd.panel].order=state[dd.panel].map(t=>t.id);}save();}}if(dd.fromEl)dd.fromEl.classList.remove('dragging');document.querySelectorAll('.drag-over').forEach(x=>x.classList.remove('drag-over'));if(dd.clone){dd.clone.remove();dd.clone=null;}dd={panel:null,fromId:null,fromEl:null,clone:null,oy:0};}
 document.addEventListener('touchmove',ddMove,{passive:false});document.addEventListener('touchend',ddEnd);
 function setExType(type){document.getElementById('exType').value=type;document.getElementById('exFieldsRes').style.display=type==='resistido'?'block':'none';document.getElementById('exFieldsCardio').style.display=type==='cardio'?'block':'none';document.getElementById('exTypeRes').style.background=type==='resistido'?'var(--accent)':'var(--card)';document.getElementById('exTypeRes').style.color=type==='resistido'?'#0a0f1e':'var(--text2)';document.getElementById('exTypeCardio').style.background=type==='cardio'?'var(--red)':'var(--card)';document.getElementById('exTypeCardio').style.color=type==='cardio'?'white':'var(--text2)';}
-function getLastSession(name){if(!name||!state.gymHistory||!state.gymHistory.length)return null;const key=name.trim().toLowerCase();const records=state.gymHistory.filter(r=>r.key===key&&r.type!=='cardio');if(!records.length)return null;return records[records.length-1];}
-function showLastSessionHint(name){const hint=document.getElementById('exLastHint');if(!hint)return;const last=getLastSession(name);if(!last){hint.style.display='none';return;}hint.style.display='block';hint.innerHTML=`📈 Última sessão: ${last.date} · Reps: ${last.reps||'?'} @ ${last.load||'?'}kg · Desc: ${last.rest||'?'}s`;}
-function applyLastSession(name){const last=getLastSession(name);if(!last)return;if(last.reps&&!document.getElementById('exReps').value)document.getElementById('exReps').value=last.reps;if(last.load&&!document.getElementById('exLoad').value)document.getElementById('exLoad').value=last.load;if(last.rest)document.getElementById('exRest').value=last.rest;}
-function openExModal(id){const isNew=id==='new';document.getElementById('exEditId').value=id;document.getElementById('exName').value='';document.getElementById('exSeries').value=4;document.getElementById('exReps').value='';document.getElementById('exLoad').value='';document.getElementById('exRest').value=90;document.getElementById('exGroup').value='';document.getElementById('exNotes').value='';document.getElementById('exDuration').value=30;document.getElementById('exCalories').value='';document.getElementById('exDistance').value='';document.getElementById('exHR').value='';document.getElementById('exDelBtn').style.display=isNew?'none':'block';document.getElementById('exDupBtn').style.display=isNew?'none':'block';document.getElementById('exLibWrap').style.display=isNew?'block':'none';document.getElementById('exLastHint').style.display='none';setExType('resistido');populateExLibSelect();if(!isNew){const ex=state.gym.find(x=>x.id===id);if(ex){setExType(ex.type||'resistido');document.getElementById('exName').value=ex.name;document.getElementById('exNotes').value=ex.notes||'';if(ex.type==='cardio'){document.getElementById('exDuration').value=ex.duration||30;document.getElementById('exCalories').value=ex.calories||'';document.getElementById('exDistance').value=ex.distance||'';document.getElementById('exHR').value=ex.hr||'';}else{document.getElementById('exSeries').value=ex.series;document.getElementById('exReps').value=ex.reps;document.getElementById('exLoad').value=ex.load;document.getElementById('exRest').value=ex.rest;document.getElementById('exGroup').value=ex.group||'';showLastSessionHint(ex.name);}}}document.getElementById('exModal').classList.add('open');}
+function openExModal(id){const isNew=id==='new';document.getElementById('exEditId').value=id;document.getElementById('exName').value='';document.getElementById('exSeries').value=4;document.getElementById('exReps').value='';document.getElementById('exLoad').value='';document.getElementById('exRest').value=90;document.getElementById('exGroup').value='';document.getElementById('exNotes').value='';document.getElementById('exDuration').value=30;document.getElementById('exCalories').value='';document.getElementById('exDistance').value='';document.getElementById('exHR').value='';document.getElementById('exDelBtn').style.display=isNew?'none':'block';document.getElementById('exDupBtn').style.display=isNew?'none':'block';document.getElementById('exLibWrap').style.display=isNew?'block':'none';setExType('resistido');populateExLibSelect();if(!isNew){const ex=state.gym.find(x=>x.id===id);if(ex){setExType(ex.type||'resistido');document.getElementById('exName').value=ex.name;document.getElementById('exNotes').value=ex.notes||'';if(ex.type==='cardio'){document.getElementById('exDuration').value=ex.duration||30;document.getElementById('exCalories').value=ex.calories||'';document.getElementById('exDistance').value=ex.distance||'';document.getElementById('exHR').value=ex.hr||'';}else{document.getElementById('exSeries').value=ex.series;document.getElementById('exReps').value=ex.reps;document.getElementById('exLoad').value=ex.load;document.getElementById('exRest').value=ex.rest;document.getElementById('exGroup').value=ex.group||'';}}}document.getElementById('exModal').classList.add('open');}
 function populateExLibSelect(){const sel=document.getElementById('exLibSelect');sel.innerHTML='<option value="">— Manual / Novo —</option>';if(!state.exerciseLibrary||!state.exerciseLibrary.length)return;const groups={};state.exerciseLibrary.forEach(e=>{const g=e.group||'Outros';if(!groups[g])groups[g]=[];groups[g].push(e);});Object.keys(groups).sort().forEach(g=>{const og=document.createElement('optgroup');og.label=g;groups[g].sort((a,b)=>a.name.localeCompare(b.name)).forEach(e=>{const opt=document.createElement('option');opt.value=e.key;opt.textContent=e.type==='cardio'?`🫀 ${e.name}`:`${e.name} (${e.load||'?'})`;og.appendChild(opt);});sel.appendChild(og);});}
-function loadFromExLib(){const key=document.getElementById('exLibSelect').value;if(!key)return;const e=state.exerciseLibrary.find(x=>x.key===key);if(!e)return;setExType(e.type||'resistido');document.getElementById('exName').value=e.name;document.getElementById('exGroup').value=e.group||'';document.getElementById('exNotes').value=e.notes||'';if(e.type==='cardio'){document.getElementById('exDuration').value=e.duration||30;document.getElementById('exCalories').value='';document.getElementById('exDistance').value='';document.getElementById('exHR').value='';}else{document.getElementById('exSeries').value=e.series||4;document.getElementById('exReps').value=e.reps||'';document.getElementById('exLoad').value=e.load||'';document.getElementById('exRest').value=e.rest||90;applyLastSession(e.name);showLastSessionHint(e.name);}}
+function loadFromExLib(){const key=document.getElementById('exLibSelect').value;if(!key)return;const e=state.exerciseLibrary.find(x=>x.key===key);if(!e)return;setExType(e.type||'resistido');document.getElementById('exName').value=e.name;document.getElementById('exGroup').value=e.group||'';document.getElementById('exNotes').value=e.notes||'';if(e.type==='cardio'){document.getElementById('exDuration').value=e.duration||30;document.getElementById('exCalories').value='';document.getElementById('exDistance').value='';document.getElementById('exHR').value='';}else{document.getElementById('exSeries').value=e.series||4;document.getElementById('exReps').value=e.reps||'';document.getElementById('exLoad').value=e.load||'';document.getElementById('exRest').value=e.rest||90;}}
 function updateExLibrary(d){if(!state.exerciseLibrary)state.exerciseLibrary=[];const key=d.name.trim().toLowerCase();const idx=state.exerciseLibrary.findIndex(x=>x.key===key);const entry={key,name:d.name,type:d.type||'resistido',group:d.group||'',notes:d.notes||'',series:d.series,reps:d.reps,load:d.load,rest:d.rest,duration:d.duration,updatedAt:new Date().toISOString()};if(idx>-1)state.exerciseLibrary[idx]=entry;else state.exerciseLibrary.push(entry);if(state.exerciseLibrary.length>200)state.exerciseLibrary=state.exerciseLibrary.slice(-200);}
-function saveEx(){const id=document.getElementById('exEditId').value,name=document.getElementById('exName').value;if(!name)return alert('Nome obrigatório');const type=document.getElementById('exType').value;const isEdit=id!=='new';let d;if(type==='cardio'){d={name,type:'cardio',duration:parseInt(document.getElementById('exDuration').value)||0,calories:parseInt(document.getElementById('exCalories').value)||0,distance:document.getElementById('exDistance').value||'',hr:parseInt(document.getElementById('exHR').value)||0,notes:document.getElementById('exNotes').value};if(!isEdit){d.done=false;d.time=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}}else{d={name,type:'resistido',series:parseInt(document.getElementById('exSeries').value)||4,reps:document.getElementById('exReps').value,load:document.getElementById('exLoad').value,rest:parseInt(document.getElementById('exRest').value)||90,group:document.getElementById('exGroup').value,notes:document.getElementById('exNotes').value};if(!isEdit){d.completed=[];d.time=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}}updateExLibrary(d);if(!isEdit){state.gym.push({...d,id:'ex'+Date.now()});}else{const ex=state.gym.find(x=>x.id===id);if(ex)Object.assign(ex,d);}save();closeModal('exModal');}
+function saveEx(){const id=document.getElementById('exEditId').value,name=document.getElementById('exName').value;if(!name)return alert('Nome obrigatório');const type=document.getElementById('exType').value;let d;if(type==='cardio'){d={name,type:'cardio',duration:parseInt(document.getElementById('exDuration').value)||0,calories:parseInt(document.getElementById('exCalories').value)||0,distance:document.getElementById('exDistance').value||'',hr:parseInt(document.getElementById('exHR').value)||0,notes:document.getElementById('exNotes').value,done:false,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})};}else{d={name,type:'resistido',series:parseInt(document.getElementById('exSeries').value)||4,reps:document.getElementById('exReps').value,load:document.getElementById('exLoad').value,rest:parseInt(document.getElementById('exRest').value)||90,group:document.getElementById('exGroup').value,notes:document.getElementById('exNotes').value,completed:[],time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})};}updateExLibrary(d);if(id==='new'){state.gym.push({...d,id:'ex'+Date.now()});}else{const ex=state.gym.find(x=>x.id===id);if(ex)Object.assign(ex,d);}save();closeModal('exModal');}
 function deleteEx(){const id=document.getElementById('exEditId').value;if(confirm('Excluir?')){state.gym=state.gym.filter(x=>x.id!==id);save();closeModal('exModal');}}
 function duplicateEx(){const id=document.getElementById('exEditId').value,orig=state.gym.find(x=>x.id===id);if(!orig)return;closeModal('exModal');document.getElementById('exEditId').value='new';setExType(orig.type||'resistido');document.getElementById('exName').value='Cópia de '+orig.name;document.getElementById('exNotes').value=orig.notes||'';if(orig.type==='cardio'){document.getElementById('exDuration').value=orig.duration||30;document.getElementById('exCalories').value=orig.calories||'';document.getElementById('exDistance').value=orig.distance||'';document.getElementById('exHR').value=orig.hr||'';}else{document.getElementById('exSeries').value=orig.series;document.getElementById('exReps').value=orig.reps;document.getElementById('exLoad').value=orig.load;document.getElementById('exRest').value=orig.rest;document.getElementById('exGroup').value=orig.group||'';}document.getElementById('exDelBtn').style.display='none';document.getElementById('exDupBtn').style.display='none';document.getElementById('exModal').classList.add('open');}
 function toggleExSet(eid,si){const ex=state.gym.find(x=>x.id===eid);if(!ex)return;if(!ex.completed)ex.completed=[];const i=ex.completed.indexOf(si);if(i>-1){ex.completed.splice(i,1);}else{ex.completed.push(si);if(!wkTimer.running&&wkTimer.elapsed===0)startWorkoutTimer();if(wkTimer.running&&wkTimer.subMode==='idle'){wkTimer.activeExId=eid;wkTimer.activeSetIdx=si;startSub('series');}if(document.getElementById('timerPip').style.display==='none'){document.getElementById('timerModal').classList.add('open');document.getElementById('btnMinimize').style.display='';renderTimerUI();}}save();}
@@ -697,10 +695,179 @@ const ITEM_INFO={'s01':{obj:'Corrigir ferritina (meta 80-100 ng/mL)',rec:'Jejum 
 's57':{obj:'Ashwagandha noite — redução cortisol vespertino + melhora qualidade do sono',rec:'Dose noturna favorece pico de efeito durante sono (cortisol basal cai à noite). COM GORDURA.',interval:'Total: 600mg KSM-66/dia · Reavaliar TSH a cada 60 dias'},
 's58':{obj:'Melatonina liberação prolongada — indução e manutenção do sono',rec:'Iniciar 3mg (1 cap) por 10 dias → progredir para 6mg (2 caps) e manter. Tomar às 19h.',interval:'Liberação prolongada = onset mais lento, duração maior · Substitui melatonina 0,21mg'},
 's59':{obj:'Hipnótico — manutenção do sono (antagonismo H1+alfa1)',rec:'1/3 do comprimido de Donaren Retard 150mg = 50mg. Ao deitar.',interval:'⚠ Serotonérgico — sobreposição c/ escitalopram · Monitorar: agitação, tremor, sudorese'},
-'s60':{obj:'GABA exógeno — relaxamento periférico (eixo vagal)',rec:'Blue Calm Pura Vida 150mg. Tomar às 19h.',interval:'Absorção central limitada em adultos — efeito predominantemente periférico'},
-'s61':{obj:'Profilaxia HSV-1 durante protocolo GHK-Cu',rec:'JEJUM obrigatório. 1.500mg/dia. Lisina compete com arginina pelo transportador CAT-1 — reduz replicação viral.',interval:'≥6h antes da Arginina/Citrulina (s55, 21:15→06:15 = ~9h ✓) · Manter enquanto usar GHK-Cu'}};
+'s60':{obj:'GABA exógeno — relaxamento periférico (eixo vagal)',rec:'Blue Calm Pura Vida 150mg. Tomar às 19h.',interval:'Absorção central limitada em adultos — efeito predominantemente periférico'}};
 function openItemInfo(id,panel){const item=state[panel].find(x=>x.id===id);if(!item)return;const info=ITEM_INFO[id];document.getElementById('infoTitle').textContent=item.title;let html='';if(info){html+=`<div style="margin-bottom:12px;padding:10px;background:rgba(52,211,153,.08);border-radius:8px;border-left:3px solid var(--accent)"><strong style="color:var(--accent);font-size:10px;text-transform:uppercase">🎯 Objetivo</strong><br>${info.obj}</div>`;html+=`<div style="margin-bottom:12px;padding:10px;background:rgba(96,165,250,.08);border-radius:8px;border-left:3px solid var(--blue)"><strong style="color:var(--blue);font-size:10px;text-transform:uppercase">📋 Recomendação</strong><br>${info.rec}</div>`;html+=`<div style="margin-bottom:12px;padding:10px;background:rgba(251,146,60,.08);border-radius:8px;border-left:3px solid var(--orange)"><strong style="color:var(--orange);font-size:10px;text-transform:uppercase">⏰ Intervalos</strong><br>${info.interval}</div>`;}html+=`<div style="padding:8px;background:rgba(255,255,255,.03);border-radius:8px;font-size:11px"><div style="color:var(--text3)">💊 ${item.qty} · ⏰ ${item.time} · 🏷 ${item.cat}</div>`;if(item.note)html+=`<div style="color:var(--text3);margin-top:6px">📝 ${item.note}</div>`;if(item.userNote)html+=`<div style="color:var(--yellow);margin-top:6px">✏️ ${item.userNote}</div>`;html+=`</div>`;document.getElementById('infoContent').innerHTML=html;document.getElementById('infoModal').classList.add('open');}
 let wkTimer={running:false,start:0,elapsed:0,interval:null,subMode:'idle',subStart:0,subElapsed:0,subInterval:null,totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0,activeExId:null,activeSetIdx:-1,countdown:0,countdownInterval:null};
 let pipScale=1.0;
 function applyPipScale(){const el=document.getElementById('timerPip');if(!el)return;el.style.transformOrigin='bottom right';el.style.transform=`scale(${pipScale})`;}
-function fmtTimer(ms){const s=Math.floor(ms/1000),m=Math.floor(s/60),h=Math.floor(m/60)
+function fmtTimer(ms){const s=Math.floor(ms/1000),m=Math.floor(s/60),h=Math.floor(m/60);return(h?String(h).padStart(2,'0')+':':'')+String(m%60).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function openWorkoutTimer(){renderTimerUI();document.getElementById('timerModal').classList.add('open');document.getElementById('btnMinimize').style.display='';}
+function closeTimerModal(){if(wkTimer.running||wkTimer.elapsed>0){minimizeTimer();}else{stopWorkoutTimer();closeModal('timerModal');}}
+function minimizeTimer(){closeModal('timerModal');document.getElementById('timerPip').style.display='block';renderPip();}
+function expandTimer(){document.getElementById('timerPip').style.display='none';renderTimerUI();document.getElementById('timerModal').classList.add('open');document.getElementById('btnMinimize').style.display='';}
+function closePip(){stopWorkoutTimer();document.getElementById('timerPip').style.display='none';}
+function renderPip(){
+  const pip=document.getElementById('timerPip');if(!pip||pip.style.display==='none')return;
+  const elapsed=wkTimer.running?(wkTimer.elapsed+Date.now()-wkTimer.start):wkTimer.elapsed;
+  const subElapsed=((wkTimer.subMode==='series'||wkTimer.subMode==='rest')&&wkTimer.subInterval)?(wkTimer.subElapsed+Date.now()-wkTimer.subStart):wkTimer.subElapsed;
+  const mainEl=document.getElementById('pipMain');const subEl=document.getElementById('pipSub');const ppBtn=document.getElementById('pipPlayPause');const subBtn=document.getElementById('pipSubBtn');
+  if(!mainEl)return;
+  mainEl.textContent=fmtTimer(elapsed);mainEl.style.color=wkTimer.running?'var(--accent)':'var(--text2)';
+  ppBtn.textContent=wkTimer.running?'⏸':'▶';ppBtn.style.background=wkTimer.running?'var(--accent)':'var(--blue)';
+  if(wkTimer.subMode==='countdown'){subEl.textContent='🏁 PREPARAR...';subEl.style.color='var(--yellow)';subBtn.textContent=String(wkTimer.countdown);subBtn.style.color='var(--yellow)';subBtn.style.fontSize='22px';subBtn.style.fontWeight='800';subBtn.style.borderColor='rgba(251,191,36,.5)';}
+  else if(wkTimer.subMode==='idle'){subBtn.style.fontSize='';subBtn.style.fontWeight='';subBtn.style.borderColor='';subEl.textContent='—';subEl.style.color='var(--text3)';subBtn.textContent='🏋️ Série';subBtn.style.color='var(--accent)';}
+  else if(wkTimer.subMode==='series'){subBtn.style.fontSize='';subBtn.style.fontWeight='';subBtn.style.borderColor='';subEl.textContent='🏋️ SÉRIE '+fmtTimer(subElapsed);subEl.style.color='var(--accent)';subBtn.textContent='✓ Fim série';}
+  else{subBtn.style.fontSize='';subBtn.style.fontWeight='';subBtn.style.borderColor='';subEl.textContent='⏳ INTERVALO '+fmtTimer(subElapsed);subEl.style.color='var(--orange)';subBtn.textContent='✓ Fim intervalo';}
+  applyPipScale();
+}
+function pipTogglePlay(){if(wkTimer.elapsed===0&&!wkTimer.running){startWorkoutTimer();return;}if(wkTimer.running)pauseWorkoutTimer();else resumeWorkoutTimer();}
+function pipSubAction(){if(wkTimer.subMode==='idle')startSub('series');else endSub();}
+(function initPipDrag(){
+  let drag=false,ox=0,oy=0,pinchDist=null;
+  function getEl(){return document.getElementById('timerPip');}
+  function getDist(t){return Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);}
+  function start(e){if(e.target.tagName==='BUTTON')return;if(e.touches&&e.touches.length===2){pinchDist=getDist(e.touches);e.preventDefault();return;}drag=true;const el=getEl(),r=el.getBoundingClientRect();const cx=e.touches?e.touches[0].clientX:e.clientX;const cy=e.touches?e.touches[0].clientY:e.clientY;ox=cx-r.left;oy=cy-r.top;el.style.cursor='grabbing';e.preventDefault();}
+  function move(e){if(e.touches&&e.touches.length===2&&pinchDist!==null){const newDist=getDist(e.touches);const ratio=newDist/pinchDist;pipScale=Math.min(2.5,Math.max(0.5,pipScale*ratio));pinchDist=newDist;applyPipScale();e.preventDefault();return;}if(!drag)return;e.preventDefault();const el=getEl();const cx=e.touches?e.touches[0].clientX:e.clientX;const cy=e.touches?e.touches[0].clientY:e.clientY;let nx=cx-ox,ny=cy-oy;nx=Math.max(0,Math.min(nx,window.innerWidth-el.offsetWidth));ny=Math.max(0,Math.min(ny,window.innerHeight-el.offsetHeight));el.style.right='auto';el.style.bottom='auto';el.style.left=nx+'px';el.style.top=ny+'px';}
+  function end(e){if(e&&e.touches&&e.touches.length<2)pinchDist=null;drag=false;const el=getEl();if(el)el.style.cursor='grab';}
+  document.addEventListener('DOMContentLoaded',function(){const el=getEl();if(!el)return;el.addEventListener('mousedown',start);el.addEventListener('touchstart',start,{passive:false});document.addEventListener('mousemove',move);document.addEventListener('touchmove',move,{passive:false});document.addEventListener('mouseup',end);document.addEventListener('touchend',end);});
+})();
+function adjustTimer(ms){if(wkTimer.running){wkTimer.elapsed+=Date.now()-wkTimer.start;wkTimer.start=Date.now();}wkTimer.elapsed=Math.max(0,wkTimer.elapsed+ms);renderTimerUI();renderPip();}
+function adjustSub(ms){if(wkTimer.subInterval){wkTimer.subElapsed+=Date.now()-wkTimer.subStart;wkTimer.subStart=Date.now();}const before=wkTimer.subElapsed;wkTimer.subElapsed=Math.max(0,wkTimer.subElapsed+ms);const delta=wkTimer.subElapsed-before;if(wkTimer.subMode==='series')wkTimer.totalRestTime=Math.max(0,wkTimer.totalRestTime-delta);else if(wkTimer.subMode==='rest')wkTimer.totalSeriesTime=Math.max(0,wkTimer.totalSeriesTime-delta);renderTimerUI();renderPip();}
+function adjustSeriesCount(delta){wkTimer.seriesCount=Math.max(0,wkTimer.seriesCount+delta);renderTimerUI();renderPip();}
+function renderTimerUI(){const el=document.getElementById('timerContent');const elapsed=wkTimer.running?(wkTimer.elapsed+Date.now()-wkTimer.start):wkTimer.elapsed;const subElapsed=(wkTimer.subMode!=='idle'&&wkTimer.subMode!=='countdown'&&wkTimer.subInterval)?(wkTimer.subElapsed+Date.now()-wkTimer.subStart):wkTimer.subElapsed;const adjBtnStyle='background:rgba(255,255,255,.07);border:1px solid var(--border2);color:var(--text2);border-radius:8px;padding:6px 10px;font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;cursor:pointer';let html=`<div style="text-align:center;margin:16px 0"><div style="font-family:'JetBrains Mono',monospace;font-size:42px;font-weight:800;color:${wkTimer.running?'var(--accent)':'var(--text2)'}">${fmtTimer(elapsed)}</div><div style="font-size:10px;color:var(--text3);margin-top:4px">TEMPO TOTAL DO TREINO</div><div style="display:flex;gap:6px;justify-content:center;margin-top:8px"><button style="${adjBtnStyle}" onclick="adjustTimer(-30000)">−30s</button><button style="${adjBtnStyle}" onclick="adjustTimer(-5000)">−5s</button><button style="${adjBtnStyle}" onclick="adjustTimer(5000)">+5s</button><button style="${adjBtnStyle}" onclick="adjustTimer(30000)">+30s</button></div></div>`;html+=`<div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px">`;if(!wkTimer.running&&wkTimer.elapsed===0){html+=`<button class="mbtn mbtn-save" onclick="startWorkoutTimer()" style="flex:1">▶ Iniciar Treino</button>`;}else if(wkTimer.running){html+=`<button class="mbtn mbtn-del" onclick="pauseWorkoutTimer()" style="flex:1">⏸ Pausar</button>`;}else{html+=`<button class="mbtn mbtn-save" onclick="resumeWorkoutTimer()" style="flex:1">▶ Retomar</button><button class="mbtn mbtn-del" onclick="finishWorkoutTimer()" style="flex:1">⏹ Finalizar</button>`;}html+=`</div>`;html+=`<div style="text-align:center;margin-bottom:10px"><button class="mbtn" onclick="toggleMetro()" style="padding:8px 16px;font-size:11px;background:${metro.active?'rgba(167,139,250,.2)':'rgba(255,255,255,.04)'};color:${metro.active?'var(--purple)':'var(--text3)'};border:1px solid ${metro.active?'var(--purple)':'var(--border2)'}">${metro.active?'🎵 Metrônomo ON — tick a cada seg, grave a cada 10s':'🔇 Metrônomo OFF'}</button></div>`;if(wkTimer.running||wkTimer.elapsed>0){const subColor=wkTimer.subMode==='series'?'var(--accent)':wkTimer.subMode==='rest'?'var(--orange)':wkTimer.subMode==='countdown'?'var(--yellow)':'var(--text3)';const subLabel=wkTimer.subMode==='series'?'🏋️ SÉRIE':wkTimer.subMode==='rest'?'⏳ INTERVALO':wkTimer.subMode==='countdown'?'🏁 PREPARAR':'—';const subDisplay=wkTimer.subMode==='countdown'?`<div style="font-family:'JetBrains Mono',monospace;font-size:72px;font-weight:800;color:var(--yellow);line-height:1">${wkTimer.countdown}</div>`:`<div style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:800;color:${subColor}">${fmtTimer(subElapsed)}</div>`;html+=`<div style="border-top:1px solid var(--border2);padding-top:14px;margin-top:8px"><div style="text-align:center;margin-bottom:10px"><div style="font-size:10px;font-weight:700;color:${subColor};text-transform:uppercase;margin-bottom:4px">${subLabel}</div>${subDisplay}</div><div style="display:flex;gap:8px;justify-content:center;margin-bottom:12px">`;if(wkTimer.subMode==='countdown'){html+=`<button class="mbtn" onclick="cancelCountdown()" style="flex:1;background:rgba(251,191,36,.15);color:var(--yellow);border:1px solid var(--yellow)">✕ Cancelar contagem</button>`;}else if(wkTimer.subMode==='idle'){html+=`<button class="mbtn" onclick="startSub('series')" style="flex:1;background:rgba(52,211,153,.15);color:var(--accent);border:1px solid var(--accent)">🏋️ Iniciar Série</button>`;}else if(wkTimer.subMode==='series'){html+=`<button class="mbtn" onclick="endSub()" style="flex:1;background:rgba(52,211,153,.15);color:var(--accent);border:1px solid var(--accent)">✓ Fim da Série</button>`;}else if(wkTimer.subMode==='rest'){html+=`<button class="mbtn" onclick="endSub()" style="flex:1;background:rgba(251,146,60,.15);color:var(--orange);border:1px solid var(--orange)">✓ Fim do Intervalo</button>`;}html+=`</div>`;if(wkTimer.subMode!=='idle'&&wkTimer.subMode!=='countdown'){html+=`<div style="display:flex;gap:6px;justify-content:center;margin-bottom:10px"><button style="${adjBtnStyle}" onclick="adjustSub(-5000)">−5s</button><button style="${adjBtnStyle}" onclick="adjustSub(5000)">+5s</button></div>`;}html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px"><div style="background:rgba(52,211,153,.06);padding:8px;border-radius:8px;text-align:center"><div style="color:var(--accent);font-weight:800;font-size:16px">${fmtTimer(wkTimer.totalSeriesTime)}</div><div style="color:var(--text3);margin:3px 0">Sob tensão</div><div style="display:flex;align-items:center;justify-content:center;gap:6px"><button style="${adjBtnStyle};padding:3px 8px" onclick="adjustSeriesCount(-1)">−</button><span style="color:var(--accent);font-weight:800">${wkTimer.seriesCount} séries</span><button style="${adjBtnStyle};padding:3px 8px" onclick="adjustSeriesCount(1)">+</button></div></div><div style="background:rgba(251,146,60,.06);padding:8px;border-radius:8px;text-align:center"><div style="color:var(--orange);font-weight:800;font-size:16px">${fmtTimer(wkTimer.totalRestTime)}</div><div style="color:var(--text3)">Intervalo (${wkTimer.restCount}x)</div></div></div></div>`;}el.innerHTML=html;}
+function startWorkoutTimer(){wkTimer.running=true;wkTimer.start=Date.now();wkTimer.elapsed=0;wkTimer.totalSeriesTime=0;wkTimer.totalRestTime=0;wkTimer.seriesCount=0;wkTimer.restCount=0;wkTimer.subMode='idle';wkTimer.interval=setInterval(function(){metroTick();renderTimerUI();renderPip();},500);renderTimerUI();renderPip();updateMetroBtn();}
+function pauseWorkoutTimer(){wkTimer.running=false;wkTimer.elapsed+=Date.now()-wkTimer.start;clearInterval(wkTimer.interval);wkTimer.interval=null;if(wkTimer.subMode!=='idle')pauseSub();renderTimerUI();renderPip();}
+function resumeWorkoutTimer(){wkTimer.running=true;wkTimer.start=Date.now();wkTimer.interval=setInterval(function(){metroTick();renderTimerUI();renderPip();},500);renderTimerUI();renderPip();}
+function stopWorkoutTimer(){if(wkTimer.interval){clearInterval(wkTimer.interval);wkTimer.interval=null;}if(wkTimer.subInterval){clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}if(wkTimer.countdownInterval){clearInterval(wkTimer.countdownInterval);wkTimer.countdownInterval=null;}metro.active=false;metro.lastSec=-1;}
+function finishWorkoutTimer(){const totalMs=wkTimer.elapsed;if(wkTimer.subMode!=='idle')endSub();clearInterval(wkTimer.interval);wkTimer.interval=null;const totalMin=Math.round(totalMs/60000),seriesMin=(wkTimer.totalSeriesTime/60000).toFixed(1),restMin=(wkTimer.totalRestTime/60000).toFixed(1);const cals=prompt('Calorias estimadas (smartwatch):','0');const notes=`⏱ ${totalMin}min total · 🏋️ ${seriesMin}min tensão (${wkTimer.seriesCount} séries) · ⏳ ${restMin}min intervalo (${wkTimer.restCount}x)`;state.gym.push({id:'ex'+Date.now(),name:'Musculação',type:'cardio',duration:totalMin,calories:parseInt(cals)||0,distance:'',hr:0,notes,done:true,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),isGeneric:true,seriesTime:wkTimer.totalSeriesTime,restTime:wkTimer.totalRestTime,seriesCount:wkTimer.seriesCount,restCount:wkTimer.restCount});wkTimer={running:false,start:0,elapsed:0,interval:null,subMode:'idle',subStart:0,subElapsed:0,subInterval:null,totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0,countdown:0,countdownInterval:null};metro.active=false;metro.lastSec=-1;save();closeModal('timerModal');}
+function startSub(mode){
+  if(mode==='series'){
+    wkTimer.subMode='countdown';wkTimer.countdown=3;
+    if(wkTimer.countdownInterval)clearInterval(wkTimer.countdownInterval);
+    wkTimer.countdownInterval=setInterval(function(){wkTimer.countdown--;if(wkTimer.countdown<=0){clearInterval(wkTimer.countdownInterval);wkTimer.countdownInterval=null;wkTimer.countdown=0;wkTimer.subMode='series';wkTimer.subStart=Date.now();wkTimer.subElapsed=0;wkTimer.subInterval=setInterval(function(){renderTimerUI();renderPip();},200);}renderTimerUI();renderPip();},1000);
+    renderTimerUI();renderPip();return;
+  }
+  wkTimer.subMode=mode;wkTimer.subStart=Date.now();wkTimer.subElapsed=0;wkTimer.subInterval=setInterval(function(){renderTimerUI();renderPip();},200);renderTimerUI();renderPip();
+}
+function cancelCountdown(){if(wkTimer.countdownInterval){clearInterval(wkTimer.countdownInterval);wkTimer.countdownInterval=null;}wkTimer.countdown=0;wkTimer.subMode='idle';renderTimerUI();renderPip();}
+function pauseSub(){if(wkTimer.subMode==='countdown'){cancelCountdown();return;}if(wkTimer.subInterval){wkTimer.subElapsed+=Date.now()-wkTimer.subStart;clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}}
+function endSub(){if(wkTimer.subMode==='countdown'){cancelCountdown();return;}const elapsed=wkTimer.subElapsed+(wkTimer.subInterval?Date.now()-wkTimer.subStart:0);if(wkTimer.subMode==='series'){wkTimer.totalSeriesTime+=elapsed;wkTimer.seriesCount++;wkTimer.subMode='rest';}else if(wkTimer.subMode==='rest'){wkTimer.totalRestTime+=elapsed;wkTimer.restCount++;wkTimer.subMode='idle';}if(wkTimer.subInterval){clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}wkTimer.subElapsed=0;wkTimer.subStart=Date.now();if(wkTimer.subMode==='rest'){startSub('rest');}else{renderTimerUI();}}
+function openHistory(){const list=document.getElementById('histList');list.innerHTML='';if(!state.history.length){list.innerHTML='<p style="color:var(--text3);font-size:12px;text-align:center;padding:20px">Nenhum registro</p>';}state.history.forEach(h=>{list.innerHTML+=`<div class="hist-item"><div><div class="hist-date">${h.date}</div><div class="hist-water">💧 ${h.water||0}ml · 🏋️ ${h.gym||0}</div></div><div class="hist-score">${h.score}%</div></div>`;});document.getElementById('histModal').classList.add('open');}
+function generateSnapshot(){const c=document.getElementById('snapCanvas'),ctx=c.getContext('2d'),w=1080;const allActive=[...state.supps,...state.derm].filter(t=>!t.suspended);const h=400+allActive.length*55+state.gym.length*55+100;c.height=h;ctx.fillStyle='#0a0f1e';ctx.fillRect(0,0,w,h);ctx.fillStyle='#151d2e';ctx.fillRect(0,0,w,300);ctx.fillStyle='#34d399';ctx.font='bold 52px sans-serif';ctx.fillText('THOBIAS PRO — RELATÓRIO',50,90);ctx.fillStyle='#8b95a8';ctx.font='34px sans-serif';ctx.fillText(state.date,50,150);const done=allActive.filter(t=>t.done).length;const score=Math.round((done/(allActive.length||1))*100);ctx.fillStyle='#e8edf5';ctx.font='bold 72px sans-serif';ctx.fillText(score+'%',850,140);ctx.fillStyle='#60a5fa';ctx.font='bold 34px sans-serif';ctx.fillText('💧 '+(state.fluids.pure+state.fluids.decaf+state.fluids.other)+'ml',50,230);ctx.fillStyle='#fb923c';ctx.font='28px sans-serif';ctx.fillText('🏋️ '+state.gym.length+' exercícios',50,275);let y=360;ctx.font='24px sans-serif';allActive.forEach(t=>{ctx.fillStyle=t.done?'#34d399':'#1a2235';ctx.fillRect(50,y-28,32,32);ctx.fillStyle=t.done?'#8b95a8':'#e8edf5';ctx.fillText(t.time+' — '+t.title,100,y);if(t.done&&t.log){ctx.fillStyle='#34d399';ctx.fillText(t.log,950,y);}y+=55;});if(state.gym.length){y+=20;ctx.fillStyle='#fbbf24';ctx.font='bold 28px sans-serif';ctx.fillText('TREINO DO DIA',50,y);y+=40;ctx.font='24px sans-serif';state.gym.forEach(ex=>{ctx.fillStyle='#e8edf5';ctx.fillText(ex.name+(ex.reps?' — '+ex.reps+' reps @ '+ex.load+'kg':''),100,y);y+=55;});}c.toBlob(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Relatorio_'+state.date.replace(/\//g,'-')+'.png';a.click();});}
+function openWeightModal(){document.getElementById('wEditId').value='';document.getElementById('wInput').value='';const now=new Date();const local=new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().slice(0,16);document.getElementById('wDateTime').value=local;document.getElementById('wNotes').value='';document.getElementById('wDelBtn').style.display='none';renderWeightList();document.getElementById('weightModal').classList.add('open');}
+function cancelWeightEdit(){document.getElementById('wEditId').value='';document.getElementById('wInput').value='';document.getElementById('wNotes').value='';document.getElementById('wDelBtn').style.display='none';const now=new Date();const local=new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().slice(0,16);document.getElementById('wDateTime').value=local;}
+function saveWeight(){const w=parseFloat(document.getElementById('wInput').value);if(!w||w<20||w>300)return alert('Peso inválido (20–300 kg)');const dt=document.getElementById('wDateTime').value;if(!dt)return alert('Data/hora obrigatória');const notes=document.getElementById('wNotes').value;const editId=document.getElementById('wEditId').value;if(editId){const idx=state.weightHistory.findIndex(x=>x.id===editId);if(idx>-1)state.weightHistory[idx]={...state.weightHistory[idx],weight:w,datetime:dt,notes};}else{state.weightHistory.unshift({id:'w'+Date.now(),weight:w,datetime:dt,notes});if(state.weightHistory.length>365)state.weightHistory=state.weightHistory.slice(0,365);}cancelWeightEdit();save();renderWeightList();}
+function editWeight(id){const e=state.weightHistory.find(x=>x.id===id);if(!e)return;document.getElementById('wEditId').value=id;document.getElementById('wInput').value=e.weight;document.getElementById('wDateTime').value=e.datetime;document.getElementById('wNotes').value=e.notes||'';document.getElementById('wDelBtn').style.display='block';document.getElementById('wInput').focus();}
+function deleteWeight(){const id=document.getElementById('wEditId').value;if(!id||!confirm('Excluir registro?'))return;state.weightHistory=state.weightHistory.filter(x=>x.id!==id);cancelWeightEdit();save();renderWeightList();}
+function renderWeightList(){const el=document.getElementById('weightList');if(!el)return;if(!state.weightHistory||!state.weightHistory.length){el.innerHTML='<p style="color:var(--text3);font-size:12px;text-align:center;padding:16px">Nenhum registro ainda.<br>Registre seu primeiro peso acima.</p>';return;}const sorted=[...state.weightHistory].sort((a,b)=>b.datetime.localeCompare(a.datetime));let html='<div style="border-top:1px solid var(--border2);padding-top:12px"><div style="font-family:JetBrains Mono,monospace;font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Histórico</div>';if(sorted.length>=3){html+=`<canvas id="weightChartCvs" style="display:block;width:100%;height:80px;border-radius:8px;background:var(--bg);border:1px solid var(--border);margin-bottom:10px"></canvas>`;}const last=sorted[0];const prev=sorted[1];if(prev){const diff=(last.weight-prev.weight).toFixed(1);const color=parseFloat(diff)<0?'var(--accent)':parseFloat(diff)>0?'var(--red)':'var(--text3)';html+=`<div style="text-align:center;margin-bottom:10px;font-family:JetBrains Mono,monospace"><span style="font-size:28px;font-weight:800;color:var(--blue)">${last.weight}kg</span><span style="font-size:14px;color:${color};margin-left:8px">${parseFloat(diff)>0?'+':''}${diff}kg</span></div>`;}else{html+=`<div style="text-align:center;margin-bottom:10px;font-family:JetBrains Mono,monospace;font-size:28px;font-weight:800;color:var(--blue)">${last.weight}kg</div>`;}sorted.slice(0,20).forEach(e=>{const d=new Date(e.datetime);const ds=d.toLocaleDateString('pt-BR');const ts=d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});html+=`<div class="hist-item" style="cursor:pointer" onclick="editWeight('${e.id}')"><div><div class="hist-date">${ds} ${ts}</div>${e.notes?`<div style="font-size:9px;color:var(--text3)">${e.notes}</div>`:''}</div><div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:800;color:var(--blue)">${e.weight}kg</div></div>`;});html+='</div>';el.innerHTML=html;if(sorted.length>=3){requestAnimationFrame(()=>{const cvs=document.getElementById('weightChartCvs');if(!cvs)return;const ctx=cvs.getContext('2d');const dpr=window.devicePixelRatio||1;cvs.width=cvs.offsetWidth*dpr;cvs.height=80*dpr;ctx.scale(dpr,dpr);const W=cvs.offsetWidth,H=80;const pts=sorted.slice(0,30).reverse();const weights=pts.map(p=>p.weight);const mn=Math.min(...weights)-0.5,mx=Math.max(...weights)+0.5;const xp=i=>8+i*(W-16)/(pts.length-1);const yp=v=>H-8-((v-mn)/(mx-mn||1))*(H-16);ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;[.25,.5,.75].forEach(r=>{const y=yp(mn+(mx-mn)*r);ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();});ctx.beginPath();ctx.moveTo(xp(0),yp(weights[0]));weights.forEach((w,i)=>{if(i>0)ctx.lineTo(xp(i),yp(w));});ctx.strokeStyle='#60a5fa';ctx.lineWidth=2;ctx.stroke();weights.forEach((w,i)=>{ctx.beginPath();ctx.fillStyle='#60a5fa';ctx.arc(xp(i),yp(w),3,0,Math.PI*2);ctx.fill();});});}}
+let metro={active:false,lastSec:-1,audioCtx:null};
+function beep(freq,dur,gain){try{if(!metro.audioCtx)metro.audioCtx=new(window.AudioContext||window.webkitAudioContext)();const ctx=metro.audioCtx;const osc=ctx.createOscillator();const g=ctx.createGain();osc.connect(g);g.connect(ctx.destination);osc.type='sine';osc.frequency.value=freq;g.gain.setValueAtTime(gain,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);osc.start(ctx.currentTime);osc.stop(ctx.currentTime+dur);}catch(e){}}
+function toggleMetro(){metro.active=!metro.active;metro.lastSec=-1;if(metro.active&&metro.audioCtx&&metro.audioCtx.state==='suspended')metro.audioCtx.resume();updateMetroBtn();}
+function updateMetroBtn(){const btn=document.getElementById('pipMetroBtn');if(!btn)return;btn.style.background=metro.active?'rgba(167,139,250,.25)':'transparent';btn.style.borderColor=metro.active?'var(--purple)':'var(--border2)';btn.style.color=metro.active?'var(--purple)':'var(--text3)';}
+function metroTick(){if(!metro.active||!wkTimer.running)return;const elapsed=wkTimer.elapsed+Date.now()-wkTimer.start;const sec=Math.floor(elapsed/1000);if(sec===metro.lastSec)return;metro.lastSec=sec;const mod=sec%10;if(mod===0&&sec>0){beep(330,0.18,0.9);}else{beep(880,0.06,0.35);}}
+let pomo={mode:'idle',focusMins:25,breakMins:5,secsLeft:25*60,running:false,interval:null,cycles:0};
+function pomoFmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function pomoBeep(type){beep(type==='focus'?660:440,0.5,0.8);setTimeout(()=>beep(type==='focus'?880:330,0.3,0.6),200);}
+function openPomoModal(){renderPomoUI();document.getElementById('pomoModal').classList.add('open');document.getElementById('btnPomoMin').style.display=(pomo.running||pomo.mode!=='idle')?'':'none';}
+function closePomoModal(){if(pomo.running||pomo.mode!=='idle'){minimizePomo();}else{closeModal('pomoModal');}}
+function minimizePomo(){closeModal('pomoModal');document.getElementById('pomoPip').style.display='block';renderPomoPip();}
+function expandPomo(){document.getElementById('pomoPip').style.display='none';renderPomoUI();document.getElementById('pomoModal').classList.add('open');document.getElementById('btnPomoMin').style.display='';}
+function closePomoPip(){pomoStop();document.getElementById('pomoPip').style.display='none';}
+function pomoToggle(){if(!pomo.running){if(pomo.mode==='idle'){pomo.mode='focus';pomo.secsLeft=pomo.focusMins*60;}pomo.running=true;pomo.interval=setInterval(()=>{pomo.secsLeft--;if(pomo.secsLeft<=0){if(pomo.mode==='focus'){pomoBeep('break');pomo.cycles++;pomo.mode='break';pomo.secsLeft=pomo.breakMins*60;}else{pomoBeep('focus');pomo.mode='focus';pomo.secsLeft=pomo.focusMins*60;}}renderPomoUI();renderPomoPip();},1000);}else{clearInterval(pomo.interval);pomo.interval=null;pomo.running=false;}renderPomoUI();renderPomoPip();}
+function pomoReset(){clearInterval(pomo.interval);pomo.interval=null;pomo.running=false;pomo.mode='idle';pomo.secsLeft=pomo.focusMins*60;pomo.cycles=0;renderPomoUI();renderPomoPip();}
+function pomoStop(){clearInterval(pomo.interval);pomo.interval=null;pomo.running=false;pomo.mode='idle';pomo.secsLeft=pomo.focusMins*60;}
+function renderPomoUI(){const el=document.getElementById('pomoContent');if(!el)return;const isFocus=pomo.mode!=='break';const col=isFocus?'var(--red)':'var(--blue)';const total=(pomo.mode==='break'?pomo.breakMins:pomo.focusMins)*60;const pct=total>0?Math.round((1-pomo.secsLeft/total)*100):0;let html=`<div style="text-align:center;margin:10px 0">`;html+=`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:${col};margin-bottom:8px">${pomo.mode==='idle'?'🍅 Pomodoro':pomo.mode==='focus'?'🎯 FOCO':'☕ PAUSA'}${pomo.cycles?' · '+pomo.cycles+' ciclo'+(pomo.cycles>1?'s':''):''}</div>`;html+=`<div style="font-family:'JetBrains Mono',monospace;font-size:56px;font-weight:800;color:${col};line-height:1">${pomoFmt(pomo.secsLeft)}</div>`;if(pomo.mode!=='idle')html+=`<div style="margin-top:8px;height:4px;background:var(--bg);border-radius:2px"><div style="height:4px;width:${pct}%;background:${col};border-radius:2px;transition:width .9s"></div></div>`;html+=`</div>`;html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0">`;html+=`<div class="fld" style="margin:0"><label>Foco (min)</label><input type="number" value="${pomo.focusMins}" min="1" max="90" oninput="pomo.focusMins=parseInt(this.value)||25;if(pomo.mode==='idle')pomo.secsLeft=pomo.focusMins*60;renderPomoUI();" style="text-align:center;font-size:18px;font-weight:700"></div>`;html+=`<div class="fld" style="margin:0"><label>Pausa (min)</label><input type="number" value="${pomo.breakMins}" min="1" max="30" oninput="pomo.breakMins=parseInt(this.value)||5;" style="text-align:center;font-size:18px;font-weight:700"></div>`;html+=`</div>`;html+=`<div style="display:flex;gap:8px">`;html+=`<button class="mbtn" onclick="pomoToggle()" style="flex:3;padding:14px;font-size:14px;font-weight:800;background:${pomo.running?'rgba(248,113,113,.15)':col};color:${pomo.running?'var(--red)':'white'};border:${pomo.running?'1px solid var(--red)':'none'}">${pomo.running?'⏸ Pausar':pomo.mode==='idle'?'▶ Iniciar Foco':'▶ Retomar'}</button>`;html+=`<button class="mbtn" onclick="pomoReset()" style="flex:1;background:rgba(255,255,255,.05);color:var(--text2);border:1px solid var(--border2)">↺</button>`;html+=`</div>`;el.innerHTML=html;document.getElementById('btnPomoMin').style.display=(pomo.running||pomo.mode!=='idle')?'':'none';}
+function renderPomoPip(){const pip=document.getElementById('pomoPip');if(!pip||pip.style.display==='none')return;const isFocus=pomo.mode!=='break';const col=isFocus?'var(--red)':'var(--blue)';document.getElementById('pomoPipLabel').textContent=pomo.mode==='break'?'☕ Pausa':`🍅 Foco${pomo.cycles?' ×'+pomo.cycles:''}`;document.getElementById('pomoPipLabel').style.color=col;document.getElementById('pomoPipTime').textContent=pomoFmt(pomo.secsLeft);document.getElementById('pomoPipTime').style.color=col;document.getElementById('pomoPipBtn').textContent=pomo.running?'⏸':'▶';document.getElementById('pomoPipBtn').style.background=col;}
+(function initPomoPipDrag(){let drag=false,ox=0,oy=0;function getEl(){return document.getElementById('pomoPip');}function start(e){if(e.target.tagName==='BUTTON')return;drag=true;const el=getEl(),r=el.getBoundingClientRect();const cx=e.touches?e.touches[0].clientX:e.clientX;const cy=e.touches?e.touches[0].clientY:e.clientY;ox=cx-r.left;oy=cy-r.top;e.preventDefault();}function move(e){if(!drag)return;const el=getEl();const cx=e.touches?e.touches[0].clientX:e.clientX;const cy=e.touches?e.touches[0].clientY:e.clientY;let nx=cx-ox,ny=cy-oy;nx=Math.max(0,Math.min(nx,window.innerWidth-el.offsetWidth));ny=Math.max(0,Math.min(ny,window.innerHeight-el.offsetHeight));el.style.right='auto';el.style.bottom='auto';el.style.left=nx+'px';el.style.top=ny+'px';e.preventDefault();}function end(){drag=false;}document.addEventListener('DOMContentLoaded',function(){const el=getEl();if(!el)return;el.addEventListener('mousedown',start);el.addEventListener('touchstart',start,{passive:false});document.addEventListener('mousemove',move);document.addEventListener('touchmove',move,{passive:false});document.addEventListener('mouseup',end);document.addEventListener('touchend',end);});})();
+function renderList(panel,cid){const list=state[panel],el=document.getElementById(cid);el.innerHTML='';const times=[...new Set(list.map(t=>t.time))].sort();times.forEach(time=>{const items=list.filter(t=>t.time===time);if(!items.length)return;const sep=document.createElement('div');sep.className='time-sep';sep.innerHTML='<div class="time-dot"></div>'+time;el.appendChild(sep);items.forEach(t=>{const row=document.createElement('div');row.className='task'+(t.done?' done':'')+(t.suspended?' suspended':'');row.setAttribute('data-ddid',t.id);const logHtml=(t.done&&!t.suspended&&t.log)?`<div class="task-log">${t.log}</div>`:'';const noteHtml=t.note?`<div class="task-note">${t.note}</div>`:'';const userNoteHtml=t.userNote?`<div class="task-note" style="border-left-color:var(--yellow);color:var(--yellow);opacity:.8">📝 ${t.userNote}</div>`:'';const hasInfo=ITEM_INFO[t.id];row.innerHTML=`<div class="drag-handle" ontouchstart="ddStart(event,'${panel}','${t.id}')">⠿</div><div class="chk" onclick="event.stopPropagation();toggleTask('${panel}','${t.id}')">✓</div><div class="task-info"><div class="task-meta" onclick="toggleTask('${panel}','${t.id}')">${t.qty} · ${t.cat}</div><div class="task-title" onclick="${hasInfo?`event.stopPropagation();openItemInfo('${t.id}','${panel}')`:`toggleTask('${panel}','${t.id}')`}" style="${hasInfo?'cursor:pointer':''}">${t.title}${hasInfo?' ℹ️':''}</div>${logHtml}${noteHtml}${userNoteHtml}</div><div class="task-btns"><button class="task-chart" onclick="event.stopPropagation();openItemChart('${t.id}','${panel}')" title="Progresso">📊</button><button class="task-edit" onclick="event.stopPropagation();openEdit('${t.id}','${panel}')" title="Editar">⚙️</button></div>`;el.appendChild(row);});});}
+function renderGym(){const el=document.getElementById('exList');el.innerHTML='';if(!state.gym.length){el.innerHTML='<p style="color:var(--text3);font-size:12px;text-align:center;padding:30px">Nenhum exercício registrado hoje.<br>Toque + para adicionar.</p>';return;}state.gym.forEach(ex=>{const card=document.createElement('div');card.className='ex-card';card.setAttribute('data-ddid',ex.id);if(ex.type==='cardio'){const doneClass=ex.done?' done':'';card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><div class="drag-handle" ontouchstart="ddStart(event,'gym','${ex.id}')" style="margin-right:4px">⠿</div><div class="ex-name" style="flex:1">🫀 ${ex.name}</div><div class="task-btns"><button class="task-chart" onclick="openExHistory('${ex.id}')">📊</button><button class="task-edit" onclick="openExModal('${ex.id}')">⚙️</button></div></div><div class="ex-sets"><div class="ex-set${doneClass}" onclick="toggleCardioDone('${ex.id}')" style="min-width:100%">⏱ ${ex.duration}min${ex.calories?' · 🔥 '+ex.calories+'kcal':''}${ex.distance?' · 📏 '+ex.distance+'km':''}${ex.hr?' · ❤️ '+ex.hr+'bpm':''}</div></div>${ex.notes?`<div class="ex-meta">📝 ${ex.notes}</div>`:''}`;} else {let sH='';const rA=ex.reps?ex.reps.split(',').map(s=>s.trim()):[];const lA=ex.load?ex.load.split(',').map(s=>s.trim()):[];for(let i=0;i<ex.series;i++){const done=ex.completed&&ex.completed.includes(i);const r=rA[i]||rA[rA.length-1]||'?';const l=lA[i]||lA[lA.length-1]||'?';sH+=`<div class="ex-set${done?' done':''}" onclick="toggleExSet('${ex.id}',${i})">S${i+1}: ${r}×${l}kg</div>`;}card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><div class="drag-handle" ontouchstart="ddStart(event,'gym','${ex.id}')" style="margin-right:4px">⠿</div><div class="ex-name" style="flex:1">${ex.name}</div><div class="task-btns"><button class="task-chart" onclick="openExHistory('${ex.id}')">📊</button><button class="task-edit" onclick="openExModal('${ex.id}')">⚙️</button></div></div>${ex.group?`<div class="ex-meta" style="color:var(--purple);margin-bottom:6px">${ex.group}</div>`:''}<div class="ex-sets">${sH}</div><div class="ex-meta">⏱ ${ex.rest}s${ex.notes?' · '+ex.notes:''}</div>`;}el.appendChild(card);});}
+function populateFoodSelect(){const sel=document.getElementById('foodSelect');sel.innerHTML='<option value="">— Selecionar do banco —</option>';let lastCat='';FOODS.forEach(f=>{if(f.cat!==lastCat){const og=document.createElement('optgroup');og.label=f.cat;sel.appendChild(og);lastCat=f.cat;}const opt=document.createElement('option');opt.value=f.fid;opt.textContent=`${f.name} (${f.defQty}${f.unit})`;sel.lastElementChild.appendChild(opt);});}
+function onFoodSelect(){const fid=document.getElementById('foodSelect').value;const f=FOODS.find(x=>x.fid===fid);if(f){document.getElementById('foodName').value=f.name;document.getElementById('foodQty').value=f.defQty;calcFoodMacros();}}
+function calcFoodMacros(){const fid=document.getElementById('foodSelect').value;const f=FOODS.find(x=>x.fid===fid);const qty=parseFloat(document.getElementById('foodQty').value)||0;const el=document.getElementById('foodMacroPreview');if(!f){el.innerHTML='<span style="color:var(--text3)">Selecione um alimento para ver os macros</span>';return;}const m=qty/100;const kcal=Math.round(f.per100.kcal*m);const prot=(f.per100.prot*m).toFixed(1);const carb=(f.per100.carb*m).toFixed(1);const fat=(f.per100.fat*m).toFixed(1);const fib=(f.per100.fib*m).toFixed(1);el.innerHTML=`<div style="display:flex;justify-content:space-around;text-align:center"><div><span style="color:var(--accent);font-weight:800;font-size:14px">${kcal}</span><br><span style="font-size:8px;color:var(--text3)">kcal</span></div><div><span style="color:var(--red);font-weight:800">${prot}g</span><br><span style="font-size:8px;color:var(--text3)">prot</span></div><div><span style="color:var(--blue);font-weight:800">${carb}g</span><br><span style="font-size:8px;color:var(--text3)">carb</span></div><div><span style="color:var(--yellow);font-weight:800">${fat}g</span><br><span style="font-size:8px;color:var(--text3)">gord</span></div><div><span style="color:var(--purple);font-weight:800">${fib}g</span><br><span style="font-size:8px;color:var(--text3)">fibra</span></div></div>`;}
+function openFoodModal(id){const isNew=id==='new';document.getElementById('foodEditId').value=id;document.getElementById('foodModalTitle').textContent=isNew?'Adicionar Alimento':'Editar Alimento';document.getElementById('foodDelBtn').style.display=isNew?'none':'block';populateFoodSelect();document.getElementById('foodSelect').value='';document.getElementById('foodName').value='';document.getElementById('foodQty').value=100;document.getElementById('foodMeal').value='almoco';document.getElementById('foodNotes').value='';document.getElementById('foodMacroPreview').innerHTML='<span style="color:var(--text3)">Selecione um alimento para ver os macros</span>';if(!isNew){const item=state.food.find(x=>x.id===id);if(item){document.getElementById('foodSelect').value=item.fid||'';document.getElementById('foodName').value=item.name;document.getElementById('foodQty').value=item.qty;document.getElementById('foodMeal').value=item.meal||'almoco';document.getElementById('foodNotes').value=item.notes||'';calcFoodMacros();}}document.getElementById('foodModal').classList.add('open');}
+function saveFood(){const id=document.getElementById('foodEditId').value;const name=document.getElementById('foodName').value;if(!name)return alert('Nome obrigatório');const fid=document.getElementById('foodSelect').value;const f=FOODS.find(x=>x.fid===fid);const qty=parseFloat(document.getElementById('foodQty').value)||0;const meal=document.getElementById('foodMeal').value;const notes=document.getElementById('foodNotes').value;const m=qty/100;const macros=f?{kcal:Math.round(f.per100.kcal*m),prot:+(f.per100.prot*m).toFixed(1),carb:+(f.per100.carb*m).toFixed(1),fat:+(f.per100.fat*m).toFixed(1),fib:+(f.per100.fib*m).toFixed(1)}:{kcal:0,prot:0,carb:0,fat:0,fib:0};const unit=f?f.unit:'g';const d={name,fid:fid||'',qty,unit,meal,notes,macros,eaten:true,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})};if(id==='new'){state.food.push({...d,id:'fd'+Date.now()});}else{const item=state.food.find(x=>x.id===id);if(item)Object.assign(item,d);}save();closeModal('foodModal');}
+function deleteFood(){const id=document.getElementById('foodEditId').value;if(confirm('Excluir?')){state.food=state.food.filter(x=>x.id!==id);save();closeModal('foodModal');}}
+function toggleFoodEaten(id){const item=state.food.find(x=>x.id===id);if(item){item.eaten=!item.eaten;save();}}
+const MEAL_LABELS={cafe:'☕ Café',lanche_m:'🍎 Lanche M',almoco:'🍽 Almoço',lanche_t:'🥜 Lanche T',pre_treino:'💪 Pré-treino',pos_treino:'🥤 Pós-treino',jantar:'🌙 Jantar',ceia:'🍫 Ceia'};
+const MEAL_ORDER=['cafe','lanche_m','almoco','lanche_t','pre_treino','pos_treino','jantar','ceia'];
+function renderFood(){const el=document.getElementById('foodList');el.innerHTML='';if(!state.food.length){el.innerHTML='<p style="color:var(--text3);font-size:12px;text-align:center;padding:30px">Nenhum alimento registrado hoje.<br>Toque + para adicionar.</p>';updateFoodTotals();return;}const groups={};state.food.forEach(item=>{const m=item.meal||'almoco';if(!groups[m])groups[m]=[];groups[m].push(item);});MEAL_ORDER.forEach(meal=>{if(!groups[meal])return;let sk=0,sp=0,sc=0,sf=0,sfb=0;groups[meal].filter(f=>f.eaten).forEach(f=>{const m=f.macros||{};sk+=m.kcal||0;sp+=m.prot||0;sc+=m.carb||0;sf+=m.fat||0;sfb+=m.fib||0;});const header=document.createElement('div');header.style.cssText='display:flex;justify-content:space-between;align-items:baseline;padding:8px 0 4px;border-bottom:1px solid var(--border2);margin-bottom:6px;margin-top:8px';header.innerHTML=`<span style="font-size:11px;font-weight:700;color:var(--text3)">${MEAL_LABELS[meal]||meal}</span><span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3)">${Math.round(sk)}kcal · <span style="color:var(--red)">${sp.toFixed(0)}P</span> · <span style="color:var(--blue)">${sc.toFixed(0)}C</span> · <span style="color:var(--yellow)">${sf.toFixed(0)}G</span></span>`;el.appendChild(header);groups[meal].forEach(item=>{const card=document.createElement('div');card.className='ex-card';card.style.opacity=item.eaten?'1':'0.4';const mc=item.macros||{kcal:0,prot:0,carb:0,fat:0,fib:0};card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:8px;flex:1;cursor:pointer" onclick="toggleFoodEaten('${item.id}')"><div style="width:22px;height:22px;border-radius:50%;border:2px solid ${item.eaten?'var(--accent)':'var(--border2)'};display:flex;align-items:center;justify-content:center;flex-shrink:0">${item.eaten?'<div style="width:12px;height:12px;border-radius:50%;background:var(--accent)"></div>':''}</div><div><div class="ex-name" style="font-size:12px">${item.name}</div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3)">${item.qty}${item.unit} · ${mc.kcal}kcal · <span style="color:var(--red)">${mc.prot}P</span> · <span style="color:var(--blue)">${mc.carb}C</span> · <span style="color:var(--yellow)">${mc.fat}G</span> · <span style="color:var(--purple)">${mc.fib}F</span></div></div></div><button class="task-edit" onclick="openFoodModal('${item.id}')">⚙️</button></div>${item.notes?'<div style="font-size:9px;color:var(--text3);margin-top:4px;padding-left:30px">📝 '+item.notes+'</div>':''}`;el.appendChild(card);});});updateFoodTotals();}
+function updateFoodTotals(){let kcal=0,prot=0,carb=0,fat=0,fib=0;state.food.filter(f=>f.eaten).forEach(f=>{const m=f.macros||{};kcal+=m.kcal||0;prot+=m.prot||0;carb+=m.carb||0;fat+=m.fat||0;fib+=m.fib||0;});document.getElementById('fTotalKcal').textContent=Math.round(kcal);document.getElementById('fTotalProt').textContent=prot.toFixed(1)+'g';document.getElementById('fTotalCarb').textContent=carb.toFixed(1)+'g';document.getElementById('fTotalFat').textContent=fat.toFixed(1)+'g';document.getElementById('fTotalFib').textContent=fib.toFixed(1)+'g';}
+function render(){document.getElementById('displayDate').textContent=state.date;const allActive=[...state.supps,...state.derm].filter(t=>!t.suspended);const done=allActive.filter(t=>t.done).length;const score=Math.round((done/(allActive.length||1))*100);document.getElementById('lblScore').textContent=score;const circ=2*Math.PI*15.5;document.getElementById('scoreArc').setAttribute('stroke-dashoffset',circ-(circ*score/100));const fp=state.fluids.pure||0,fd=state.fluids.decaf||0,fo=state.fluids.other||0,totalW=fp+fd+fo;document.getElementById('lblWater').textContent=totalW;document.getElementById('lblPure').textContent=fp;document.getElementById('lblDecaf').textContent=fd;document.getElementById('lblOther').textContent=fo;document.getElementById('barW').style.width=Math.min((fp/4000)*100,100)+'%';document.getElementById('barC').style.width=Math.min((fd/4000)*100,100)+'%';document.getElementById('barO').style.width=Math.min((fo/4000)*100,100)+'%';renderList('supps','panel-supps');renderList('derm','panel-derm');renderGym();renderFood();}
+const WORKOUT_PRESETS={
+'push_a':{name:'🏋️ SEG · Push A — Peito+Ombros+Tríceps',exercises:[
+{name:'Supino Reto com Barra',type:'resistido',series:4,reps:'8, 7, 6, 6',load:'',rest:120,group:'Peito',notes:'Base do dia — carga pesada'},
+{name:'Supino Inclinado com Halteres',type:'resistido',series:3,reps:'12, 10, 10',load:'',rest:90,group:'Peito Superior',notes:''},
+{name:'Desenvolvimento com Halteres',type:'resistido',series:3,reps:'10, 10, 8',load:'',rest:90,group:'Ombro',notes:'Pegada neutra se dor no ombro'},
+{name:'Elevação Lateral com Cabo — unilateral',type:'resistido',series:3,reps:'15, 15, 15',load:'',rest:60,group:'Ombro Lateral',notes:'Cada lado separado'},
+{name:'Tríceps Testa com Barra W',type:'resistido',series:3,reps:'12, 10, 10',load:'',rest:60,group:'Tríceps',notes:'Superset core →'},
+{name:'Prancha com elevação de braço alternado',type:'resistido',series:3,reps:'20, 20, 20',load:'',rest:0,group:'Core',notes:'Superset c/ Tríceps Testa'},
+{name:'Tríceps Corda no Cabo',type:'resistido',series:3,reps:'15, 15, 12',load:'',rest:60,group:'Tríceps',notes:'Superset core →'},
+{name:'Elevação de pernas suspenso',type:'resistido',series:3,reps:'15, 12, 12',load:'',rest:90,group:'Core',notes:'Superset c/ Tríceps Corda'},
+]},
+'pull_a':{name:'🔵 TER · Pull A — Costas+Bíceps',exercises:[
+{name:'Remada Curvada com Halteres',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:90,group:'Costas',notes:'Halteres — menor tensão no ombro'},
+{name:'Puxada na Polia — pegada supinada',type:'resistido',series:4,reps:'15, 15, 12, 12',load:'',rest:90,group:'Dorsal',notes:'Carga moderada — ombro direito'},
+{name:'Remada Unilateral no Cabo',type:'resistido',series:3,reps:'15, 15, 15',load:'',rest:60,group:'Costas',notes:'Cada lado — equilíbrio E/D'},
+{name:'Face Pull com Corda (altura dos olhos)',type:'resistido',series:4,reps:'20, 20, 20, 20',load:'',rest:60,group:'Posterior Deltóide',notes:'★ PRIORIDADE — manguito rotador'},
+{name:'Rosca Direta com Barra W',type:'resistido',series:3,reps:'15, 12, 12',load:'',rest:60,group:'Bíceps',notes:'Superset core →'},
+{name:'Hollow Body Hold',type:'resistido',series:3,reps:'30s, 25s, 20s',load:'',rest:0,group:'Core',notes:'Superset c/ Rosca Direta'},
+{name:'Rosca Martelo Alternada',type:'resistido',series:3,reps:'15, 12, 12',load:'',rest:60,group:'Bíceps',notes:'Superset core →'},
+{name:'Dead Bug',type:'resistido',series:3,reps:'8, 8, 8',load:'',rest:90,group:'Core',notes:'Superset c/ Rosca Martelo · 8 cada lado'},
+]},
+'lower_a':{name:'🦵 QUA · Lower A — Quadríceps Dominante',exercises:[
+{name:'Agachamento Livre',type:'resistido',series:4,reps:'10, 9, 8, 8',load:'',rest:120,group:'Quadríceps/Glúteo',notes:''},
+{name:'Leg Press 45°',type:'resistido',series:4,reps:'12, 12, 10, 10',load:'',rest:90,group:'Quadríceps',notes:'Pegada alta para posterior'},
+{name:'Cadeira Extensora',type:'resistido',series:3,reps:'15, 15, 12',load:'',rest:60,group:'Quadríceps',notes:'Superset core →'},
+{name:'Ab Wheel Rollout',type:'resistido',series:3,reps:'12, 10, 10',load:'',rest:0,group:'Core',notes:'Superset c/ Extensora'},
+{name:'Afundo Caminhando com Halteres',type:'resistido',series:3,reps:'10, 10, 10',load:'',rest:60,group:'Glúteo/Quad',notes:'10 cada lado · Superset core →'},
+{name:'Crunch Oblíquo com rotação',type:'resistido',series:3,reps:'15, 15, 15',load:'',rest:60,group:'Core/Oblíquo',notes:'Superset c/ Afundo · 15 cada lado'},
+{name:'Adução de Quadril (máquina)',type:'resistido',series:3,reps:'20, 20, 20',load:'',rest:60,group:'Adutores',notes:''},
+{name:'Panturrilha em Pé (máquina)',type:'resistido',series:4,reps:'20, 20, 20, 20',load:'',rest:45,group:'Panturrilha',notes:''},
+]},
+'upper':{name:'💪 QUI · Upper — Push+Pull',exercises:[
+{name:'Supino Inclinado com Halteres',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:90,group:'Peito Superior',notes:''},
+{name:'Puxada Triângulo Neutro (polia)',type:'resistido',series:4,reps:'15, 12, 12, 12',load:'',rest:90,group:'Dorsal',notes:'Neutro = menor impacto no ombro'},
+{name:'Crucifixo com Cabo (cruzado)',type:'resistido',series:3,reps:'15, 15, 12',load:'',rest:60,group:'Peito',notes:'Amplitude controlada'},
+{name:'Remada Sentada na Polia',type:'resistido',series:3,reps:'15, 12, 12',load:'',rest:60,group:'Costas',notes:'Pegada neutra · Superset core →'},
+{name:'Pallof Press no Cabo',type:'resistido',series:3,reps:'12, 12, 12',load:'',rest:0,group:'Core Anti-rotação',notes:'Superset c/ Remada · 12 cada lado'},
+{name:'Desenvolvimento Arnold (ROM reduzido)',type:'resistido',series:3,reps:'12, 10, 10',load:'',rest:60,group:'Ombro',notes:'Parar antes extensão total · Superset core →'},
+{name:'Prancha com extensão de quadril alternada',type:'resistido',series:3,reps:'15, 15, 15',load:'',rest:60,group:'Core/Glúteo',notes:'Superset c/ Arnold'},
+{name:'Rosca Concentrada',type:'resistido',series:3,reps:'15, 12, 12',load:'',rest:90,group:'Bíceps',notes:'Cada braço'},
+]},
+'lower_b':{name:'🍑 SEX · Lower B — Posterior Dominante',exercises:[
+{name:'Terra Romeno com Barra',type:'resistido',series:4,reps:'10, 8, 8, 8',load:'',rest:120,group:'Posterior/Lombar',notes:'Foco no excêntrico'},
+{name:'Hip Thrust com Barra',type:'resistido',series:4,reps:'12, 12, 10, 10',load:'',rest:90,group:'Glúteo',notes:''},
+{name:'Cadeira Flexora',type:'resistido',series:3,reps:'15, 12, 12',load:'',rest:60,group:'Posterior',notes:''},
+{name:'Stiff com Halteres',type:'resistido',series:3,reps:'12, 10, 10',load:'',rest:60,group:'Posterior/Glúteo',notes:'Superset core →'},
+{name:'Russian Twist com peso',type:'resistido',series:3,reps:'12, 12, 12',load:'',rest:0,group:'Core/Oblíquo',notes:'Superset c/ Stiff · 12 cada lado'},
+{name:'Abdução de Quadril com Elástico',type:'resistido',series:3,reps:'20, 20, 20',load:'',rest:60,group:'Glúteo Médio',notes:'Superset core →'},
+{name:'Prancha Lateral',type:'resistido',series:3,reps:'30s, 30s, 30s',load:'',rest:60,group:'Core Lateral',notes:'Superset c/ Abdução · 30s cada lado'},
+{name:'Panturrilha Sentada (máquina)',type:'resistido',series:3,reps:'20, 20, 20',load:'',rest:45,group:'Panturrilha',notes:''},
+]},
+'comp_a':{name:'🌿 SÁB · Comp A — Full Body+Ombro+Cardio',exercises:[
+{name:'Face Pull — aquecimento manguito',type:'resistido',series:3,reps:'20, 20, 20',load:'',rest:30,group:'Ombro/Reabilitação',notes:'★ Aquecimento obrigatório — carga leve'},
+{name:'Rotação Externa com Elástico',type:'resistido',series:2,reps:'15, 15',load:'',rest:30,group:'Manguito Rotador',notes:'Cada lado'},
+{name:'Agachamento Goblet',type:'resistido',series:2,reps:'15, 15',load:'',rest:60,group:'Quadríceps/Glúteo',notes:'Carga leve — sem falha'},
+{name:'Remada Sentada na Polia',type:'resistido',series:2,reps:'15, 15',load:'',rest:60,group:'Costas',notes:'Pegada neutra — carga leve'},
+{name:'Supino com Halteres',type:'resistido',series:2,reps:'15, 15',load:'',rest:60,group:'Peito',notes:'Carga leve — sem falha'},
+{name:'Hip Thrust com elástico',type:'resistido',series:2,reps:'20, 20',load:'',rest:60,group:'Glúteo',notes:''},
+{name:'Elevação de pernas (core)',type:'resistido',series:2,reps:'15, 15',load:'',rest:60,group:'Core',notes:''},
+{name:'Cardio LISS — esteira inclinada ou bike',type:'cardio',duration:30,calories:0,distance:'',hr:0,notes:'6-10% inclinação · FC 60-70% FCmax'},
+]},
+'comp_b':{name:'🌿 DOM · Comp B — Lower Regenerativo+Cardio',exercises:[
+{name:'Hip Thrust isométrico com banda (pulsos)',type:'resistido',series:3,reps:'20, 20, 20',load:'',rest:45,group:'Glúteo',notes:'Pulsos no topo da contração'},
+{name:'Abdução de Quadril na Máquina',type:'resistido',series:3,reps:'25, 25, 20',load:'',rest:45,group:'Glúteo Médio',notes:'Carga leve — volume'},
+{name:'Agachamento Búlgaro com peso corporal',type:'resistido',series:3,reps:'10, 10, 10',load:'',rest:60,group:'Glúteo/Quad',notes:'10 cada lado'},
+{name:'Panturrilha no degrau (excêntrico)',type:'resistido',series:3,reps:'15, 15, 15',load:'',rest:45,group:'Panturrilha',notes:'Foco na descida lenta'},
+{name:'Cardio regenerativo — bike/natação/caminhada',type:'cardio',duration:35,calories:0,distance:'',hr:0,notes:'5-6 km/h se caminhada · Recuperação ativa'},
+]},
+};
+function loadPreset(key){const preset=WORKOUT_PRESETS[key];if(!preset)return;if(state.gym.length>0&&!confirm(`Substituir os ${state.gym.length} exercício(s) atuais pelo treino "${preset.name}"?`))return;state.gym=preset.exercises.map(ex=>({...ex,id:'ex'+Date.now()+Math.random().toString(36).substr(2,5),completed:[],done:false,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}));preset.exercises.forEach(ex=>updateExLibrary(ex));save();switchTab('gym');}
+load();
+document.addEventListener('DOMContentLoaded',function(){restoreTimerState();render();if(state._rollover)showRolloverModal();if(wkTimer.elapsed>0){document.getElementById('timerPip').style.display='block';renderPip();}});
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+(function fetchBuildDate(){const el=document.getElementById('buildDate');const CACHE_KEY='thobias_buildDate';const CACHE_TTL=3600000;function fmt(isoStr){const d=new Date(isoStr);const dd=String(d.getDate()).padStart(2,'0');const mm=String(d.getMonth()+1).padStart(2,'0');const yyyy=d.getFullYear();const hh=String(d.getHours()).padStart(2,'0');const mi=String(d.getMinutes()).padStart(2,'0');return`${dd}/${mm}/${yyyy} ${hh}:${mi}`;}try{const cached=JSON.parse(localStorage.getItem(CACHE_KEY)||'null');if(cached&&Date.now()-cached.ts<CACHE_TTL){el.textContent=cached.val;return;}}catch(e){}fetch('https://api.github.com/repos/thobitv/thobias-pro/commits?path=thobias_pro_v51.html&per_page=1',{headers:{Accept:'application/vnd.github.v3+json'}}).then(r=>r.json()).then(data=>{const iso=data[0]?.commit?.committer?.date;if(!iso)throw new Error('no date');const val=fmt(iso);el.textContent=val;try{localStorage.setItem(CACHE_KEY,JSON.stringify({val,ts:Date.now()}));}catch(e){}}).catch(()=>{el.textContent='03/05/2026';});})();
+</script>
+</body>
+</html>
+
