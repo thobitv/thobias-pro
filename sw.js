@@ -1,4 +1,4 @@
-const V = 'tp-64c';
+const V = 'tp-64d';
 const ASSETS = ['./', './thobias_pro_v51.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -11,7 +11,6 @@ self.addEventListener('activate', e => {
   ).then(() => self.clients.claim()));
 });
 
-// Network-first: sempre busca versão nova online; só usa cache se offline
 self.addEventListener('fetch', e => {
   e.respondWith(
     fetch(e.request).then(resp => {
