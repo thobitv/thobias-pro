@@ -571,8 +571,7 @@ if(!state.supps)state.supps=[];if(!state.derm)state.derm=[];if(!state.gym)state.
 if(!state.history)state.history=[];if(!state.gymHistory)state.gymHistory=[];if(!state.exerciseLibrary)state.exerciseLibrary=[];if(!state.weightHistory)state.weightHistory=[
 ];
  ensureUserMods();
- // Migração: remover itens descontinuados do v62
- const v62deprecated=['s01','s05','s13','s32','s39','s50'];
+ // Migração: remover itens descontinuados do v62 const v62deprecated=['s01','s05','s13','s32','s39','s50'];
  
 if(v62deprecated.some(id=>state.supps.find(t=>t.id===id))){state.supps=state.supps.filter(t=>!v62deprecated.includes(t.id));}
  const today=new Date().toLocaleDateString('pt-BR');
@@ -719,4 +718,4 @@ ppBtn.textContent=wkTimer.running?'⏸':'▶';ppBtn.style.background=wkTimer.run
  
 else{subBtn.style.fontSize='';subBtn.style.fontWeight='';subBtn.style.borderColor='';subEl.textContent='⏳ INTERVALO '+fmtTimer(subElapsed);subEl.style.color='var(--orange)';subBtn.textContent='✓ Fim intervalo';}
  applyPipScale();}
-function pipTogglePlay(){if(wkTimer.elapsed===0&&!wkTimer.
+function pipTogglePlay(){if(wkTimer.elapsed===0&&!wkTimer.r
