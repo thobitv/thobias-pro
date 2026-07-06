@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thobias Pro | v64 i · 25/05/2026</title>
+    <title>Thobias Pro | v65 · 06/07/2026</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -127,7 +127,7 @@
             <div>
                 <div class="brand">Thobias Pro</div>
                 <div class="brand-sub" id="displayDate">--/--/----</div>
-                <div class="brand-sub" style="color:var(--text3);opacity:.5">v64 · <span id="buildDate">…</span></div>
+                <div class="brand-sub" style="color:var(--text3);opacity:.5">v65 · <span id="buildDate">…</span></div>
             </div>
             <div style="display:flex;align-items:flex-start;gap:10px">
                 <button id="themeToggle" onclick="toggleTheme()" style="background:var(--accent-glow);border:1px solid var(--border2);border-radius:12px;padding:6px 12px;display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--text2);font-size:14px;margin-top:2px;transition:all .2s;font-family:'JetBrains Mono',monospace;font-weight:600" title="Alternar tema"><span id="themeIcon">🌙</span><span id="themeLabel" style="font-size:9px;text-transform:uppercase;letter-spacing:.5px">Escuro</span></button>
@@ -477,6 +477,7 @@ const DERM=[
 {id:'d16',time:'21:09',qty:'🧴',title:'Gel noturno manipulado (Ivermectina 1% + Ác. Azelaico 15%)',cat:'Rosácea',note:'⚠ SEM metronidazol · Aguardar 15-20min antes da barreira'},
 {id:'d17',time:'21:30',qty:'🧴',title:'Principia CM-01 Multirreparador (barreira noturna)',cat:'Rosto',note:'Finaliza rotina'},
 {id:'d18',time:'21:35',qty:'🧴',title:'Adapaleno (tórax — dias alternados)',cat:'Corpo',note:'Dias alternados · Não aplicar no rosto'},
+{id:'d23',time:'REGEN',qty:'🧖 10-15min',title:'Sauna a Vapor (50°C)',cat:'Recuperação',regenOnly:true,note:'⚠ Pós-treino ou dia regenerativo · Aguardar 10-15min de intervalo pós-esforço antes de entrar · 10-15min/sessão · 1-2 rounds com 5min de intervalo fora · 2-4x/semana · +500ml de água pós-sessão'},
 ];
 const FOODS=[
 {fid:'f01',name:'Peito de frango grelhado',unit:'g',defQty:150,per100:{kcal:159,prot:32,carb:0,fat:2.5,fib:0},cat:'🥩 Proteína'},
@@ -557,10 +558,11 @@ function applyUserMods(panel){
   else state[panel].sort((a,b)=>a.time.localeCompare(b.time));
 }
 function initDay(dateStr){
-  const dow=new Date().getDay();const isTuesday=dow===2;
+  const dow=new Date().getDay();const isTuesday=dow===2;const isRegenDay=dow===0||dow===4;
   state.supps=JSON.parse(JSON.stringify(SUPPS));state.derm=JSON.parse(JSON.stringify(DERM));
   applyUserMods('supps');applyUserMods('derm');
   state.supps.forEach(t=>{if(t.tuesdayOnly)t.suspended=!isTuesday;});
+  state.derm.forEach(t=>{if(t.regenOnly)t.suspended=!isRegenDay;});
   state.fluids={pure:0,decaf:0,other:0};state.food=[];state.gym=[];state.date=dateStr;
 }
 function load(){
@@ -568,6 +570,7 @@ function load(){
   if(!state.fluids)state.fluids={pure:0,decaf:0,other:0};if(state.fluids.other==null)state.fluids.other=0;
   if(!state.supps)state.supps=[];if(!state.derm)state.derm=[];if(!state.gym)state.gym=[];if(!state.food)state.food=[];
   if(!state.history)state.history=[];if(!state.gymHistory)state.gymHistory=[];if(!state.exerciseLibrary)state.exerciseLibrary=[];if(!state.weightHistory)state.weightHistory=[];
+  if(!state.customPresets)state.customPresets=[];
   ensureUserMods();
   // Migração: remover itens descontinuados do v62
   const v62deprecated=['s01','s05','s13','s32','s39','s50'];
@@ -586,6 +589,16 @@ function load(){
       state.supps.push(fresh);
     }});
     if(!state.userMods.supps.order)state.supps.sort((a,b)=>a.time.localeCompare(b.time));
+    const dowNow=new Date().getDay();const isRegenDayNow=dowNow===0||dowNow===4;
+    const existingDermIds=new Set(state.derm.map(t=>t.id));
+    DERM.forEach(t=>{if(!existingDermIds.has(t.id)&&!state.userMods.derm.deleted.includes(t.id)){
+      const fresh={...JSON.parse(JSON.stringify(t)),done:false,log:''};
+      if(t.regenOnly)fresh.suspended=!isRegenDayNow;
+      if(state.userMods.derm.suspended[t.id]!==undefined)fresh.suspended=state.userMods.derm.suspended[t.id];
+      if(state.userMods.derm.edited&&state.userMods.derm.edited[t.id])Object.assign(fresh,state.userMods.derm.edited[t.id]);
+      state.derm.push(fresh);
+    }});
+    if(!state.userMods.derm.order)state.derm.sort((a,b)=>a.time.localeCompare(b.time));
     save();
   }
 }
@@ -698,7 +711,8 @@ const ITEM_INFO={'s01':{obj:'Corrigir ferritina (meta 80-100 ng/mL)',rec:'Jejum 
 's58':{obj:'Melatonina liberação prolongada — indução e manutenção do sono',rec:'Iniciar 3mg (1 cap) por 10 dias → progredir para 6mg (2 caps) e manter. Tomar às 19h.',interval:'Liberação prolongada = onset mais lento, duração maior · Substitui melatonina 0,21mg'},
 's59':{obj:'Hipnótico — manutenção do sono (antagonismo H1+alfa1)',rec:'1/3 do comprimido de Donaren Retard 150mg = 50mg. Ao deitar.',interval:'⚠ Serotonérgico — sobreposição c/ escitalopram · Monitorar: agitação, tremor, sudorese'},
 's60':{obj:'GABA exógeno — relaxamento periférico (eixo vagal)',rec:'Blue Calm Pura Vida 150mg. Tomar às 19h.',interval:'Absorção central limitada em adultos — efeito predominantemente periférico'},
-'s61':{obj:'Profilaxia HSV-1 durante protocolo GHK-Cu',rec:'JEJUM obrigatório. 1.500mg/dia. Lisina compete com arginina pelo transportador CAT-1 — reduz replicação viral.',interval:'≥6h antes da Arginina/Citrulina (s55, 21:15→06:15 = ~9h ✓) · Manter enquanto usar GHK-Cu'}};
+'s61':{obj:'Profilaxia HSV-1 durante protocolo GHK-Cu',rec:'JEJUM obrigatório. 1.500mg/dia. Lisina compete com arginina pelo transportador CAT-1 — reduz replicação viral.',interval:'≥6h antes da Arginina/Citrulina (s55, 21:15→06:15 = ~9h ✓) · Manter enquanto usar GHK-Cu'},
+'d23':{obj:'Recuperação muscular + adaptação ao calor (heat shock proteins, vasodilatação)',rec:'Pós-treino ou em dia regenerativo. Aguardar 10-15min de intervalo pós-esforço antes de entrar. 10-15min por sessão, 1-2 rounds com 5min de intervalo fora da sauna. 2-4x/semana. Hidratar com +500ml de água pós-sessão.',interval:'⚠ Monitorar flushing facial (rosácea) · Levantar devagar ao sair (risco de hipotensão ortostática c/ minoxidil oral + candesartana) · Evitar logo após propranolol SOS'}};
 function openItemInfo(id,panel){const item=state[panel].find(x=>x.id===id);if(!item)return;const info=ITEM_INFO[id];document.getElementById('infoTitle').textContent=item.title;let html='';if(info){html+=`<div style="margin-bottom:12px;padding:10px;background:rgba(60,103,81,.06);border-radius:8px;border-left:3px solid var(--accent)"><strong style="color:var(--accent);font-size:10px;text-transform:uppercase">🎯 Objetivo</strong><br>${info.obj}</div>`;html+=`<div style="margin-bottom:12px;padding:10px;background:rgba(56,98,132,.06);border-radius:8px;border-left:3px solid var(--blue)"><strong style="color:var(--blue);font-size:10px;text-transform:uppercase">📋 Recomendação</strong><br>${info.rec}</div>`;html+=`<div style="margin-bottom:12px;padding:10px;background:rgba(139,76,80,.06);border-radius:8px;border-left:3px solid var(--orange)"><strong style="color:var(--orange);font-size:10px;text-transform:uppercase">⏰ Intervalos</strong><br>${info.interval}</div>`;}html+=`<div style="padding:8px;background:rgba(0,0,0,.02);border-radius:8px;font-size:11px"><div style="color:var(--text3)">💊 ${item.qty} · ⏰ ${item.time} · 🏷 ${item.cat}</div>`;if(item.note)html+=`<div style="color:var(--text3);margin-top:6px">📝 ${item.note}</div>`;if(item.userNote)html+=`<div style="color:var(--yellow);margin-top:6px">✏️ ${item.userNote}</div>`;html+=`</div>`;document.getElementById('infoContent').innerHTML=html;document.getElementById('infoModal').classList.add('open');}
 let wkTimer={running:false,start:0,elapsed:0,interval:null,subMode:'idle',subStart:0,subElapsed:0,subInterval:null,totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0,activeExId:null,activeSetIdx:-1,countdown:0,countdownInterval:null,log:[]};
 let pipScale=1.0;
@@ -800,72 +814,46 @@ function renderFood(){const el=document.getElementById('foodList');el.innerHTML=
 function updateFoodTotals(){let kcal=0,prot=0,carb=0,fat=0,fib=0;state.food.filter(f=>f.eaten).forEach(f=>{const m=f.macros||{};kcal+=m.kcal||0;prot+=m.prot||0;carb+=m.carb||0;fat+=m.fat||0;fib+=m.fib||0;});document.getElementById('fTotalKcal').textContent=Math.round(kcal);document.getElementById('fTotalProt').textContent=prot.toFixed(1)+'g';document.getElementById('fTotalCarb').textContent=carb.toFixed(1)+'g';document.getElementById('fTotalFat').textContent=fat.toFixed(1)+'g';document.getElementById('fTotalFib').textContent=fib.toFixed(1)+'g';}
 function render(){document.getElementById('displayDate').textContent=state.date;const allActive=[...state.supps,...state.derm].filter(t=>!t.suspended);const done=allActive.filter(t=>t.done).length;const score=Math.round((done/(allActive.length||1))*100);document.getElementById('lblScore').textContent=score;const circ=2*Math.PI*15.5;document.getElementById('scoreArc').setAttribute('stroke-dashoffset',circ-(circ*score/100));const fp=state.fluids.pure||0,fd=state.fluids.decaf||0,fo=state.fluids.other||0,totalW=fp+fd+fo;document.getElementById('lblWater').textContent=totalW;document.getElementById('lblPure').textContent=fp;document.getElementById('lblDecaf').textContent=fd;document.getElementById('lblOther').textContent=fo;document.getElementById('barW').style.width=Math.min((fp/4000)*100,100)+'%';document.getElementById('barC').style.width=Math.min((fd/4000)*100,100)+'%';document.getElementById('barO').style.width=Math.min((fo/4000)*100,100)+'%';renderList('supps','panel-supps');renderList('derm','panel-derm');renderGym();renderFood();}
 const WORKOUT_PRESETS={
-'push_a':{name:'🏋️ SEG · Push A — Peito+Ombros+Tríceps',exercises:[
-{name:'Supino Reto com Barra',type:'resistido',series:4,reps:'8, 7, 6, 6',load:'',rest:120,group:'Peito',notes:'Base do dia — carga pesada'},
-{name:'Supino Inclinado com Halteres',type:'resistido',series:3,reps:'12, 10, 10',load:'',rest:90,group:'Peito Superior',notes:''},
-{name:'Desenvolvimento com Halteres',type:'resistido',series:3,reps:'10, 10, 8',load:'',rest:90,group:'Ombro',notes:'Pegada neutra se dor no ombro'},
-{name:'Elevação Lateral com Cabo — unilateral',type:'resistido',series:3,reps:'15, 15, 15',load:'',rest:60,group:'Ombro Lateral',notes:'Cada lado separado'},
-{name:'Tríceps Testa com Barra W',type:'resistido',series:3,reps:'12, 10, 10',load:'',rest:60,group:'Tríceps',notes:'Superset core →'},
-{name:'Prancha com elevação de braço alternado',type:'resistido',series:3,reps:'20, 20, 20',load:'',rest:0,group:'Core',notes:'Superset c/ Tríceps Testa'},
-{name:'Tríceps Corda no Cabo',type:'resistido',series:3,reps:'15, 15, 12',load:'',rest:60,group:'Tríceps',notes:'Superset core →'},
-{name:'Elevação de pernas suspenso',type:'resistido',series:3,reps:'15, 12, 12',load:'',rest:90,group:'Core',notes:'Superset c/ Tríceps Corda'},
+'push_seg':{name:'🏋️ SEG · Push — Peito+Ombro+Tríceps',exercises:[
+{name:'Supino Reto Máquina',type:'resistido',series:6,reps:'18, 4, 4, 7, 7, 7',load:'',rest:120,group:'Peito',notes:'Aquecimento (S1 ~50-60%, 15-20 reps) → Feeder (S2-3, 75%→90%) → Válidas (S4-6, 85-100%, RIR 1-2) · Primeiro exercício do dia'},
+{name:'Desenvolvimento Arnold',type:'resistido',series:4,reps:'4, 7, 7, 7',load:'',rest:90,group:'Ombro',notes:'Feeder (S1, ~75-90%) → Válidas (S2-4, 85-100%, RIR 1-2)'},
+{name:'Elevação Lateral Máquina',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Ombro Lateral (isolamento)',notes:'3 séries válidas diretas (85-100%, RIR 1-2) · Sem aquecimento/feeder'},
+{name:'Tríceps Francês c/ Corda Cross',type:'resistido',series:4,reps:'4, 7, 7, 7',load:'',rest:90,group:'Tríceps',notes:'Feeder (S1) → Válidas (S2-4, RIR 1-2)'},
 ]},
-'pull_a':{name:'🔵 TER · Pull A — Costas+Bíceps',exercises:[
-{name:'Remada Curvada com Halteres',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:90,group:'Costas',notes:'Halteres — menor tensão no ombro'},
-{name:'Puxada na Polia — pegada supinada',type:'resistido',series:4,reps:'15, 15, 12, 12',load:'',rest:90,group:'Dorsal',notes:'Carga moderada — ombro direito'},
-{name:'Remada Unilateral no Cabo',type:'resistido',series:3,reps:'15, 15, 15',load:'',rest:60,group:'Costas',notes:'Cada lado — equilíbrio E/D'},
-{name:'Face Pull com Corda (altura dos olhos)',type:'resistido',series:4,reps:'20, 20, 20, 20',load:'',rest:60,group:'Posterior Deltóide',notes:'★ PRIORIDADE — manguito rotador'},
-{name:'Rosca Direta com Barra W',type:'resistido',series:3,reps:'15, 12, 12',load:'',rest:60,group:'Bíceps',notes:'Superset core →'},
-{name:'Hollow Body Hold',type:'resistido',series:3,reps:'30s, 25s, 20s',load:'',rest:0,group:'Core',notes:'Superset c/ Rosca Direta'},
-{name:'Rosca Martelo Alternada',type:'resistido',series:3,reps:'15, 12, 12',load:'',rest:60,group:'Bíceps',notes:'Superset core →'},
-{name:'Dead Bug',type:'resistido',series:3,reps:'8, 8, 8',load:'',rest:90,group:'Core',notes:'Superset c/ Rosca Martelo · 8 cada lado'},
+'pull_ter':{name:'🔵 TER · Pull + Antebraço — Costas+Bíceps',exercises:[
+{name:'Puxada Triângulo Neutro (polia)',type:'resistido',series:6,reps:'18, 4, 4, 7, 7, 7',load:'',rest:120,group:'Costas/Dorsal',notes:'Aquecimento (S1) → Feeder (S2-3) → Válidas (S4-6, RIR 1-2) · Primeiro exercício do dia'},
+{name:'Remada Sentada na Polia',type:'resistido',series:4,reps:'4, 7, 7, 7',load:'',rest:90,group:'Costas (secundário)',notes:'Feeder (S1) → Válidas (S2-4, RIR 1-2)'},
+{name:'Rosca Scott Máquina Unilateral',type:'resistido',series:4,reps:'4, 7, 7, 7',load:'',rest:90,group:'Bíceps',notes:'Feeder (S1) → Válidas (S2-4, RIR 1-2) · Cada braço'},
+{name:'Rosca de Punho com Barra',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Antebraço (Flexores)',notes:'NOVO · 3 séries válidas diretas · Sistematização antebraço'},
+{name:'Rosca de Punho Invertida',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Antebraço (Extensores)',notes:'NOVO · 3 séries válidas diretas · Sistematização antebraço'},
 ]},
-'lower_a':{name:'🦵 QUA · Lower A — Quadríceps Dominante',exercises:[
-{name:'Agachamento Livre',type:'resistido',series:4,reps:'10, 9, 8, 8',load:'',rest:120,group:'Quadríceps/Glúteo',notes:''},
-{name:'Leg Press 45°',type:'resistido',series:4,reps:'12, 12, 10, 10',load:'',rest:90,group:'Quadríceps',notes:'Pegada alta para posterior'},
-{name:'Cadeira Extensora',type:'resistido',series:3,reps:'15, 15, 12',load:'',rest:60,group:'Quadríceps',notes:'Superset core →'},
-{name:'Ab Wheel Rollout',type:'resistido',series:3,reps:'12, 10, 10',load:'',rest:0,group:'Core',notes:'Superset c/ Extensora'},
-{name:'Afundo Caminhando com Halteres',type:'resistido',series:3,reps:'10, 10, 10',load:'',rest:60,group:'Glúteo/Quad',notes:'10 cada lado · Superset core →'},
-{name:'Crunch Oblíquo com rotação',type:'resistido',series:3,reps:'15, 15, 15',load:'',rest:60,group:'Core/Oblíquo',notes:'Superset c/ Afundo · 15 cada lado'},
-{name:'Adução de Quadril (máquina)',type:'resistido',series:3,reps:'20, 20, 20',load:'',rest:60,group:'Adutores',notes:''},
-{name:'Panturrilha em Pé (máquina)',type:'resistido',series:4,reps:'20, 20, 20, 20',load:'',rest:45,group:'Panturrilha',notes:''},
+'legs_qua':{name:'🦵 QUA · Legs + Lombar — Quadríceps+Posterior',exercises:[
+{name:'Leg Press 45°',type:'resistido',series:6,reps:'18, 4, 4, 7, 7, 7',load:'',rest:120,group:'Quadríceps',notes:'Aquecimento (S1) → Feeder (S2-3) → Válidas (S4-6, RIR 1-2) · Primeiro exercício do dia'},
+{name:'Cadeira Extensora',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Quadríceps (isolamento)',notes:'3 séries válidas diretas'},
+{name:'Mesa Flexora',type:'resistido',series:4,reps:'4, 7, 7, 7',load:'',rest:90,group:'Posterior',notes:'Feeder (S1) → Válidas (S2-4, RIR 1-2)'},
+{name:'Panturrilha (Leg Press)',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:45,group:'Panturrilha',notes:'3 séries válidas diretas · Abaixo da meta semanal (6-10) — avaliar 2ª exposição no Sábado'},
+{name:'Hiperextensão Lombar em Banco Romano',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Lombar',notes:'NOVO · 3 séries válidas diretas · Sistematização lombar'},
 ]},
-'upper':{name:'💪 QUI · Upper — Push+Pull',exercises:[
-{name:'Supino Inclinado com Halteres',type:'resistido',series:4,reps:'12, 10, 10, 10',load:'',rest:90,group:'Peito Superior',notes:''},
-{name:'Puxada Triângulo Neutro (polia)',type:'resistido',series:4,reps:'15, 12, 12, 12',load:'',rest:90,group:'Dorsal',notes:'Neutro = menor impacto no ombro'},
-{name:'Crucifixo com Cabo (cruzado)',type:'resistido',series:3,reps:'15, 15, 12',load:'',rest:60,group:'Peito',notes:'Amplitude controlada'},
-{name:'Remada Sentada na Polia',type:'resistido',series:3,reps:'15, 12, 12',load:'',rest:60,group:'Costas',notes:'Pegada neutra · Superset core →'},
-{name:'Pallof Press no Cabo',type:'resistido',series:3,reps:'12, 12, 12',load:'',rest:0,group:'Core Anti-rotação',notes:'Superset c/ Remada · 12 cada lado'},
-{name:'Desenvolvimento Arnold (ROM reduzido)',type:'resistido',series:3,reps:'12, 10, 10',load:'',rest:60,group:'Ombro',notes:'Parar antes extensão total · Superset core →'},
-{name:'Prancha com extensão de quadril alternada',type:'resistido',series:3,reps:'15, 15, 15',load:'',rest:60,group:'Core/Glúteo',notes:'Superset c/ Arnold'},
-{name:'Rosca Concentrada',type:'resistido',series:3,reps:'15, 12, 12',load:'',rest:90,group:'Bíceps',notes:'Cada braço'},
+'regen_qui':{name:'🌿 QUI · Regenerativo — Cardio+Mobilidade+Sauna',exercises:[
+{name:'Cardio Regenerativo (bike/caminhada/natação)',type:'cardio',duration:25,calories:0,distance:'',hr:0,notes:'20-30min · Recuperação ativa'},
+{name:'Mobilidade + Bird-dog/Superman (leve)',type:'resistido',series:2,reps:'10, 10',load:'',rest:30,group:'Mobilidade/Core',notes:'Não conta como série válida · Ativação leve · Sauna a vapor: ver aba Derma'},
 ]},
-'lower_b':{name:'🍑 SEX · Lower B — Posterior Dominante',exercises:[
-{name:'Terra Romeno com Barra',type:'resistido',series:4,reps:'10, 8, 8, 8',load:'',rest:120,group:'Posterior/Lombar',notes:'Foco no excêntrico'},
-{name:'Hip Thrust com Barra',type:'resistido',series:4,reps:'12, 12, 10, 10',load:'',rest:90,group:'Glúteo',notes:''},
-{name:'Cadeira Flexora',type:'resistido',series:3,reps:'15, 12, 12',load:'',rest:60,group:'Posterior',notes:''},
-{name:'Stiff com Halteres',type:'resistido',series:3,reps:'12, 10, 10',load:'',rest:60,group:'Posterior/Glúteo',notes:'Superset core →'},
-{name:'Russian Twist com peso',type:'resistido',series:3,reps:'12, 12, 12',load:'',rest:0,group:'Core/Oblíquo',notes:'Superset c/ Stiff · 12 cada lado'},
-{name:'Abdução de Quadril com Elástico',type:'resistido',series:3,reps:'20, 20, 20',load:'',rest:60,group:'Glúteo Médio',notes:'Superset core →'},
-{name:'Prancha Lateral',type:'resistido',series:3,reps:'30s, 30s, 30s',load:'',rest:60,group:'Core Lateral',notes:'Superset c/ Abdução · 30s cada lado'},
-{name:'Panturrilha Sentada (máquina)',type:'resistido',series:3,reps:'20, 20, 20',load:'',rest:45,group:'Panturrilha',notes:''},
+'upper_sex':{name:'💪 SEX · Upper — Peito+Costas+Ombro',exercises:[
+{name:'Supino Inclinado com Halteres',type:'resistido',series:6,reps:'18, 4, 4, 7, 7, 7',load:'',rest:120,group:'Peito Superior',notes:'Aquecimento (S1) → Feeder (S2-3) → Válidas (S4-6, RIR 1-2) · Primeiro exercício do dia'},
+{name:'Barra Fixa Supinada',type:'resistido',series:4,reps:'4, 7, 7, 7',load:'',rest:90,group:'Costas',notes:'Feeder (S1) → Válidas (S2-4, RIR 1-2)'},
+{name:'Face Pull',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Manguito/Ombro Posterior',notes:'3 séries válidas diretas'},
+{name:'Bayesian Curl Unilateral',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Bíceps',notes:'3 séries válidas diretas · Cada braço'},
+{name:'Tríceps na Polia',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Tríceps',notes:'3 séries válidas diretas'},
 ]},
-'comp_a':{name:'🌿 SÁB · Comp A — Full Body+Ombro+Cardio',exercises:[
-{name:'Face Pull — aquecimento manguito',type:'resistido',series:3,reps:'20, 20, 20',load:'',rest:30,group:'Ombro/Reabilitação',notes:'★ Aquecimento obrigatório — carga leve'},
-{name:'Rotação Externa com Elástico',type:'resistido',series:2,reps:'15, 15',load:'',rest:30,group:'Manguito Rotador',notes:'Cada lado'},
-{name:'Agachamento Goblet',type:'resistido',series:2,reps:'15, 15',load:'',rest:60,group:'Quadríceps/Glúteo',notes:'Carga leve — sem falha'},
-{name:'Remada Sentada na Polia',type:'resistido',series:2,reps:'15, 15',load:'',rest:60,group:'Costas',notes:'Pegada neutra — carga leve'},
-{name:'Supino com Halteres',type:'resistido',series:2,reps:'15, 15',load:'',rest:60,group:'Peito',notes:'Carga leve — sem falha'},
-{name:'Hip Thrust com elástico',type:'resistido',series:2,reps:'20, 20',load:'',rest:60,group:'Glúteo',notes:''},
-{name:'Elevação de pernas (core)',type:'resistido',series:2,reps:'15, 15',load:'',rest:60,group:'Core',notes:''},
-{name:'Cardio LISS — esteira inclinada ou bike',type:'cardio',duration:30,calories:0,distance:'',hr:0,notes:'6-10% inclinação · FC 60-70% FCmax'},
+'lower_sab':{name:'🍑 SÁB · Lower + Antebraço — Posterior+Glúteo',exercises:[
+{name:'Agachamento Búlgaro',type:'resistido',series:6,reps:'18, 4, 4, 7, 7, 7',load:'',rest:120,group:'Pernas (variação)',notes:'Aquecimento (S1) → Feeder (S2-3) → Válidas (S4-6, RIR 1-2) · Primeiro exercício do dia'},
+{name:'Terra Romeno com Barra',type:'resistido',series:4,reps:'4, 7, 7, 7',load:'',rest:90,group:'Posterior',notes:'Feeder (S1) → Válidas (S2-4, RIR 1-2) · Estímulo indireto de lombar'},
+{name:'Cadeira Abdutora',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Glúteo Médio',notes:'3 séries válidas diretas'},
+{name:'Rosca Inversa (Braquiorradial)',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Antebraço (rodízio c/ Terça)',notes:'3 séries válidas diretas · Rodízio com Rosca de Punho da Terça'},
 ]},
-'comp_b':{name:'🌿 DOM · Comp B — Lower Regenerativo+Cardio',exercises:[
-{name:'Hip Thrust isométrico com banda (pulsos)',type:'resistido',series:3,reps:'20, 20, 20',load:'',rest:45,group:'Glúteo',notes:'Pulsos no topo da contração'},
-{name:'Abdução de Quadril na Máquina',type:'resistido',series:3,reps:'25, 25, 20',load:'',rest:45,group:'Glúteo Médio',notes:'Carga leve — volume'},
-{name:'Agachamento Búlgaro com peso corporal',type:'resistido',series:3,reps:'10, 10, 10',load:'',rest:60,group:'Glúteo/Quad',notes:'10 cada lado'},
-{name:'Panturrilha no degrau (excêntrico)',type:'resistido',series:3,reps:'15, 15, 15',load:'',rest:45,group:'Panturrilha',notes:'Foco na descida lenta'},
-{name:'Cardio regenerativo — bike/natação/caminhada',type:'cardio',duration:35,calories:0,distance:'',hr:0,notes:'5-6 km/h se caminhada · Recuperação ativa'},
+'regen_dom':{name:'🌿 DOM · Regenerativo — Cardio+Mobilidade+Sauna',exercises:[
+{name:'Cardio Regenerativo (bike/caminhada/natação)',type:'cardio',duration:25,calories:0,distance:'',hr:0,notes:'20-30min · Recuperação ativa'},
+{name:'Mobilidade + Bird-dog/Superman (leve)',type:'resistido',series:2,reps:'10, 10',load:'',rest:30,group:'Mobilidade/Core',notes:'Não conta como série válida · Ativação leve · Sauna a vapor: ver aba Derma'},
 ]},
 // === ALLPFIT — Liu Young — Ficha 11.2 ABCD ===
 'allp_a':{name:'🅰️ AllpFit A — Peito+Ombro+Tríceps (Liu)',exercises:[
@@ -992,7 +980,7 @@ const WORKOUT_PRESETS={
 ]},
 };
 const PRESET_GROUPS=[
-{id:'claude',label:'📋 UL PPL · Claude',color:'var(--accent)',keys:['push_a','pull_a','lower_a','upper','lower_b','comp_a','comp_b']},
+{id:'claude',label:'📋 Split Semanal · Claude',color:'var(--accent)',keys:['push_seg','pull_ter','legs_qua','regen_qui','upper_sex','lower_sab','regen_dom']},
 {id:'allpfit',label:'🏋️ AllpFit ABCD · Liu Young',color:'var(--yellow)',keys:['allp_a','allp_b','allp_c','allp_d']},
 {id:'bodytech',label:'💪 Bodytech ABC · Daniel',color:'var(--red)',keys:['bt_a','bt_b','bt_c']},
 {id:'arthur',label:'🎯 Arthur · Upper/Lower/Push/Pull',color:'var(--blue)',keys:['art_push','art_pull','art_lower','art_upper']},
