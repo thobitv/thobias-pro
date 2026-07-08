@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thobias Pro | v66 · 06/07/2026</title>
+    <title>Thobias Pro | v67 · 06/07/2026</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -127,7 +127,7 @@
             <div>
                 <div class="brand">Thobias Pro</div>
                 <div class="brand-sub" id="displayDate">--/--/----</div>
-                <div class="brand-sub" style="color:var(--text3);opacity:.5">v66 · <span id="buildDate">…</span></div>
+                <div class="brand-sub" style="color:var(--text3);opacity:.5">v67 · <span id="buildDate">…</span></div>
             </div>
             <div style="display:flex;align-items:flex-start;gap:10px">
                 <button id="themeToggle" onclick="toggleTheme()" style="background:var(--accent-glow);border:1px solid var(--border2);border-radius:12px;padding:6px 12px;display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--text2);font-size:14px;margin-top:2px;transition:all .2s;font-family:'JetBrains Mono',monospace;font-weight:600" title="Alternar tema"><span id="themeIcon">🌙</span><span id="themeLabel" style="font-size:9px;text-transform:uppercase;letter-spacing:.5px">Escuro</span></button>
@@ -175,6 +175,7 @@
     <div id="panel-gym" class="panel">
         <div style="display:flex;gap:8px;margin-bottom:10px">
             <button class="add-btn" onclick="openWorkoutTimer()" style="flex:1;margin:0;background:rgba(60,103,81,.08);border-color:var(--accent);color:var(--accent)">⏱ Cronômetro Musculação</button>
+            <button class="add-btn" onclick="openSaunaTimer()" style="flex:1;margin:0;background:rgba(196,144,0,.08);border-color:var(--yellow);color:var(--yellow)">🧖 Cronômetro Sauna</button>
         </div>
         <div id="gymLogPanel" style="display:none;background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:var(--radius);padding:12px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.03)">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
@@ -325,6 +326,12 @@
         <button class="mbtn mbtn-close" onclick="closeTimerModal()" style="flex:1">Fechar</button>
     </div>
 </div></div>
+<!-- SAUNA TIMER MODAL -->
+<div id="saunaModal" class="modal-bg"><div class="modal" style="max-width:400px">
+    <h3>🧖 Cronômetro de Sauna</h3>
+    <div id="saunaContent"></div>
+    <div class="modal-row"><button class="mbtn mbtn-close" onclick="closeModal('saunaModal')" style="flex:1">Fechar</button></div>
+</div></div>
 <!-- PRESET PREVIEW MODAL -->
 <div id="presetPreviewModal" class="modal-bg"><div class="modal" style="max-width:440px">
     <h3 id="presetPreviewTitle">Preset</h3>
@@ -339,10 +346,13 @@
 <div id="savePresetModal" class="modal-bg"><div class="modal" style="max-width:420px">
     <h3>💾 Salvar Treino como Preset</h3>
     <p id="savePresetInfo" style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5"></p>
-    <div class="fld"><label>Nome do preset</label><input type="text" id="newPresetName" placeholder="ex: Push (equipamento alternativo)"></div>
+    <div id="savePresetOverwriteRow" style="display:none;margin-bottom:14px">
+        <button class="mbtn" id="btnOverwritePreset" onclick="overwriteCurrentPreset()" style="width:100%;background:rgba(196,144,0,.1);color:var(--yellow);border:1px solid var(--yellow)">♻️ Sobrescrever "<span id="overwritePresetName"></span>"</button>
+    </div>
+    <div class="fld"><label>Ou salvar como novo preset personalizado</label><input type="text" id="newPresetName" placeholder="ex: Push (equipamento alternativo)"></div>
     <div class="modal-row">
         <button class="mbtn mbtn-close" onclick="skipSavePreset()">Pular</button>
-        <button class="mbtn mbtn-save" onclick="saveCurrentAsPreset()">Salvar Preset</button>
+        <button class="mbtn mbtn-save" onclick="saveCurrentAsPreset()">Salvar como Novo</button>
     </div>
 </div></div>
 <!-- DAY ROLLOVER MODAL -->
@@ -504,7 +514,7 @@ const DERM=[
 {id:'d16',time:'21:09',qty:'🧴',title:'Gel noturno manipulado (Ivermectina 1% + Ác. Azelaico 15%)',cat:'Rosácea',note:'⚠ SEM metronidazol · Aguardar 15-20min antes da barreira'},
 {id:'d17',time:'21:30',qty:'🧴',title:'Principia CM-01 Multirreparador (barreira noturna)',cat:'Rosto',note:'Finaliza rotina'},
 {id:'d18',time:'21:35',qty:'🧴',title:'Adapaleno (tórax — dias alternados)',cat:'Corpo',note:'Dias alternados · Não aplicar no rosto'},
-{id:'d23',time:'REGEN',qty:'🧖 10-15min',title:'Sauna a Vapor (50°C)',cat:'Recuperação',regenOnly:true,note:'⚠ Pós-treino ou dia regenerativo · Aguardar 10-15min de intervalo pós-esforço antes de entrar · 10-15min/sessão · 1-2 rounds com 5min de intervalo fora · 2-4x/semana · +500ml de água pós-sessão'},
+{id:'d23',time:'FLEX',qty:'🧖 10-15min',title:'Sauna a Vapor (50°C)',cat:'Recuperação',note:'⚠ Pós-treino ou dia regenerativo · Aguardar 10-15min de intervalo pós-esforço antes de entrar · 10-15min/sessão · 1-2 rounds com 5min de intervalo fora · 4-6x/semana (disponível todo dia — treino ou regenerativo) · +500ml de água pós-sessão'},
 ];
 const FOODS=[
 {fid:'f01',name:'Peito de frango grelhado',unit:'g',defQty:150,per100:{kcal:159,prot:32,carb:0,fat:2.5,fib:0},cat:'🥩 Proteína'},
@@ -585,12 +595,11 @@ function applyUserMods(panel){
   else state[panel].sort((a,b)=>a.time.localeCompare(b.time));
 }
 function initDay(dateStr){
-  const dow=new Date().getDay();const isTuesday=dow===2;const isRegenDay=dow===0||dow===4;
+  const dow=new Date().getDay();const isTuesday=dow===2;
   state.supps=JSON.parse(JSON.stringify(SUPPS));state.derm=JSON.parse(JSON.stringify(DERM));
   applyUserMods('supps');applyUserMods('derm');
   state.supps.forEach(t=>{if(t.tuesdayOnly)t.suspended=!isTuesday;});
-  state.derm.forEach(t=>{if(t.regenOnly)t.suspended=!isRegenDay;});
-  state.fluids={pure:0,decaf:0,other:0};state.food=[];state.gym=[];state.date=dateStr;
+  state.fluids={pure:0,decaf:0,other:0};state.food=[];state.gym=[];state.gymLoadedFromPreset=null;state.date=dateStr;
 }
 function load(){
   const r=localStorage.getItem(SK);if(r)state=JSON.parse(r);
@@ -598,6 +607,8 @@ function load(){
   if(!state.supps)state.supps=[];if(!state.derm)state.derm=[];if(!state.gym)state.gym=[];if(!state.food)state.food=[];
   if(!state.history)state.history=[];if(!state.gymHistory)state.gymHistory=[];if(!state.exerciseLibrary)state.exerciseLibrary=[];if(!state.weightHistory)state.weightHistory=[];
   if(!state.customPresets)state.customPresets=[];
+  if(!state.presetOverrides)state.presetOverrides={};
+  if(state.gymLoadedFromPreset===undefined)state.gymLoadedFromPreset=null;
   ensureUserMods();
   // Migração: remover itens descontinuados do v62
   const v62deprecated=['s01','s05','s13','s32','s39','s50'];
@@ -616,16 +627,17 @@ function load(){
       state.supps.push(fresh);
     }});
     if(!state.userMods.supps.order)state.supps.sort((a,b)=>a.time.localeCompare(b.time));
-    const dowNow=new Date().getDay();const isRegenDayNow=dowNow===0||dowNow===4;
     const existingDermIds=new Set(state.derm.map(t=>t.id));
     DERM.forEach(t=>{if(!existingDermIds.has(t.id)&&!state.userMods.derm.deleted.includes(t.id)){
       const fresh={...JSON.parse(JSON.stringify(t)),done:false,log:''};
-      if(t.regenOnly)fresh.suspended=!isRegenDayNow;
       if(state.userMods.derm.suspended[t.id]!==undefined)fresh.suspended=state.userMods.derm.suspended[t.id];
       if(state.userMods.derm.edited&&state.userMods.derm.edited[t.id])Object.assign(fresh,state.userMods.derm.edited[t.id]);
       state.derm.push(fresh);
     }});
     if(!state.userMods.derm.order)state.derm.sort((a,b)=>a.time.localeCompare(b.time));
+    // Migração: sauna (d23) deixou de ser restrita a dias regenerativos — remove suspensão automática antiga se o usuário nunca ajustou manualmente
+    const d23item=state.derm.find(t=>t.id==='d23');
+    if(d23item&&d23item.suspended&&state.userMods.derm.suspended['d23']===undefined){d23item.suspended=false;}
     save();
   }
 }
@@ -722,7 +734,7 @@ function deleteEx(){const id=document.getElementById('exEditId').value;if(confir
 function duplicateEx(){const id=document.getElementById('exEditId').value,orig=state.gym.find(x=>x.id===id);if(!orig)return;closeModal('exModal');document.getElementById('exEditId').value='new';setExType(orig.type||'resistido');document.getElementById('exName').value='Cópia de '+orig.name;document.getElementById('exNotes').value=orig.notes||'';if(orig.type==='cardio'){document.getElementById('exDuration').value=orig.duration||30;document.getElementById('exCalories').value=orig.calories||'';document.getElementById('exDistance').value=orig.distance||'';document.getElementById('exHR').value=orig.hr||'';}else{document.getElementById('exSeries').value=orig.series;document.getElementById('exReps').value=orig.reps;document.getElementById('exLoad').value=orig.load;document.getElementById('exRest').value=orig.rest;document.getElementById('exGroup').value=orig.group||'';}document.getElementById('exDelBtn').style.display='none';document.getElementById('exDupBtn').style.display='none';document.getElementById('exModal').classList.add('open');}
 function toggleExSet(eid,si){const ex=state.gym.find(x=>x.id===eid);if(!ex)return;if(!ex.completed)ex.completed=[];const i=ex.completed.indexOf(si);if(i>-1){ex.completed.splice(i,1);}else{ex.completed.push(si);if(!wkTimer.running&&wkTimer.elapsed===0)startWorkoutTimer();if(wkTimer.running&&wkTimer.subMode==='idle'){wkTimer.activeExId=eid;wkTimer.activeSetIdx=si;startSub('series');}if(document.getElementById('timerPip').style.display==='none'){document.getElementById('timerModal').classList.add('open');document.getElementById('btnMinimize').style.display='';renderTimerUI();}}save();}
 function toggleCardioDone(eid){const ex=state.gym.find(x=>x.id===eid);if(!ex)return;ex.done=!ex.done;save();}
-function finishDay(){if(!confirm('Encerrar o dia e salvar no histórico?'))return;_saveToHistory(state.date);state.supps.forEach(t=>{t.done=false;t.log='';});state.derm.forEach(t=>{t.done=false;t.log='';});state.gym=[];state.fluids={pure:0,decaf:0,other:0};save();alert('✅ Dia salvo no histórico!');}
+function finishDay(){if(!confirm('Encerrar o dia e salvar no histórico?'))return;_saveToHistory(state.date);state.supps.forEach(t=>{t.done=false;t.log='';});state.derm.forEach(t=>{t.done=false;t.log='';});state.gym=[];state.gymLoadedFromPreset=null;state.fluids={pure:0,decaf:0,other:0};save();alert('✅ Dia salvo no histórico!');}
 
 function _cv(n){return getComputedStyle(document.body).getPropertyValue(n).trim();}
 function openItemChart(id,panel){const item=state[panel].find(x=>x.id===id);if(!item)return;document.getElementById('chartTitle').textContent=item.title;const container=document.getElementById('chartContent');const data=[];const hist=[...state.history].reverse();hist.forEach(h=>{if(h.items&&h.items[id])data.push({date:h.date,done:h.items[id].done,log:h.items[id].log,scheduled:h.items[id].time||item.time});});if(data.length<2){container.innerHTML='<div class="chart-empty">Mínimo 2 dias de histórico.<br>Encerre o dia para salvar dados.</div>';document.getElementById('chartModal').classList.add('open');return;}function timeToMin(t){if(!t)return null;const[h,m]=t.split(':').map(Number);return h*60+(m||0);}const labels=data.map(d=>d.date.substring(0,5));const scheduled=timeToMin(data[0].scheduled);const values=data.map(d=>d.done?timeToMin(d.log):null);const validTimes=values.filter(v=>v!==null);const avgTime=validTimes.length?Math.round(validTimes.reduce((a,b)=>a+b,0)/validTimes.length):null;const compliance=Math.round((validTimes.length/data.length)*100);function minToStr(m){if(m==null)return'--';return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');}let html=`<div class="chart-subtitle">Aderência: <strong style="color:var(--accent)">${compliance}%</strong> (${validTimes.length}/${data.length} dias) · Horário médio: <strong style="color:var(--blue)">${minToStr(avgTime)}</strong> · Agendado: ${minToStr(scheduled)}</div>`;html+=`<canvas id="itemChartCvs" class="chart-canvas" width="400" height="200" style="display:block;width:100%;height:200px"></canvas>`;html+=`<div class="chart-legend"><div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--blue)"></div>Realizado</div><div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--red);opacity:.4"></div>Agendado</div><div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--text3)"></div>Não tomou</div></div>`;container.innerHTML=html;document.getElementById('chartModal').classList.add('open');requestAnimationFrame(()=>{const cvs=document.getElementById('itemChartCvs');const ctx=cvs.getContext('2d');const dpr=window.devicePixelRatio||1;cvs.width=cvs.offsetWidth*dpr;cvs.height=200*dpr;ctx.scale(dpr,dpr);const W=cvs.offsetWidth,H=200;const pad={t:20,r:15,b:30,l:40};const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;const allVals=[...validTimes,scheduled].filter(v=>v!=null);let yMin=Math.min(...allVals)-30;let yMax=Math.max(...allVals)+30;if(yMax-yMin<60){yMin-=30;yMax+=30;}function xPos(i){return pad.l+i*(cw/(labels.length-1||1));}function yPos(v){return pad.t+ch-(((v-yMin)/(yMax-yMin))*ch);}ctx.strokeStyle='rgba(0,0,0,.03)';ctx.lineWidth=1;for(let i=0;i<=4;i++){const y=pad.t+i*(ch/4);ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();ctx.fillStyle=_cv('--text3');ctx.font='9px JetBrains Mono';ctx.textAlign='right';ctx.fillText(minToStr(Math.round(yMax-(i/4)*(yMax-yMin))),pad.l-4,y+3);}ctx.textAlign='center';ctx.fillStyle=_cv('--text3');ctx.font='8px JetBrains Mono';const step=Math.max(1,Math.floor(labels.length/8));labels.forEach((l,i)=>{if(i%step===0||i===labels.length-1)ctx.fillText(l,xPos(i),H-6);});if(scheduled!=null){ctx.strokeStyle='rgba(186,26,26,.2)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(pad.l,yPos(scheduled));ctx.lineTo(W-pad.r,yPos(scheduled));ctx.stroke();ctx.setLineDash([]);}ctx.strokeStyle=_cv('--blue');ctx.lineWidth=2;ctx.beginPath();let started=false;values.forEach((v,i)=>{if(v!==null){if(!started){ctx.moveTo(xPos(i),yPos(v));started=true;}else ctx.lineTo(xPos(i),yPos(v));}});ctx.stroke();values.forEach((v,i)=>{ctx.beginPath();if(v!==null){ctx.fillStyle=_cv('--blue');ctx.arc(xPos(i),yPos(v),3,0,Math.PI*2);}else{ctx.fillStyle=_cv('--text3');ctx.arc(xPos(i),yPos(scheduled||yMin),3,0,Math.PI*2);}ctx.fill();});});}
@@ -739,12 +751,39 @@ const ITEM_INFO={'s01':{obj:'Corrigir ferritina (meta 80-100 ng/mL)',rec:'Jejum 
 's59':{obj:'Hipnótico — manutenção do sono (antagonismo H1+alfa1)',rec:'1/3 do comprimido de Donaren Retard 150mg = 50mg. Ao deitar.',interval:'⚠ Serotonérgico — sobreposição c/ escitalopram · Monitorar: agitação, tremor, sudorese'},
 's60':{obj:'GABA exógeno — relaxamento periférico (eixo vagal)',rec:'Blue Calm Pura Vida 150mg. Tomar às 19h.',interval:'Absorção central limitada em adultos — efeito predominantemente periférico'},
 's61':{obj:'Profilaxia HSV-1 durante protocolo GHK-Cu',rec:'JEJUM obrigatório. 1.500mg/dia. Lisina compete com arginina pelo transportador CAT-1 — reduz replicação viral.',interval:'≥6h antes da Arginina/Citrulina (s55, 21:15→06:15 = ~9h ✓) · Manter enquanto usar GHK-Cu'},
-'d23':{obj:'Recuperação muscular + adaptação ao calor (heat shock proteins, vasodilatação)',rec:'Pós-treino ou em dia regenerativo. Aguardar 10-15min de intervalo pós-esforço antes de entrar. 10-15min por sessão, 1-2 rounds com 5min de intervalo fora da sauna. 2-4x/semana. Hidratar com +500ml de água pós-sessão.',interval:'⚠ Monitorar flushing facial (rosácea) · Levantar devagar ao sair (risco de hipotensão ortostática c/ minoxidil oral + candesartana) · Evitar logo após propranolol SOS'}};
+'d23':{obj:'Recuperação muscular + adaptação ao calor (heat shock proteins, vasodilatação)',rec:'Pós-treino ou em dia regenerativo. Aguardar 10-15min de intervalo pós-esforço antes de entrar. 10-15min por sessão, 1-2 rounds com 5min de intervalo fora da sauna. 4-6x/semana — disponível em qualquer dia (treino ou regenerativo), o usuário escolhe as sessões na prática. Hidratar com +500ml de água pós-sessão.',interval:'⚠ Monitorar flushing facial (rosácea) · Levantar devagar ao sair (risco de hipotensão ortostática c/ minoxidil oral + candesartana) · Evitar logo após propranolol SOS'}};
 function openItemInfo(id,panel){const item=state[panel].find(x=>x.id===id);if(!item)return;const info=ITEM_INFO[id];document.getElementById('infoTitle').textContent=item.title;let html='';if(info){html+=`<div style="margin-bottom:12px;padding:10px;background:rgba(60,103,81,.06);border-radius:8px;border-left:3px solid var(--accent)"><strong style="color:var(--accent);font-size:10px;text-transform:uppercase">🎯 Objetivo</strong><br>${info.obj}</div>`;html+=`<div style="margin-bottom:12px;padding:10px;background:rgba(56,98,132,.06);border-radius:8px;border-left:3px solid var(--blue)"><strong style="color:var(--blue);font-size:10px;text-transform:uppercase">📋 Recomendação</strong><br>${info.rec}</div>`;html+=`<div style="margin-bottom:12px;padding:10px;background:rgba(139,76,80,.06);border-radius:8px;border-left:3px solid var(--orange)"><strong style="color:var(--orange);font-size:10px;text-transform:uppercase">⏰ Intervalos</strong><br>${info.interval}</div>`;}html+=`<div style="padding:8px;background:rgba(0,0,0,.02);border-radius:8px;font-size:11px"><div style="color:var(--text3)">💊 ${item.qty} · ⏰ ${item.time} · 🏷 ${item.cat}</div>`;if(item.note)html+=`<div style="color:var(--text3);margin-top:6px">📝 ${item.note}</div>`;if(item.userNote)html+=`<div style="color:var(--yellow);margin-top:6px">✏️ ${item.userNote}</div>`;html+=`</div>`;document.getElementById('infoContent').innerHTML=html;document.getElementById('infoModal').classList.add('open');}
 let wkTimer={running:false,start:0,elapsed:0,interval:null,subMode:'idle',subStart:0,subElapsed:0,subInterval:null,totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0,activeExId:null,activeSetIdx:-1,countdown:0,countdownInterval:null,log:[]};
 let pipScale=1.0;
 function applyPipScale(){const el=document.getElementById('timerPip');if(!el)return;el.style.transformOrigin='bottom right';el.style.transform=`scale(${pipScale})`;}
 function fmtTimer(ms){const s=Math.floor(ms/1000),m=Math.floor(s/60),h=Math.floor(m/60);return(h?String(h).padStart(2,'0')+':':'')+String(m%60).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+let saunaTimer={running:false,start:0,elapsed:0,interval:null,announcedMin:0};
+function openSaunaTimer(){renderSaunaUI();document.getElementById('saunaModal').classList.add('open');}
+function speakSaunaTime(min){if(min==null||min<=0)return;try{if(!('speechSynthesis' in window))return;const label=min===1?'1 minuto':min+' minutos';const utter=new SpeechSynthesisUtterance(label);utter.lang='pt-BR';speechSynthesis.speak(utter);}catch(e){}}
+function startSaunaTimer(){
+  try{if('speechSynthesis' in window){speechSynthesis.cancel();const unlock=new SpeechSynthesisUtterance(' ');unlock.volume=0;speechSynthesis.speak(unlock);}}catch(e){}
+  saunaTimer.running=true;saunaTimer.start=Date.now()-saunaTimer.elapsed;saunaTimer.announcedMin=Math.floor(saunaTimer.elapsed/60000);
+  saunaTimer.interval=setInterval(function(){
+    saunaTimer.elapsed=Date.now()-saunaTimer.start;
+    const currentMin=Math.floor(saunaTimer.elapsed/60000);
+    if(currentMin>saunaTimer.announcedMin){saunaTimer.announcedMin=currentMin;speakSaunaTime(currentMin);}
+    renderSaunaUI();
+  },500);
+  renderSaunaUI();
+}
+function pauseSaunaTimer(){saunaTimer.running=false;clearInterval(saunaTimer.interval);saunaTimer.interval=null;renderSaunaUI();}
+function resetSaunaTimer(){saunaTimer.running=false;clearInterval(saunaTimer.interval);saunaTimer.interval=null;saunaTimer.elapsed=0;saunaTimer.announcedMin=0;try{if('speechSynthesis' in window)speechSynthesis.cancel();}catch(e){}renderSaunaUI();}
+function renderSaunaUI(){
+  const el=document.getElementById('saunaContent');if(!el)return;
+  const elapsed=saunaTimer.running?(Date.now()-saunaTimer.start):saunaTimer.elapsed;
+  let html=`<div style="text-align:center;margin:16px 0"><div style="font-family:'JetBrains Mono',monospace;font-size:42px;font-weight:800;color:${saunaTimer.running?'var(--yellow)':'var(--text2)'}">${fmtTimer(elapsed)}</div><div style="font-size:10px;color:var(--text3);margin-top:4px">TEMPO NA SAUNA</div><div style="font-size:9px;color:var(--text3);margin-top:6px">🎯 Referência: 10-15min por sessão · aviso por voz a cada minuto</div></div>`;
+  html+=`<div style="display:flex;gap:8px;justify-content:center">`;
+  if(!saunaTimer.running&&saunaTimer.elapsed===0){html+=`<button class="mbtn mbtn-save" onclick="startSaunaTimer()" style="flex:1;background:var(--yellow)">▶ Iniciar</button>`;}
+  else if(saunaTimer.running){html+=`<button class="mbtn mbtn-del" onclick="pauseSaunaTimer()" style="flex:1">⏸ Pausar</button>`;}
+  else{html+=`<button class="mbtn mbtn-save" onclick="startSaunaTimer()" style="flex:1;background:var(--yellow)">▶ Retomar</button><button class="mbtn mbtn-del" onclick="resetSaunaTimer()" style="flex:1">↺ Zerar</button>`;}
+  html+=`</div>`;
+  el.innerHTML=html;
+}
 function openWorkoutTimer(){renderTimerUI();document.getElementById('timerModal').classList.add('open');document.getElementById('btnMinimize').style.display='';}
 function closeTimerModal(){if(wkTimer.running||wkTimer.elapsed>0){minimizeTimer();}else{stopWorkoutTimer();closeModal('timerModal');}}
 function minimizeTimer(){closeModal('timerModal');document.getElementById('timerPip').style.display='block';renderPip();}
@@ -796,9 +835,11 @@ function pauseWorkoutTimer(){wkTimer.running=false;wkTimer.elapsed+=Date.now()-w
 function resumeWorkoutTimer(){wkTimer.running=true;wkTimer.start=Date.now();wkTimer.interval=setInterval(function(){metroTick();renderTimerUI();renderPip();saveTimerState();},500);renderTimerUI();renderPip();if(!window._timerHistoryPushed){history.pushState({timerGuard:true},'');window._timerHistoryPushed=true;}}
 function stopWorkoutTimer(){if(wkTimer.interval){clearInterval(wkTimer.interval);wkTimer.interval=null;}if(wkTimer.subInterval){clearInterval(wkTimer.subInterval);wkTimer.subInterval=null;}if(wkTimer.countdownInterval){clearInterval(wkTimer.countdownInterval);wkTimer.countdownInterval=null;}metro.active=false;metro.lastSec=-1;window._timerHistoryPushed=false;}
 let _pendingPresetExercises=null;
-function finishWorkoutTimer(){const totalMs=wkTimer.elapsed;if(wkTimer.subMode!=='idle')endSub();clearInterval(wkTimer.interval);wkTimer.interval=null;const totalMin=Math.round(totalMs/60000),seriesMin=(wkTimer.totalSeriesTime/60000).toFixed(1),restMin=(wkTimer.totalRestTime/60000).toFixed(1);const cals=prompt('Calorias estimadas (smartwatch):','0');const notes=`⏱ ${totalMin}min total · 🏋️ ${seriesMin}min tensão (${wkTimer.seriesCount} séries) · ⏳ ${restMin}min intervalo (${wkTimer.restCount}x)`;_pendingPresetExercises=JSON.parse(JSON.stringify(state.gym));state.gym.push({id:'ex'+Date.now(),name:'Musculação',type:'cardio',duration:totalMin,calories:parseInt(cals)||0,distance:'',hr:0,notes,done:true,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),isGeneric:true,seriesTime:wkTimer.totalSeriesTime,restTime:wkTimer.totalRestTime,seriesCount:wkTimer.seriesCount,restCount:wkTimer.restCount});wkTimer={running:false,start:0,elapsed:0,interval:null,subMode:'idle',subStart:0,subElapsed:0,subInterval:null,totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0,countdown:0,countdownInterval:null,log:[]};metro.active=false;metro.lastSec=-1;save();closeModal('timerModal');if(_pendingPresetExercises&&_pendingPresetExercises.length){document.getElementById('savePresetInfo').textContent=`${_pendingPresetExercises.length} exercício(s) registrados neste treino. Salvar como novo preset para reutilizar depois?`;document.getElementById('newPresetName').value='';document.getElementById('savePresetModal').classList.add('open');}else{_pendingPresetExercises=null;}}
+function finishWorkoutTimer(){const totalMs=wkTimer.elapsed;if(wkTimer.subMode!=='idle')endSub();clearInterval(wkTimer.interval);wkTimer.interval=null;const totalMin=Math.round(totalMs/60000),seriesMin=(wkTimer.totalSeriesTime/60000).toFixed(1),restMin=(wkTimer.totalRestTime/60000).toFixed(1);const cals=prompt('Calorias estimadas (smartwatch):','0');const notes=`⏱ ${totalMin}min total · 🏋️ ${seriesMin}min tensão (${wkTimer.seriesCount} séries) · ⏳ ${restMin}min intervalo (${wkTimer.restCount}x)`;_pendingPresetExercises=JSON.parse(JSON.stringify(state.gym));state.gym.push({id:'ex'+Date.now(),name:'Musculação',type:'cardio',duration:totalMin,calories:parseInt(cals)||0,distance:'',hr:0,notes,done:true,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),isGeneric:true,seriesTime:wkTimer.totalSeriesTime,restTime:wkTimer.totalRestTime,seriesCount:wkTimer.seriesCount,restCount:wkTimer.restCount});wkTimer={running:false,start:0,elapsed:0,interval:null,subMode:'idle',subStart:0,subElapsed:0,subInterval:null,totalSeriesTime:0,totalRestTime:0,seriesCount:0,restCount:0,countdown:0,countdownInterval:null,log:[]};metro.active=false;metro.lastSec=-1;save();closeModal('timerModal');if(_pendingPresetExercises&&_pendingPresetExercises.length){document.getElementById('savePresetInfo').textContent=`${_pendingPresetExercises.length} exercício(s) registrados neste treino. Salvar como preset para reutilizar depois?`;document.getElementById('newPresetName').value='';const loadedKey=state.gymLoadedFromPreset;const loadedPreset=loadedKey?getPresetByKey(loadedKey):null;const overwriteRow=document.getElementById('savePresetOverwriteRow');if(loadedPreset){overwriteRow.style.display='block';document.getElementById('overwritePresetName').textContent=loadedPreset.name;}else{overwriteRow.style.display='none';}document.getElementById('savePresetModal').classList.add('open');}else{_pendingPresetExercises=null;}}
 function skipSavePreset(){_pendingPresetExercises=null;document.getElementById('newPresetName').value='';closeModal('savePresetModal');}
-function saveCurrentAsPreset(){const name=document.getElementById('newPresetName').value.trim();if(!name){alert('Dê um nome ao preset.');return;}if(!_pendingPresetExercises||!_pendingPresetExercises.length){alert('Nenhum exercício para salvar.');closeModal('savePresetModal');return;}if(!state.customPresets)state.customPresets=[];const cleanExs=_pendingPresetExercises.map(ex=>{const clean={name:ex.name,type:ex.type,group:ex.group||'',notes:ex.notes||''};if(ex.type==='cardio'){clean.duration=ex.duration||0;clean.calories=0;clean.distance=ex.distance||'';clean.hr=ex.hr||0;}else{clean.series=ex.series;clean.reps=ex.reps||'';clean.load=ex.load||'';clean.rest=ex.rest||60;}return clean;});const key='custom_'+Date.now();state.customPresets.push({key,name,exercises:cleanExs,createdAt:new Date().toISOString()});save();_pendingPresetExercises=null;closeModal('savePresetModal');renderPresetGroups();alert('✅ Preset "'+name+'" salvo! Já disponível na lista de presets.');}
+function cleanExercisesForPreset(exercises){return exercises.map(ex=>{const clean={name:ex.name,type:ex.type,group:ex.group||'',notes:ex.notes||''};if(ex.type==='cardio'){clean.duration=ex.duration||0;clean.calories=0;clean.distance=ex.distance||'';clean.hr=ex.hr||0;}else{clean.series=ex.series;clean.reps=ex.reps||'';clean.load=ex.load||'';clean.rest=ex.rest||60;}return clean;});}
+function saveCurrentAsPreset(){const name=document.getElementById('newPresetName').value.trim();if(!name){alert('Dê um nome ao preset.');return;}if(!_pendingPresetExercises||!_pendingPresetExercises.length){alert('Nenhum exercício para salvar.');closeModal('savePresetModal');return;}if(!state.customPresets)state.customPresets=[];const cleanExs=cleanExercisesForPreset(_pendingPresetExercises);const key='custom_'+Date.now();state.customPresets.push({key,name,exercises:cleanExs,createdAt:new Date().toISOString()});save();_pendingPresetExercises=null;closeModal('savePresetModal');renderPresetGroups();alert('✅ Preset "'+name+'" salvo! Já disponível na lista de presets.');}
+function overwriteCurrentPreset(){const key=state.gymLoadedFromPreset;if(!key)return;if(!_pendingPresetExercises||!_pendingPresetExercises.length){alert('Nenhum exercício para salvar.');closeModal('savePresetModal');return;}const original=getPresetByKey(key);const name=original?original.name:key;const cleanExs=cleanExercisesForPreset(_pendingPresetExercises);const customIdx=(state.customPresets||[]).findIndex(p=>p.key===key);if(customIdx>-1){state.customPresets[customIdx].exercises=cleanExs;}else{if(!state.presetOverrides)state.presetOverrides={};state.presetOverrides[key]={name,exercises:cleanExs,updatedAt:new Date().toISOString()};}save();_pendingPresetExercises=null;closeModal('savePresetModal');renderPresetGroups();alert('✅ Preset "'+name+'" atualizado com os exercícios de hoje!');}
 function startSub(mode){
   if(mode==='series'){
     wkTimer.subMode='countdown';wkTimer.countdown=3;
@@ -857,41 +898,50 @@ function updateFoodTotals(){let kcal=0,prot=0,carb=0,fat=0,fib=0;state.food.filt
 function render(){document.getElementById('displayDate').textContent=state.date;const allActive=[...state.supps,...state.derm].filter(t=>!t.suspended);const done=allActive.filter(t=>t.done).length;const score=Math.round((done/(allActive.length||1))*100);document.getElementById('lblScore').textContent=score;const circ=2*Math.PI*15.5;document.getElementById('scoreArc').setAttribute('stroke-dashoffset',circ-(circ*score/100));const fp=state.fluids.pure||0,fd=state.fluids.decaf||0,fo=state.fluids.other||0,totalW=fp+fd+fo;document.getElementById('lblWater').textContent=totalW;document.getElementById('lblPure').textContent=fp;document.getElementById('lblDecaf').textContent=fd;document.getElementById('lblOther').textContent=fo;document.getElementById('barW').style.width=Math.min((fp/4000)*100,100)+'%';document.getElementById('barC').style.width=Math.min((fd/4000)*100,100)+'%';document.getElementById('barO').style.width=Math.min((fo/4000)*100,100)+'%';renderList('supps','panel-supps');renderList('derm','panel-derm');renderGym();renderFood();}
 const WORKOUT_PRESETS={
 'push_seg':{name:'🏋️ SEG · Push — Peito+Ombro+Tríceps',exercises:[
-{name:'Supino Reto Máquina',type:'resistido',series:6,reps:'18, 4, 4, 7, 7, 7',load:'',rest:120,group:'Peito',notes:'Aquecimento (S1 ~50-60%, 15-20 reps) → Feeder (S2-3, 75%→90%) → Válidas (S4-6, 85-100%, RIR 1-2) · Primeiro exercício do dia'},
-{name:'Desenvolvimento Arnold',type:'resistido',series:4,reps:'4, 7, 7, 7',load:'',rest:90,group:'Ombro',notes:'Feeder (S1, ~75-90%) → Válidas (S2-4, 85-100%, RIR 1-2)'},
-{name:'Elevação Lateral Máquina',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Ombro Lateral (isolamento)',notes:'3 séries válidas diretas (85-100%, RIR 1-2) · Sem aquecimento/feeder'},
-{name:'Tríceps Francês c/ Corda Cross',type:'resistido',series:4,reps:'4, 7, 7, 7',load:'',rest:90,group:'Tríceps',notes:'Feeder (S1) → Válidas (S2-4, RIR 1-2)'},
+{name:'Supino Reto Máquina',type:'resistido',series:7,reps:'18, 3, 3, 7, 7, 7, 7',load:'',rest:120,group:'Peito',notes:'Aquecimento (S1, 15-20 reps, ~40-50%) → Feeder (S2-3, 3 reps, ~85-95%) → Válidas (S4-7, 6-8 reps, RIR 1-2, 85-100%) · Primeiro exercício do dia · Crédito 0,5 série p/ Ombro + 0,5 p/ Tríceps'},
+{name:'Desenvolvimento Máquina (pegada neutra)',type:'resistido',series:5,reps:'3, 3, 7, 7, 7',load:'',rest:90,group:'Ombro (pegada neutra — restrição ombro D)',notes:'⚠ Restrição ombro D: sem Arnold nem rotação combinada a empurrão overhead · Feeder (S1-2) → Válidas (S3-5, 6-8 reps, RIR 1-2) · Crédito 0,5 série p/ Tríceps'},
+{name:'Elevação Lateral Máquina',type:'resistido',series:3,reps:'10, 10, 10',load:'',rest:0,group:'Ombro Lateral (isolamento)',notes:'3 séries válidas diretas (8-12 reps, RIR 1-2) · Bem tolerado · Superset com Crucifixo na Polia Sentada → (sem descanso)'},
+{name:'Crucifixo na Polia Sentada',type:'resistido',series:4,reps:'10, 10, 10, 10',load:'',rest:60,group:'Peito (isolamento)',notes:'NOVO · Braços independentes se disponível · Superset com Elevação Lateral · Descanso após o par'},
+{name:'Tríceps Francês na Polia/Crossover',type:'resistido',series:6,reps:'3, 3, 7, 7, 7, 7',load:'',rest:0,group:'Tríceps',notes:'Feeder (S1-2) → Válidas (S3-6, 6-8 reps, RIR 1-2) · Superset com Prancha → (sem descanso)'},
+{name:'Prancha',type:'resistido',series:3,reps:'40s, 35s, 30s',load:'',rest:60,group:'Core',notes:'Superset com Tríceps Francês · Descanso após o par · Não conta como volume de grupamento'},
 ]},
 'pull_ter':{name:'🔵 TER · Pull + Antebraço — Costas+Bíceps',exercises:[
-{name:'Puxada Triângulo Neutro (polia)',type:'resistido',series:6,reps:'18, 4, 4, 7, 7, 7',load:'',rest:120,group:'Costas/Dorsal',notes:'Aquecimento (S1) → Feeder (S2-3) → Válidas (S4-6, RIR 1-2) · Primeiro exercício do dia'},
-{name:'Remada Sentada na Polia',type:'resistido',series:4,reps:'4, 7, 7, 7',load:'',rest:90,group:'Costas (secundário)',notes:'Feeder (S1) → Válidas (S2-4, RIR 1-2)'},
-{name:'Rosca Scott Máquina Unilateral',type:'resistido',series:4,reps:'4, 7, 7, 7',load:'',rest:90,group:'Bíceps',notes:'Feeder (S1) → Válidas (S2-4, RIR 1-2) · Cada braço'},
-{name:'Rosca de Punho com Barra',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Antebraço (Flexores)',notes:'NOVO · 3 séries válidas diretas · Sistematização antebraço'},
-{name:'Rosca de Punho Invertida',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Antebraço (Extensores)',notes:'NOVO · 3 séries válidas diretas · Sistematização antebraço'},
+{name:'Puxada Triângulo Neutro (polia)',type:'resistido',series:7,reps:'18, 3, 3, 7, 7, 7, 7',load:'',rest:120,group:'Costas',notes:'Aquecimento (S1) → Feeder (S2-3) → Válidas (S4-7, 6-8 reps, RIR 1-2) · Primeiro exercício do dia · Crédito 0,5 série p/ Bíceps'},
+{name:'Remada Sentada na Polia',type:'resistido',series:6,reps:'3, 3, 7, 7, 7, 7',load:'',rest:90,group:'Costas (secundário)',notes:'Feeder (S1-2) → Válidas (S3-6, 6-8 reps, RIR 1-2) · Crédito 0,5 série p/ Bíceps'},
+{name:'Rosca Scott Máquina Unilateral',type:'resistido',series:6,reps:'3, 3, 7, 7, 7, 7',load:'',rest:90,group:'Bíceps',notes:'Feeder (S1-2) → Válidas (S3-6, 6-8 reps, RIR 1-2) · Cada braço'},
+{name:'Rosca de Punho com Halteres',type:'resistido',series:4,reps:'9, 9, 9, 9',load:'',rest:60,group:'Antebraço (Flexores)',notes:'NOVO · 4 séries válidas diretas (8-10 reps) · Sem barras — halteres'},
+{name:'Rosca de Punho Invertida com Halteres',type:'resistido',series:4,reps:'9, 9, 9, 9',load:'',rest:0,group:'Antebraço (Extensores)',notes:'NOVO · 4 séries válidas diretas (8-10 reps) · Sem barras — halteres · Superset com Pallof Press → (sem descanso)'},
+{name:'Pallof Press',type:'resistido',series:3,reps:'12, 12, 12',load:'',rest:60,group:'Core',notes:'Superset com Rosca de Punho Invertida · Descanso após o par · Cada lado · Não conta como volume de grupamento'},
 ]},
 'legs_qua':{name:'🦵 QUA · Legs + Lombar — Quadríceps+Posterior',exercises:[
-{name:'Leg Press 45°',type:'resistido',series:6,reps:'18, 4, 4, 7, 7, 7',load:'',rest:120,group:'Quadríceps',notes:'Aquecimento (S1) → Feeder (S2-3) → Válidas (S4-6, RIR 1-2) · Primeiro exercício do dia'},
-{name:'Cadeira Extensora',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Quadríceps (isolamento)',notes:'3 séries válidas diretas'},
-{name:'Mesa Flexora',type:'resistido',series:4,reps:'4, 7, 7, 7',load:'',rest:90,group:'Posterior',notes:'Feeder (S1) → Válidas (S2-4, RIR 1-2)'},
-{name:'Panturrilha (Leg Press)',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:45,group:'Panturrilha',notes:'3 séries válidas diretas · Abaixo da meta semanal (6-10) — avaliar 2ª exposição no Sábado'},
-{name:'Hiperextensão Lombar em Banco Romano',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Lombar',notes:'NOVO · 3 séries válidas diretas · Sistematização lombar'},
+{name:'Leg Press 45°',type:'resistido',series:7,reps:'18, 3, 3, 7, 7, 7, 7',load:'',rest:120,group:'Quadríceps',notes:'Aquecimento (S1) → Feeder (S2-3) → Válidas (S4-7, 6-8 reps, RIR 1-2) · Primeiro exercício do dia'},
+{name:'Cadeira Extensora',type:'resistido',series:4,reps:'10, 10, 10, 10',load:'',rest:60,group:'Quadríceps (isolamento)',notes:'4 séries válidas diretas (8-12 reps)'},
+{name:'Cadeira Flexora',type:'resistido',series:6,reps:'3, 3, 7, 7, 7, 7',load:'',rest:90,group:'Posterior',notes:'Feeder (S1-2) → Válidas (S3-6, 6-8 reps, RIR 1-2) · Cadeira no lugar de Mesa Flexora'},
+{name:'Panturrilha (Leg Press)',type:'resistido',series:4,reps:'11, 11, 11, 11',load:'',rest:45,group:'Panturrilha',notes:'4 séries válidas diretas (10-12 reps)'},
+{name:'Hiperextensão Lombar em Banco Romano',type:'resistido',series:4,reps:'9, 9, 9, 9',load:'',rest:0,group:'Lombar',notes:'NOVO · 4 séries válidas diretas (8-10 reps) · Superset com Ab Wheel Rollout → (sem descanso)'},
+{name:'Ab Wheel Rollout',type:'resistido',series:3,reps:'12, 11, 10',load:'',rest:60,group:'Core',notes:'Superset com Hiperextensão Lombar · Descanso após o par · Não conta como volume de grupamento'},
 ]},
 'regen_qui':{name:'🌿 QUI · Regenerativo — Cardio+Mobilidade+Sauna',exercises:[
 {name:'Cardio Regenerativo (bike/caminhada/natação)',type:'cardio',duration:25,calories:0,distance:'',hr:0,notes:'20-30min · Recuperação ativa'},
 {name:'Mobilidade + Bird-dog/Superman (leve)',type:'resistido',series:2,reps:'10, 10',load:'',rest:30,group:'Mobilidade/Core',notes:'Não conta como série válida · Ativação leve · Sauna a vapor: ver aba Derma'},
 ]},
 'upper_sex':{name:'💪 SEX · Upper — Peito+Costas+Ombro',exercises:[
-{name:'Supino Inclinado com Halteres',type:'resistido',series:6,reps:'18, 4, 4, 7, 7, 7',load:'',rest:120,group:'Peito Superior',notes:'Aquecimento (S1) → Feeder (S2-3) → Válidas (S4-6, RIR 1-2) · Primeiro exercício do dia'},
-{name:'Barra Fixa Supinada',type:'resistido',series:4,reps:'4, 7, 7, 7',load:'',rest:90,group:'Costas',notes:'Feeder (S1) → Válidas (S2-4, RIR 1-2)'},
-{name:'Face Pull',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Manguito/Ombro Posterior',notes:'3 séries válidas diretas'},
-{name:'Bayesian Curl Unilateral',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Bíceps',notes:'3 séries válidas diretas · Cada braço'},
-{name:'Tríceps na Polia',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Tríceps',notes:'3 séries válidas diretas'},
+{name:'Supino Inclinado Articulado (máquina)',type:'resistido',series:7,reps:'18, 3, 3, 7, 7, 7, 7',load:'',rest:120,group:'Peito Superior',notes:'Aquecimento (S1) → Feeder (S2-3) → Válidas (S4-7, 6-8 reps, RIR 1-2) · Primeiro exercício do dia · Máquina no lugar de barra livre · Crédito 0,5 série p/ Ombro + 0,5 p/ Tríceps'},
+{name:'Barra Fixa Supinada',type:'resistido',series:6,reps:'3, 3, 7, 7, 7, 7',load:'',rest:90,group:'Costas',notes:'Feeder (S1-2) → Válidas (S3-6, 6-8 reps, RIR 1-2) · Crédito 0,5 série p/ Bíceps'},
+{name:'Face Pull',type:'resistido',series:3,reps:'11, 11, 11',load:'',rest:60,group:'Manguito/Ombro Posterior',notes:'3 séries válidas diretas (10-12 reps) · Bem tolerado — manter'},
+{name:'Crucifixo Inverso na Máquina',type:'resistido',series:3,reps:'11, 11, 11',load:'',rest:60,group:'Ombro Posterior (hipertrofia)',notes:'NOVO · 3 séries válidas diretas (10-12 reps)'},
+{name:'Bayesian Curl Unilateral (polia)',type:'resistido',series:4,reps:'7, 7, 7, 7',load:'',rest:60,group:'Bíceps',notes:'4 séries válidas diretas (6-8 reps) · Cada braço'},
+{name:'Tríceps na Polia',type:'resistido',series:4,reps:'7, 7, 7, 7',load:'',rest:0,group:'Tríceps',notes:'4 séries válidas diretas (6-8 reps) · Superset com Crunch Oblíquo → (sem descanso)'},
+{name:'Crunch Oblíquo com Rotação',type:'resistido',series:3,reps:'15, 15, 15',load:'',rest:60,group:'Core',notes:'Superset com Tríceps na Polia · Descanso após o par · Cada lado · Não conta como volume de grupamento'},
 ]},
-'lower_sab':{name:'🍑 SÁB · Lower + Antebraço — Posterior+Glúteo',exercises:[
-{name:'Agachamento Búlgaro',type:'resistido',series:6,reps:'18, 4, 4, 7, 7, 7',load:'',rest:120,group:'Pernas (variação)',notes:'Aquecimento (S1) → Feeder (S2-3) → Válidas (S4-6, RIR 1-2) · Primeiro exercício do dia'},
-{name:'Terra Romeno com Barra',type:'resistido',series:4,reps:'4, 7, 7, 7',load:'',rest:90,group:'Posterior',notes:'Feeder (S1) → Válidas (S2-4, RIR 1-2) · Estímulo indireto de lombar'},
-{name:'Cadeira Abdutora',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Glúteo Médio',notes:'3 séries válidas diretas'},
-{name:'Rosca Inversa (Braquiorradial)',type:'resistido',series:3,reps:'7, 7, 7',load:'',rest:60,group:'Antebraço (rodízio c/ Terça)',notes:'3 séries válidas diretas · Rodízio com Rosca de Punho da Terça'},
+'lower_sab':{name:'🍑 SÁB · Lower + Antebraço + Lombar (2ª exposição)',exercises:[
+{name:'Agachamento na Máquina (Hack/V-Squat)',type:'resistido',series:7,reps:'18, 3, 3, 7, 7, 7, 7',load:'',rest:120,group:'Quadríceps',notes:'Aquecimento (S1) → Feeder (S2-3) → Válidas (S4-7, 6-8 reps, RIR 1-2) · Primeiro exercício do dia · Sem barras — máquina'},
+{name:'Stiff/Terra Romeno na Máquina',type:'resistido',series:6,reps:'3, 3, 7, 7, 7, 7',load:'',rest:90,group:'Posterior',notes:'Feeder (S1-2) → Válidas (S3-6, 6-8 reps, RIR 1-2) · Sem barras — máquina · Crédito 0,5 série p/ Lombar'},
+{name:'Abdutora em Pé',type:'resistido',series:4,reps:'11, 11, 11, 11',load:'',rest:60,group:'Glúteo Médio',notes:'4 séries válidas diretas (10-12 reps) · Em pé no lugar de sentada'},
+{name:'Panturrilha (variação, 2ª exposição)',type:'resistido',series:4,reps:'11, 11, 11, 11',load:'',rest:45,group:'Panturrilha (2ª exposição)',notes:'4 séries válidas diretas (10-12 reps)'},
+{name:'Rosca Inversa com Halteres',type:'resistido',series:4,reps:'9, 9, 9, 9',load:'',rest:60,group:'Antebraço',notes:'4 séries válidas diretas (8-10 reps) · Sem barras — halteres'},
+{name:'Extensão de Tronco (Lombar, 2ª exposição)',type:'resistido',series:4,reps:'9, 9, 9, 9',load:'',rest:0,group:'Lombar (2ª exposição)',notes:'NOVO · 4 séries válidas diretas (8-10 reps) · Superset com Russian Twist → (sem descanso)'},
+{name:'Russian Twist',type:'resistido',series:3,reps:'15, 15, 15',load:'',rest:60,group:'Core',notes:'Superset com Extensão de Tronco · Descanso após o par · Não conta como volume de grupamento'},
 ]},
 'regen_dom':{name:'🌿 DOM · Regenerativo — Cardio+Mobilidade+Sauna',exercises:[
 {name:'Cardio Regenerativo (bike/caminhada/natação)',type:'cardio',duration:25,calories:0,distance:'',hr:0,notes:'20-30min · Recuperação ativa'},
@@ -1027,12 +1077,12 @@ const PRESET_GROUPS=[
 {id:'bodytech',label:'💪 Bodytech ABC · Daniel',color:'var(--red)',keys:['bt_a','bt_b','bt_c']},
 {id:'arthur',label:'🎯 Arthur · Upper/Lower/Push/Pull',color:'var(--blue)',keys:['art_push','art_pull','art_lower','art_upper']},
 ];
-function getPresetByKey(key){if(WORKOUT_PRESETS[key])return WORKOUT_PRESETS[key];return(state.customPresets||[]).find(p=>p.key===key)||null;}
+function getPresetByKey(key){if(state.presetOverrides&&state.presetOverrides[key])return state.presetOverrides[key];if(WORKOUT_PRESETS[key])return WORKOUT_PRESETS[key];return(state.customPresets||[]).find(p=>p.key===key)||null;}
 function renderPresetGroups(){const container=document.getElementById('presetGroups');if(!container)return;container.innerHTML='';const groups=PRESET_GROUPS.slice();if(state.customPresets&&state.customPresets.length){groups.push({id:'custom',label:'⭐ Meus Presets',color:'var(--pink)',keys:state.customPresets.map(p=>p.key)});}groups.forEach(grp=>{const wrap=document.createElement('div');wrap.style.marginBottom='6px';const toggle=document.createElement('button');toggle.style.cssText=`width:100%;padding:8px 10px;border-radius:10px;border:1px solid rgba(0,0,0,.04);background:rgba(0,0,0,.02);color:${grp.color};font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center`;const isOpen=container.dataset['open_'+grp.id]==='1';toggle.innerHTML=`<span>${grp.label}</span><span style="font-size:11px">${isOpen?'▾':'▸'}</span>`;const grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;'+(isOpen?'':'display:none');grp.keys.forEach(key=>{const p=getPresetByKey(key);if(!p)return;const shortName=p.name.replace(/^[^\s]+\s/,'');const btn=document.createElement('button');btn.className='wbtn';btn.style.cssText=`padding:8px 4px;border-color:rgba(255,255,255,.1);color:var(--text2);background:rgba(0,0,0,.02);font-size:8px;flex-direction:column;gap:1px;text-align:center`;btn.innerHTML=`<span style="font-size:10px;font-weight:700;color:${grp.color}">${shortName.split('—')[0].trim()}</span><span style="font-size:7px;opacity:.6">${(shortName.split('—')[1]||'').trim()}</span>`;btn.onclick=function(){openPresetPreview(key);};grid.appendChild(btn);});toggle.onclick=function(){const open=grid.style.display==='none';grid.style.display=open?'grid':'none';container.dataset['open_'+grp.id]=open?'1':'0';toggle.querySelector('span:last-child').textContent=open?'▾':'▸';};wrap.appendChild(toggle);wrap.appendChild(grid);container.appendChild(wrap);});}
 let _previewPresetKey=null;
 function openPresetPreview(key){const preset=getPresetByKey(key);if(!preset)return;_previewPresetKey=key;document.getElementById('presetPreviewTitle').textContent=preset.name;let html='';preset.exercises.forEach(ex=>{if(ex.type==='cardio'){html+=`<div class="hist-item" style="flex-direction:column;align-items:stretch;gap:2px"><div style="font-weight:700;font-size:12px">🫀 ${ex.name}</div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3)">⏱ ${ex.duration||0}min${ex.notes?' · '+ex.notes:''}</div></div>`;}else{html+=`<div class="hist-item" style="flex-direction:column;align-items:stretch;gap:2px"><div style="display:flex;justify-content:space-between;gap:8px"><span style="font-weight:700;font-size:12px">${ex.name}</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);white-space:nowrap">${ex.series}× ${ex.reps||'?'}</span></div>${ex.group?`<div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--purple)">${ex.group}</div>`:''}${ex.notes?`<div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3)">${ex.notes}</div>`:''}</div>`;}});document.getElementById('presetPreviewContent').innerHTML=html||'<div class="chart-empty">Sem exercícios.</div>';document.getElementById('presetPreviewModal').classList.add('open');}
 function applyPresetFromPreview(mode){const key=_previewPresetKey;if(!key)return;closeModal('presetPreviewModal');applyPreset(key,mode);}
-function applyPreset(key,mode){const preset=getPresetByKey(key);if(!preset)return;const newExs=preset.exercises.map(ex=>{const newEx={...ex,id:'ex'+Date.now()+Math.random().toString(36).substr(2,5),completed:[],done:false,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})};if(ex.type!=='cardio'){const last=getLastSession(ex.name);if(last){if(last.load&&!newEx.load)newEx.load=last.load;if(last.reps)newEx.reps=last.reps;if(last.rest)newEx.rest=last.rest;}}return newEx;});if(mode==='replace'){state.gym=newExs;}else{state.gym.push(...newExs);}preset.exercises.forEach(ex=>updateExLibrary(ex));save();switchTab('gym');}
+function applyPreset(key,mode){const preset=getPresetByKey(key);if(!preset)return;const newExs=preset.exercises.map(ex=>{const newEx={...ex,id:'ex'+Date.now()+Math.random().toString(36).substr(2,5),completed:[],done:false,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})};if(ex.type!=='cardio'){const last=getLastSession(ex.name);if(last){if(last.load&&!newEx.load)newEx.load=last.load;if(last.reps)newEx.reps=last.reps;if(last.rest)newEx.rest=last.rest;}}return newEx;});if(mode==='replace'){state.gym=newExs;state.gymLoadedFromPreset=key;}else{const wasEmpty=state.gym.length===0;state.gym.push(...newExs);state.gymLoadedFromPreset=wasEmpty?key:null;}preset.exercises.forEach(ex=>updateExLibrary(ex));save();switchTab('gym');}
 function seedExerciseLibrary(){if(!state.exerciseLibrary)state.exerciseLibrary=[];let added=0;Object.values(WORKOUT_PRESETS).forEach(preset=>{preset.exercises.forEach(ex=>{const key=ex.name.trim().toLowerCase();if(!state.exerciseLibrary.find(e=>e.key===key)){updateExLibrary(ex);added++;}});});if(added>0)save();}
 load();
 seedExerciseLibrary();
