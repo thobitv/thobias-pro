@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thobias Pro | v69 · 23/11/2026</title>
+    <title>Thobias Pro | v70 · 23/11/2026</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -138,7 +138,7 @@
             <div>
                 <div class="brand">Thobias Pro</div>
                 <div class="brand-sub" id="displayDate">--/--/----</div>
-                <div class="brand-sub" style="color:var(--text3);opacity:.5">v69 · <span id="buildDate">…</span></div>
+                <div class="brand-sub" style="color:var(--text3);opacity:.5">v70 · <span id="buildDate">…</span></div>
             </div>
             <div style="display:flex;align-items:flex-start;gap:10px">
                 <button id="themeToggle" onclick="toggleTheme()" style="background:var(--accent-glow);border:1px solid var(--border2);border-radius:12px;padding:6px 12px;display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--text2);font-size:14px;margin-top:2px;transition:all .2s;font-family:'JetBrains Mono',monospace;font-weight:600" title="Alternar tema"><span id="themeIcon">🌙</span><span id="themeLabel" style="font-size:9px;text-transform:uppercase;letter-spacing:.5px">Escuro</span></button>
@@ -1200,12 +1200,83 @@ const WORKOUT_PRESETS={
 {name:'Desenvolvimento Militar',type:'resistido',series:3,reps:'12, 10, 10',load:'',rest:60,group:'Ombro',notes:''},
 {name:'Tríceps Testa Polia + Rosca Direta Polia Baixa',type:'resistido',series:3,reps:'12, 12, 12',load:'8.75',rest:60,group:'Tríceps/Bíceps',notes:'Bi-set'},
 ]},
+'bws5_d1':{name:'🧪 BWS 5d · Dia 1 — Full Body',exercises:[
+{name:'Agachamento Livre c/ Barra',type:'resistido',series:3,reps:'6-8, 6-8, 6-8',load:'',rest:120,group:'Quadríceps',notes:'Descanso 2–3 min · Testar a posição dos pés; descer ao menos até o paralelo; elevar os calcanhares com anilhas se necessário'},
+{name:'Supino Inclinado Baixo com Halteres',type:'resistido',series:3,reps:'8-10, 8-10, 8-10',load:'',rest:90,group:'Peito',notes:'Descanso 1,5–2 min · Banco 1–2 entalhes acima da posição mais baixa; peito alto; sem abrir os cotovelos'},
+{name:'Cadeira Flexora',type:'resistido',series:3,reps:'10-15, 10-15, 10-15',load:'',rest:90,group:'Posterior',notes:'Descanso 1,5–2 min · Pontas dos pés para cima; controlar a carga; sem arquear a lombar'},
+{name:'Pulley Anterior Pronado',type:'resistido',series:3,reps:'8-10, 8-10, 8-10',load:'',rest:120,group:'Dorsal',notes:'Descanso 2 min · Pegada além da largura dos ombros; inclinar levemente o tronco para trás; puxar a barra até logo abaixo do queixo'},
+{name:'Rosca no Cabo Atrás do Corpo',type:'resistido',series:3,reps:'10-12, 10-12, 10-12',load:'',rest:90,group:'Bíceps',notes:'Descanso 1,5–2 min · Dar um pequeno passo à frente do cabo; deixar o braço pendente atrás do corpo; fazer a rosca'},
+]},
+'bws5_d2':{name:'🧪 BWS 5d · Dia 2 — Full Body',exercises:[
+{name:'Supino Reto com Barra',type:'resistido',series:3,reps:'6-8, 6-8, 6-8',load:'',rest:120,group:'Peito',notes:'Descanso 2–3 min · Pegada pouco além dos ombros; peito alto; barra até a linha dos mamilos; sem abrir os cotovelos'},
+{name:'Terra Romeno com Barra',type:'resistido',series:3,reps:'6-8, 6-8, 6-8',load:'',rest:120,group:'Posterior',notes:'Descanso 2–3 min · Quadril para trás, joelhos levemente flexionados; descer até as mãos na altura das canelas'},
+{name:'Remada Apoiada com Halteres (costas médias/superiores)',type:'resistido',series:3,reps:'10-12, 10-12, 10-12',load:'',rest:90,group:'Costas',notes:'Descanso 1,5–2 min · Banco 2 entalhes acima da posição mais baixa; cotovelos abertos; juntar as escápulas'},
+{name:'Elevação Lateral com Cabo — unilateral',type:'resistido',series:3,reps:'15-20, 15-20, 15-20',load:'',rest:90,group:'Ombro Lateral',notes:'Descanso 1,5–2 min · Elevar o braço no plano da escápula; alinhar o cabo ao braço; pensar em levar a mão para fora, não para cima'},
+{name:'Tríceps Overhead com Corda no Cabo — unilateral',type:'resistido',series:3,reps:'10-15, 10-15, 10-15',load:'',rest:90,group:'Tríceps',notes:'Descanso 1,5–2 min · Um braço por vez; cotovelo travado; estender o braço para cima e para fora'},
+]},
+'bws5_d3':{name:'🧪 BWS 5d · Dia 3 — Full Body',exercises:[
+{name:'Barra Fixa Pronada',type:'resistido',series:3,reps:'6-12, 6-12, 6-12',load:'',rest:120,group:'Dorsal',notes:'Descanso 2–3 min · Pegada além dos ombros; subir até o queixo passar da barra; usar alternativa (ex.: puxada) se não fizer 6 repetições seguidas'},
+{name:'Leg Press (foco em quadríceps)',type:'resistido',series:3,reps:'10-12, 10-12, 10-12',load:'',rest:120,group:'Quadríceps',notes:'Descanso 2–3 min · Pés baixos na plataforma; joelhos avançam sobre os dedos dos pés; não descolar os calcanhares'},
+{name:'Crucifixo no Cabo Sentado (altura do peito)',type:'resistido',series:3,reps:'10-15, 10-15, 10-15',load:'',rest:90,group:'Peito',notes:'Descanso 1,5–2 min · Cabos na altura do peito; juntar os braços; pausa na posição final'},
+{name:'Panturrilha em Pé com Peso (barra ou halteres)',type:'resistido',series:3,reps:'10-15, 10-15, 10-15',load:'',rest:90,group:'Panturrilha',notes:'Descanso 1,5–2 min · Pés na largura do quadril; dedos elevados sobre uma anilha; empurrar pelo dedão'},
+{name:'Rosca Martelo com Halteres',type:'resistido',series:3,reps:'10-12, 10-12, 10-12',load:'',rest:90,group:'Bíceps',notes:'Descanso 1,5–2 min · Palmas voltadas para dentro (pegada neutra); subir o halter ligeiramente à frente do corpo'},
+]},
+'bws5_d4':{name:'🧪 BWS 5d · Dia 4 — Full Body',exercises:[
+{name:'Agachamento Búlgaro (foco em glúteos)',type:'resistido',series:3,reps:'8-10, 8-10, 8-10',load:'',rest:60,group:'Glúteo',notes:'8–10 por perna · Descanso 1 min entre as pernas · Apoio mais afastado; tronco levemente à frente; fazer uma série numa perna, descansar 1 min e fazer a outra'},
+{name:'Mergulho na Máquina (foco em peito)',type:'resistido',series:3,reps:'6-12, 6-12, 6-12',load:'',rest:90,group:'Peito',notes:'Descanso 1,5–2 min · Máquina de mergulho; braços travados no início; tronco levemente à frente; flexionar os cotovelos e descer devagar'},
+{name:'Cadeira Extensora',type:'resistido',series:3,reps:'10-15, 10-15, 10-15',load:'',rest:90,group:'Quadríceps',notes:'Descanso 1,5–2 min · Pausa de 1 s na posição de topo; controlar a descida'},
+{name:'Remada no Cabo (foco em dorsais)',type:'resistido',series:3,reps:'10-12, 10-12, 10-12',load:'',rest:90,group:'Dorsal',notes:'Descanso 1,5–2 min · Tronco levemente inclinado à frente; puxar os cotovelos para baixo; cotovelos junto ao corpo'},
+{name:'Crucifixo Inverso Crossover',type:'resistido',series:3,reps:'10-15, 10-15, 10-15',load:'',rest:90,group:'Posterior Deltóide',notes:'Descanso 1,5–2 min · Polias na altura máxima, sem pegadores; dar alguns passos à frente; puxar os braços para fora mantendo-os estendidos'},
+{name:'Tríceps Corda no Cabo',type:'resistido',series:3,reps:'8-10, 8-10, 8-10',load:'',rest:90,group:'Tríceps',notes:'Descanso 1,5–2 min · Duas cordas, se possível; cotovelo travado; empurrar para baixo e para fora (variação que poupa os cotovelos)'},
+]},
+'bws5_d5':{name:'🧪 BWS 5d · Dia 5 — Full Body',exercises:[
+{name:'Desenvolvimento com Halteres',type:'resistido',series:3,reps:'8-10, 8-10, 8-10',load:'',rest:120,group:'Ombro',notes:'Descanso 2–3 min · Sentado; banco 2–3 entalhes abaixo da posição vertical; empurrar no plano da escápula'},
+{name:'Elevação Lateral Inclinada Deitado',type:'resistido',series:3,reps:'15-20, 15-20, 15-20',load:'',rest:90,group:'Ombro Lateral',notes:'Descanso 1,5–2 min · Banco 2–3 entalhes abaixo do topo; peito apoiado no banco com halteres nas mãos; braços levemente flexionados; elevar em Y à frente'},
+{name:'Flexão Declinada (com elástico)',type:'resistido',series:3,reps:'10-20, 10-20, 10-20',load:'',rest:90,group:'Peito',notes:'Descanso 1,5–2 min · Elástico nas costas; pés elevados (banco ou anilhas); descer com os cotovelos a 45–60°'},
+{name:'Remada Sentada no Cabo (costas médias/superiores)',type:'resistido',series:3,reps:'10-12, 10-12, 10-12',load:'',rest:90,group:'Costas',notes:'Descanso 1,5–2 min · Pegada larga, se possível; cotovelos para fora; juntar as escápulas'},
+{name:'Rosca Inclinada com Halteres',type:'resistido',series:3,reps:'8-10, 8-10, 8-10',load:'',rest:90,group:'Bíceps',notes:'Descanso 1,5–2 min · Banco 2–3 entalhes abaixo do topo; alternar os braços a cada repetição; cotovelo travado'},
+{name:'Panturrilha em Pé com Peso (barra ou halteres)',type:'resistido',series:3,reps:'10-15, 10-15, 10-15',load:'',rest:90,group:'Panturrilha',notes:'Descanso 1,5–2 min · Pés na largura do quadril; dedos elevados sobre uma anilha; empurrar pelo dedão'},
+]},
+'bws4_u1':{name:'⏱ BWS 4d · Upper 1',exercises:[
+{name:'Supino Reto com Barra',type:'resistido',series:3,reps:'8-10, 8-10, 8-10',load:'',rest:60,group:'Peito',notes:'Superset A1 — sem mais de 1 min entre os dois exercícios · Pegada pouco além dos ombros; peito alto; barra até a linha dos mamilos; sem abrir os cotovelos'},
+{name:'Remada Curvada com Barra (costas médias/superiores)',type:'resistido',series:3,reps:'8-10, 8-10, 8-10',load:'',rest:60,group:'Costas',notes:'Superset A2 — sem mais de 1 min entre os dois exercícios · Pegada pronada, ligeiramente mais larga que os ombros; quadril para trás; tronco inclinado; puxar os cotovelos para trás do corpo'},
+{name:'Desenvolvimento Militar em Pé com Barra',type:'resistido',series:3,reps:'6-8, 6-8, 6-8',load:'',rest:60,group:'Ombro',notes:'Superset B1 — sem mais de 1 min entre os dois exercícios · Empurrar em linha reta para cima; abdômen e glúteos contraídos; sem arquear a lombar'},
+{name:'Barra Fixa Pronada (com carga)',type:'resistido',series:3,reps:'6-12, 6-12, 6-12',load:'',rest:60,group:'Dorsal',notes:'Superset B2 — sem mais de 1 min entre os dois exercícios · Pegada além dos ombros; subir até o queixo passar da barra; usar puxada se não fizer 6 repetições seguidas'},
+{name:'Rosca Inclinada com Halteres',type:'resistido',series:3,reps:'8-10, 8-10, 8-10',load:'',rest:60,group:'Bíceps',notes:'Superset C1 — sem mais de 1 min entre os dois exercícios · Banco 2–3 entalhes abaixo do topo; cotovelo travado'},
+{name:'Elevação Lateral Inclinada Deitado',type:'resistido',series:3,reps:'15-20, 15-20, 15-20',load:'',rest:60,group:'Ombro Lateral',notes:'Superset C2 — sem mais de 1 min entre os dois exercícios · Banco 2–3 entalhes acima da posição mais baixa; carga leve; elevar os braços no plano da escápula'},
+{name:'Crucifixo no Cabo Sentado (altura do peito)',type:'resistido',series:3,reps:'Falha, Falha, Falha',load:'',rest:0,group:'Peito',notes:'Drop set: 1 série até a falha + 2 drop sets · Fazer o máximo de repetições, reduzir 20% da carga e repetir até a falha, reduzir mais 20% e repetir · Cabos na altura do peito; pausa de 1 s na posição final',seriesTypes:['normal','drop','drop']},
+]},
+'bws4_l1':{name:'⏱ BWS 4d · Lower 1 (quadríceps)',exercises:[
+{name:'Agachamento Livre c/ Barra',type:'resistido',series:3,reps:'8-10, 8-10, 8-10',load:'',rest:60,group:'Quadríceps',notes:'Superset A1 — sem mais de 1 min entre os dois exercícios · Testar a posição dos pés; descer ao menos até o paralelo; elevar os calcanhares com anilhas se necessário'},
+{name:'Face Pull',type:'resistido',series:3,reps:'10, 10, 10',load:'',rest:60,group:'Posterior Deltóide',notes:'Superset A2 — sem mais de 1 min entre os dois exercícios · Corda dupla, se possível; carga leve; fazer sem o movimento em Y para facilitar'},
+{name:'Terra Romeno com Halteres',type:'resistido',series:3,reps:'8-10, 8-10, 8-10',load:'',rest:60,group:'Posterior',notes:'Superset B1 — sem mais de 1 min entre os dois exercícios · Quadril para trás, joelhos levemente flexionados; descer até as mãos na altura das canelas'},
+{name:'Afundo Caminhando (foco em quadríceps)',type:'resistido',series:3,reps:'8-10, 8-10, 8-10',load:'',rest:60,group:'Quadríceps',notes:'Superset B2 — sem mais de 1 min entre os dois exercícios · 8–10 por perna · Tronco ereto; levar o joelho à frente; alternar as pernas a cada passo'},
+{name:'Cadeira Flexora',type:'resistido',series:3,reps:'10-15, 10-15, 10-15',load:'',rest:60,group:'Posterior',notes:'Superset C1 — sem mais de 1 min entre os dois exercícios · Pontas dos pés para cima; controlar a carga; sem arquear a lombar'},
+{name:'Cadeira Extensora',type:'resistido',series:3,reps:'10-15, 10-15, 10-15',load:'',rest:60,group:'Quadríceps',notes:'Superset C2 — sem mais de 1 min entre os dois exercícios · Pausa de 2 s na posição de topo; controlar a descida'},
+]},
+'bws4_u2':{name:'⏱ BWS 4d · Upper 2',exercises:[
+{name:'Supino Inclinado Baixo com Halteres',type:'resistido',series:3,reps:'8-10, 8-10, 8-10',load:'',rest:60,group:'Peito',notes:'Superset A1 — sem mais de 1 min entre os dois exercícios · Banco 1–2 entalhes acima da posição mais baixa; peito alto; sem abrir os cotovelos'},
+{name:'Remada Apoiada com Halteres (foco em dorsais)',type:'resistido',series:3,reps:'10-12, 10-12, 10-12',load:'',rest:60,group:'Dorsal',notes:'Superset A2 — sem mais de 1 min entre os dois exercícios · Banco 2 entalhes acima da posição mais baixa; puxar os cotovelos em direção aos bolsos de trás'},
+{name:'Supino Reto Halteres',type:'resistido',series:3,reps:'8-10, 8-10, 8-10',load:'',rest:60,group:'Peito',notes:'Superset B1 — sem mais de 1 min entre os dois exercícios · Peito alto; sem abrir os cotovelos; controlar a carga na subida e na descida'},
+{name:'Remada Apoiada com Halteres (deltóide posterior)',type:'resistido',series:3,reps:'10-15, 10-15, 10-15',load:'',rest:60,group:'Posterior Deltóide',notes:'Superset B2 — sem mais de 1 min entre os dois exercícios · Banco 2 entalhes acima da posição mais baixa; puxar com os cotovelos a 45°'},
+{name:'Rosca Martelo Alternada',type:'resistido',series:3,reps:'8-10, 8-10, 8-10',load:'',rest:60,group:'Bíceps',notes:'Superset C1 — sem mais de 1 min entre os dois exercícios · 8–10 por braço · Pegada martelo; subir e cruzar em direção ao peito; alternar os braços a cada repetição'},
+{name:'Tríceps Overhead Inclinado com Halteres',type:'resistido',series:3,reps:'10-15, 10-15, 10-15',load:'',rest:60,group:'Tríceps',notes:'Superset C2 — sem mais de 1 min entre os dois exercícios · Banco a 45°; braços paralelos ao tronco; cotovelo travado'},
+]},
+'bws4_l2':{name:'⏱ BWS 4d · Lower 2 (glúteos)',exercises:[
+{name:'Levantamento Terra',type:'resistido',series:3,reps:'6-8, 6-8, 6-8',load:'',rest:120,group:'Posterior',notes:'Descanso 2–3 min entre as séries · Exercício técnico: assistir ao vídeo do tutorial; começar com a barra na altura das canelas'},
+{name:'Afundo Reverso com Pé da Frente Elevado',type:'resistido',series:3,reps:'8-10, 8-10, 8-10',load:'',rest:60,group:'Glúteo',notes:'Superset A1 — sem mais de 1 min entre os dois exercícios · 8–10 por lado · Pé da frente sobre uma anilha; passo longo para trás; tronco levemente à frente; alternar as pernas a cada repetição'},
+{name:'Panturrilha em Pé com Peso (barra ou halteres)',type:'resistido',series:3,reps:'10-15, 10-15, 10-15',load:'',rest:60,group:'Panturrilha',notes:'Superset A2 — sem mais de 1 min entre os dois exercícios · Pés na largura do quadril; dedos elevados sobre uma anilha; empurrar pelo dedão'},
+{name:'Hip Thrust com Barra',type:'resistido',series:3,reps:'10-15, 10-15, 10-15',load:'',rest:60,group:'Glúteo',notes:'Superset B1 — sem mais de 1 min entre os dois exercícios · Contrair forte os glúteos; joelhos a 90° no topo; não descer por completo a cada repetição'},
+{name:'Abdução de Quadril com Elástico',type:'resistido',series:3,reps:'12, 12, 12',load:'',rest:60,group:'Glúteo Médio',notes:'Superset B2 — sem mais de 1 min entre os dois exercícios · Elástico nos joelhos; sentar na ponta do banco com os joelhos juntos; abrir os joelhos e contrair os glúteos'},
+]},
 };
 const PRESET_GROUPS=[
 {id:'claude',label:'📋 UL PPL · Claude',color:'var(--accent)',keys:['push_a','pull_a','lower_a','upper','lower_b','comp_a','comp_b']},
 {id:'allpfit',label:'🏋️ AllpFit ABCD · Liu Young',color:'var(--yellow)',keys:['allp_a','allp_b','allp_c','allp_d']},
 {id:'bodytech',label:'💪 Bodytech ABC · Daniel',color:'var(--red)',keys:['bt_a','bt_b','bt_c']},
 {id:'arthur',label:'🎯 Arthur · Upper/Lower/Push/Pull',color:'var(--blue)',keys:['art_push','art_pull','art_lower','art_upper']},
+{id:'bws5',label:'🧪 BWS · Full Body 5 dias',color:'var(--purple)',keys:['bws5_d1','bws5_d2','bws5_d3','bws5_d4','bws5_d5']},
+{id:'bws4',label:'⏱ BWS · Time-Saving 4 dias (Upper/Lower)',color:'var(--orange)',keys:['bws4_u1','bws4_l1','bws4_u2','bws4_l2']},
 ];
 function renderPresetGroups(){const container=document.getElementById('presetGroups');if(!container)return;container.innerHTML='';const groups=PRESET_GROUPS.slice();if(state.customPresets&&state.customPresets.length){groups.push({id:'custom',label:'⭐ Meus Presets',color:'var(--pink)',keys:state.customPresets.map(p=>p.key)});}groups.forEach(grp=>{const wrap=document.createElement('div');wrap.style.marginBottom='6px';const toggle=document.createElement('button');toggle.style.cssText=`width:100%;padding:8px 10px;border-radius:10px;border:1px solid rgba(0,0,0,.04);background:rgba(0,0,0,.02);color:${grp.color};font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center`;const isOpen=container.dataset['open_'+grp.id]==='1';toggle.innerHTML=`<span>${grp.label}</span><span style="font-size:11px">${isOpen?'▾':'▸'}</span>`;const grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;'+(isOpen?'':'display:none');grp.keys.forEach(key=>{const p=getPresetByKey(key);if(!p)return;const shortName=p.name.replace(/^[^\s]+\s/,'');const btn=document.createElement('button');btn.className='wbtn';btn.style.cssText=`padding:8px 4px;border-color:rgba(255,255,255,.1);color:var(--text2);background:rgba(0,0,0,.02);font-size:8px;flex-direction:column;gap:1px;text-align:center`;btn.innerHTML=`<span style="font-size:10px;font-weight:700;color:${grp.color}">${shortName.split('—')[0].trim()}</span><span style="font-size:7px;opacity:.6">${(shortName.split('—')[1]||'').trim()}</span>`;btn.onclick=function(){openPresetPreview(key);};grid.appendChild(btn);});toggle.onclick=function(){const open=grid.style.display==='none';grid.style.display=open?'grid':'none';container.dataset['open_'+grp.id]=open?'1':'0';toggle.querySelector('span:last-child').textContent=open?'▾':'▸';};wrap.appendChild(toggle);wrap.appendChild(grid);container.appendChild(wrap);});}
 // Presets: WORKOUT_PRESETS (fixos) + state.presetOverrides (fixo sobrescrito pelo usuário) + state.customPresets (novos, criados pelo usuário)
