@@ -1,4 +1,4 @@
-const V = 'tp-68a';
+const V = 'tp-69a';
 const ASSETS = ['./', './thobias_pro_v51.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
